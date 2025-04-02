@@ -1,0 +1,218 @@
+/* Features Section */
+.features {
+    padding: 80px 0;
+    background-color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.features::before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, var(--secondary-50) 0%, rgba(255,255,255,0) 70%);
+    top: -100px;
+    left: -200px;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.features::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, var(--accent-50) 0%, rgba(255,255,255,0) 70%);
+    bottom: -150px;
+    right: -150px;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.feature-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 4rem;
+}
+
+.feature-card {
+    background-color: white;
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.feature-icon {
+    width: 64px;
+    height: 64px;
+    background-color: var(--primary-50);
+    color: var(--primary);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+    transition: all 0.3s ease;
+}
+
+.feature-card:nth-child(2n) .feature-icon {
+    background-color: var(--secondary-50);
+    color: var(--secondary);
+}
+
+.feature-card:nth-child(3n) .feature-icon {
+    background-color: var(--accent-50);
+    color: var(--accent);
+}
+
+.feature-title {
+    font-size: 1.25rem;
+    font-weight: var(--font-bold);
+    margin-bottom: 1rem;
+    color: var(--gray-900);
+}
+
+.feature-description {
+    color: var(--gray-600);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    flex: 1;
+}
+
+.feature-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary);
+    font-weight: var(--font-medium);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.feature-link:hover {
+    gap: 0.75rem;
+    color: var(--primary-dark);
+}
+
+.features-cta {
+    background-color: var(--primary-50);
+    border-radius: var(--radius-2xl);
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.features-cta::before {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background-color: rgba(255, 255, 255, 0.1);
+    top: -100px;
+    left: -100px;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.features-cta::after {
+    content: '';
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background-color: rgba(255, 255, 255, 0.1);
+    bottom: -75px;
+    right: -75px;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.features-cta h3 {
+    font-size: 1.75rem;
+    font-weight: var(--font-bold);
+    margin-bottom: 1rem;
+    color: var(--gray-900);
+}
+
+.features-cta p {
+    color: var(--gray-700);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.features-cta .btn {
+    padding: 0.75rem 2rem;
+    font-size: 1.125rem;
+}
+
+@media (max-width: 768px) {
+    .features {
+        padding: 60px 0;
+    }
+    
+    .feature-cards {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .feature-card {
+        padding: 1.5rem;
+    }
+    
+    .feature-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+    }
+    
+    .features-cta {
+        padding: 2.5rem 1.5rem;
+    }
+    
+    .features-cta h3 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .features {
+        padding: 40px 0;
+    }
+    
+    .feature-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .feature-card {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .features-cta {
+        padding: 2rem 1rem;
+    }
+}

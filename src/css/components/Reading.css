@@ -1,0 +1,243 @@
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    border-right: 2px solid #000000;
+    padding: 20px;
+}
+
+.sidebar-user {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #000000;
+    margin-bottom: 20px;
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid #000000;
+    margin-bottom: 10px;
+}
+
+.user-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 5px 0;
+}
+
+.user-email {
+    font-size: 14px;
+    color: #000000;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin-bottom: 10px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    color: #000000;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.nav-link i {
+    margin-right: 10px;
+    width: 20px;
+}
+
+.nav-item.active .nav-link {
+    background-color: #ff6b2c;
+    color: #000000;
+    font-weight: 600;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 107, 44, 0.1);
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background-color: #ffffff;
+}
+
+.readings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.readings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 2px solid #000000;
+}
+
+.readings-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+}
+
+.readings-create-btn {
+    padding: 12px 24px;
+    background-color: #ff6b2c;
+    color: #000000;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.readings-create-btn i {
+    margin-right: 8px;
+}
+
+.readings-create-btn:hover {
+    background-color: #ff8f5e;
+    transform: translateY(-2px);
+}
+
+.readings-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.reading-category-card {
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform 0.3s;
+}
+
+.reading-category-card:hover {
+    transform: translateY(-5px);
+}
+
+.reading-category-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 15px;
+}
+
+.reading-category-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.reading-action-btn {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    color: #000000;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.reading-action-btn i {
+    margin-right: 8px;
+}
+
+.reading-action-btn:hover {
+    background-color: #ff6b2c;
+    color: #000000;
+}
+
+.readings-stats-container {
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.readings-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.reading-stat {
+    text-align: center;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 8px;
+}
+
+.reading-stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 5px;
+}
+
+.reading-stat-label {
+    font-size: 14px;
+    color: #000000;
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 2px solid #000000;
+    }
+
+    .readings-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .readings-categories {
+        grid-template-columns: 1fr;
+    }
+
+    .readings-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .readings-stats {
+        grid-template-columns: 1fr;
+    }
+} 

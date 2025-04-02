@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="240px" viewBox="0 0 200 240" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>WordWise Mascot</title>
+    <defs>
+        <circle id="path-1" cx="35" cy="35" r="35"></circle>
+        <circle id="path-2" cx="35" cy="35" r="35"></circle>
+    </defs>
+    <g id="Mascot" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Body -->
+        <ellipse id="Body" fill="#58CC02" cx="100" cy="140" rx="70" ry="90"></ellipse>
+        
+        <!-- Face -->
+        <circle id="Face" fill="#FFFFFF" cx="100" cy="90" r="60"></circle>
+        
+        <!-- Left Eye -->
+        <g id="Left-Eye" transform="translate(40, 65)">
+            <mask id="mask-1" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Eye-Background" fill="#F5F5F5" xlink:href="#path-1"></use>
+            <circle id="Pupil" fill="#333333" mask="url(#mask-1)" cx="45" cy="35" r="15"></circle>
+            <circle id="Reflection" fill="#FFFFFF" mask="url(#mask-1)" cx="52" cy="28" r="6"></circle>
+        </g>
+        
+        <!-- Right Eye -->
+        <g id="Right-Eye" transform="translate(90, 65)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-2"></use>
+            </mask>
+            <use id="Eye-Background" fill="#F5F5F5" xlink:href="#path-2"></use>
+            <circle id="Pupil" fill="#333333" mask="url(#mask-2)" cx="25" cy="35" r="15"></circle>
+            <circle id="Reflection" fill="#FFFFFF" mask="url(#mask-2)" cx="32" cy="28" r="6"></circle>
+        </g>
+        
+        <!-- Mouth -->
+        <path d="M85,115 C85,122.5 92.5,130 100,130 C107.5,130 115,122.5 115,115" id="Mouth" stroke="#333333" stroke-width="5" stroke-linecap="round"></path>
+        
+        <!-- Eyebrows -->
+        <path d="M40,60 C55,53 70,58 75,60" id="Left-Eyebrow" stroke="#333333" stroke-width="4" stroke-linecap="round"></path>
+        <path d="M125,60 C140,53 155,58 160,60" id="Right-Eyebrow" stroke="#333333" stroke-width="4" stroke-linecap="round" transform="translate(142.500000, 60.000000) scale(-1, 1) translate(-142.500000, -60.000000)"></path>
+        
+        <!-- Thumb -->
+        <g id="Thumb" transform="translate(140, 150)">
+            <path d="M0,0 C10,10 20,0 30,-25 C35,-35 25,-40 15,-30 C5,-20 0,-10 0,0 Z" fill="#58CC02" stroke="#006400" stroke-width="3"></path>
+            <path d="M15,-15 C20,-20 25,-15 20,-10" stroke="#006400" stroke-width="2" stroke-linecap="round"></path>
+        </g>
+        
+        <!-- Bottom highlight -->
+        <path d="M50,180 C60,210 140,210 150,180" id="Bottom-Highlight" stroke="#006400" stroke-width="3" opacity="0.3"></path>
+        
+        <!-- Blush marks -->
+        <circle id="Left-Blush" fill="#FF9999" opacity="0.6" cx="65" cy="105" r="10"></circle>
+        <circle id="Right-Blush" fill="#FF9999" opacity="0.6" cx="135" cy="105" r="10"></circle>
+        
+        <!-- Graduation cap -->
+        <g id="Cap" transform="translate(55, 20)">
+            <rect id="Cap-Base" fill="#333333" x="0" y="0" width="90" height="15" rx="2"></rect>
+            <path d="M45,0 L80,20 L10,20 Z" id="Cap-Top" fill="#333333"></path>
+            <rect id="Tassel" fill="#FFD700" x="70" y="0" width="5" height="30"></rect>
+            <circle id="Tassel-End" fill="#FFD700" cx="72.5" cy="35" r="7.5"></circle>
+        </g>
+    </g>
+</svg> 

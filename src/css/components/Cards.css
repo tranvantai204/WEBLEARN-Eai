@@ -1,0 +1,272 @@
+/* Cards */
+.card {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid #000000;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 0 #000000;
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 2px solid #000000;
+    background-color: white;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+}
+
+.card-subtitle {
+    font-size: 0.875rem;
+    color: #000000;
+    margin-top: 0.25rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-footer {
+    padding: 1.5rem;
+    border-top: 2px solid #000000;
+    background-color: white;
+}
+
+.card-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.card-img-top {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom: 2px solid #000000;
+}
+
+.card-img-bottom {
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-top: 2px solid #000000;
+}
+
+.card-primary {
+    border-left: 4px solid #ff6b2c;
+}
+
+.card-secondary {
+    border-left: 4px solid #000000;
+}
+
+.card-success {
+    border-left: 4px solid #10B981;
+}
+
+.card-warning {
+    border-left: 4px solid #F59E0B;
+}
+
+.card-danger {
+    border-left: 4px solid #EF4444;
+}
+
+.card-sm {
+    max-width: 300px;
+}
+
+.card-md {
+    max-width: 400px;
+}
+
+.card-lg {
+    max-width: 500px;
+}
+
+.card-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.card-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.card-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.card-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.card-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.card-btn-primary {
+    background-color: #ff6b2c;
+    color: #000000;
+}
+
+.card-btn-secondary {
+    background-color: white;
+    color: #000000;
+}
+
+.card-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 #000000;
+}
+
+.card-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 0 #000000;
+}
+
+/* Feature Cards */
+.feature-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 2px solid #000000;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 0 #000000;
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: #ff6b2c;
+    margin-bottom: 1.5rem;
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #000000;
+}
+
+.feature-description {
+    color: #000000;
+    line-height: 1.6;
+}
+
+/* Dashboard Cards */
+.dashboard-section {
+    background: var(--white);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 1.5rem;
+}
+
+/* Stat Cards */
+.stat-card {
+    background: var(--white);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon i {
+    font-size: 1.5rem;
+    color: var(--white);
+}
+
+.stat-info h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6B7280;
+    margin: 0 0 0.25rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .card-grid-4 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .card-grid-3,
+    .card-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .card-grid-2,
+    .card-grid-3,
+    .card-grid-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-actions {
+        flex-direction: column;
+    }
+    
+    .card-btn {
+        width: 100%;
+    }
+} 

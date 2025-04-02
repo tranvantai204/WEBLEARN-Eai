@@ -1,0 +1,74 @@
+/* Base CSS Imports */
+@import 'base.css';
+@import 'layout.css';
+@import 'utilities.css';
+
+/* Component CSS Imports */
+@import 'components/Buttons.css';
+@import 'components/Cards.css';
+@import 'components/Modal.css';
+@import 'components/Dictionary.css';
+@import 'components/Sidebar.css';
+@import 'components/Auth.css';
+@import 'components/Profile.css';
+@import 'components/ApiKeyModal.css';
+@import 'components/DictionaryWidget.css';
+@import 'components/Register.css';
+@import 'components/WritingPage.css';
+@import 'components/HomePage.css';
+@import 'components/Header.css';
+@import 'components/Footer.css';
+@import 'components/App.css';
+@import 'components/Reading.css';
+@import 'components/Flashcards.css';
+@import 'components/Login.css';
+@import 'components/Discover.css';
+@import 'components/Dashboard.css';
+@import 'components/DictionaryWidget.css';
+@import 'components/WritingCreate.css';
+@import 'components/ReadingCreate.css';
+
+/* Google Fonts - Nunito */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Font Awesome */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+/* Global fixes and overrides */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Animation fix for Safari */
+@media not all and (min-resolution:.001dpcm) { 
+    @supports (-webkit-appearance:none) {
+        .animate-bounce,
+        .animate-pulse,
+        .animate-fade-in,
+        .animate-slide-up,
+        .animate-pop {
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+    }
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: #FFF9C4 !important;
+        color: black !important;
+    }
+    
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+}
