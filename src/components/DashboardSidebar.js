@@ -25,20 +25,22 @@ function DashboardSidebar({ user }) {
             </div>
 
             <nav className="sidebar-nav">
+                <div className={`nav-item ${isActive('/flashcards') ? 'active' : ''}`}>
+                    <Link 
+                        to="/flashcards" 
+                        className="nav-link"
+                        data-tooltip="Flashcards"
+                    >
+                        <i className="fas fa-layer-group"></i>
+                    </Link>
+                </div>
+
                 <Link 
                     to="/dashboard" 
                     className={`sidebar-link ${isActive('/dashboard') ? 'active' : ''}`}
                 >
                     <i className="fas fa-home"></i>
                     Dashboard
-                </Link>
-
-                <Link 
-                    to="/flashcards" 
-                    className={`sidebar-link ${isActive('/flashcards') ? 'active' : ''}`}
-                >
-                    <i className="fas fa-layer-group"></i>
-                    Flashcards
                 </Link>
 
                 <Link 

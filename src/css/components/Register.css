@@ -689,6 +689,54 @@
     font-size: 0.9rem;
 }
 
+/* Level Selection */
+.level-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.level-option {
+    position: relative;
+    width: 100%;
+}
+
+.level-option-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: white;
+    border: 2px solid #000;
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.level-icon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    margin-bottom: 0;
+}
+
+.level-name {
+    font-weight: 600;
+    color: #000;
+    font-size: 1rem;
+    text-align: left;
+    line-height: 1.2;
+}
+
+.level-option input[type="radio"]:checked + .level-option-label {
+    background-color: #e6f7e6;
+    border-color: #40c057;
+    transform: translateX(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 /* Responsive Design */
 @media (max-width: 992px) {
     .register-container {
@@ -742,6 +790,10 @@
     .btn {
         width: 100%;
     }
+    
+    .level-grid {
+        gap: 0.5rem;
+    }
 }
 
 @media (max-width: 576px) {
@@ -749,5 +801,75 @@
         border-radius: 0;
         border-left: none;
         border-right: none;
+    }
+}
+
+.password-error {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.password-error::before {
+    content: '\f071';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+}
+
+.gender-options {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.gender-option {
+    flex: 1;
+    position: relative;
+}
+
+.gender-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.gender-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: white;
+    border: 2px solid #000;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.gender-label i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.gender-option input[type="radio"]:checked + .gender-label {
+    background-color: #e6f7e6;
+    border-color: #40c057;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.gender-option:hover .gender-label {
+    border-color: #40c057;
+}
+
+@media (max-width: 480px) {
+    .gender-options {
+        flex-direction: column;
+    }
+    
+    .gender-option {
+        width: 100%;
     }
 } 

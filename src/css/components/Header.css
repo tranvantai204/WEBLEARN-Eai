@@ -129,6 +129,121 @@
     padding: 0.5rem;
 }
 
+/* Language Selector Styles - New Version */
+.language-selector {
+    position: relative;
+    margin-right: 1rem;
+}
+
+.lang-btn-main {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+.lang-btn-main:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+    border-color: rgba(52, 152, 219, 0.4);
+}
+
+.lang-flag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 16px;
+}
+
+.lang-flag svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.lang-name {
+    font-weight: 500;
+}
+
+.language-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 240px;
+    z-index: 1000;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.language-menu-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.globe-icon {
+    color: #3498db;
+}
+
+.language-menu-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: #2c3e50;
+}
+
+.language-option:hover {
+    background-color: #f8f9fa;
+}
+
+.language-option.active {
+    background-color: rgba(52, 152, 219, 0.1);
+    font-weight: 600;
+}
+
+.check-icon {
+    margin-left: auto;
+    color: #3498db;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive Styles */
 @media (max-width: 900px) {
     .main-nav {
@@ -161,5 +276,18 @@
     .mobile-menu-btn {
         display: block;
         margin-left: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .language-menu {
+        width: 100%;
+        left: 0;
+        right: auto;
+    }
+    
+    .lang-btn-main {
+        width: 100%;
+        justify-content: space-between;
     }
 } 

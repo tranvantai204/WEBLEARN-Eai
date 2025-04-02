@@ -5,8 +5,38 @@ import '../css/components/Register.css';
 function RegisterPage() {
     const [formStep, setFormStep] = useState(1);
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        gender: '',
+        level: ''
+    });
+    const [passwordError, setPasswordError] = useState('');
+
+    const levels = [
+        { value: '1', label: 'Level 1 - Beginner', icon: '🌱' },
+        { value: '2', label: 'Level 2 - Elementary', icon: '🌿' },
+        { value: '3', label: 'Level 3 - Pre-Intermediate', icon: '🌲' },
+        { value: '4', label: 'Level 4 - Intermediate', icon: '🎯' },
+        { value: '5', label: 'Level 5 - Upper Intermediate', icon: '🎓' },
+        { value: '6', label: 'Level 6 - Advanced', icon: '⭐' }
+    ];
 
     const nextStep = () => {
+        if (formStep === 2) {
+            // Check password confirmation before proceeding
+            if (formData.password !== formData.confirmPassword) {
+                setPasswordError('Passwords do not match');
+                return;
+            }
+            if (formData.password.length < 8) {
+                setPasswordError('Password must be at least 8 characters long');
+                return;
+            }
+            setPasswordError('');
+        }
         setFormStep(Math.min(formStep + 1, 3));
     };
 
@@ -16,6 +46,18 @@ function RegisterPage() {
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
+    };
+
+    const handleInputChange = (e) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [id]: value
+        }));
+        
+        if (id === 'password' || id === 'confirmPassword') {
+            setPasswordError('');
+        }
     };
 
     return (
@@ -103,6 +145,8 @@ function RegisterPage() {
                                         type="text"
                                         className="form-control"
                                         id="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
                                         placeholder="Enter your full name"
                                     />
                                 </div>
@@ -116,8 +160,60 @@ function RegisterPage() {
                                         type="email"
                                         className="form-control"
                                         id="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
                                         placeholder="Enter your email"
                                     />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Gender</label>
+                                    <div className="gender-options">
+                                        <div className="gender-option">
+                                            <input
+                                                type="radio"
+                                                id="male"
+                                                name="gender"
+                                                value="male"
+                                                checked={formData.gender === 'male'}
+                                                onChange={(e) => handleInputChange({ target: { id: 'gender', value: e.target.value } })}
+                                            />
+                                            <label htmlFor="male" className="gender-label">
+                                                <i className="fas fa-mars"></i>
+                                                Male
+                                            </label>
+                                        </div>
+                                        
+                                        <div className="gender-option">
+                                            <input
+                                                type="radio"
+                                                id="female"
+                                                name="gender"
+                                                value="female"
+                                                checked={formData.gender === 'female'}
+                                                onChange={(e) => handleInputChange({ target: { id: 'gender', value: e.target.value } })}
+                                            />
+                                            <label htmlFor="female" className="gender-label">
+                                                <i className="fas fa-venus"></i>
+                                                Female
+                                            </label>
+                                        </div>
+                                        
+                                        <div className="gender-option">
+                                            <input
+                                                type="radio"
+                                                id="other"
+                                                name="gender"
+                                                value="other"
+                                                checked={formData.gender === 'other'}
+                                                onChange={(e) => handleInputChange({ target: { id: 'gender', value: e.target.value } })}
+                                            />
+                                            <label htmlFor="other" className="gender-label">
+                                                <i className="fas fa-genderless"></i>
+                                                Other
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <div className="register-form-buttons">
@@ -125,6 +221,7 @@ function RegisterPage() {
                                         type="button"
                                         className="btn btn-primary btn-lg register-next-btn"
                                         onClick={nextStep}
+                                        disabled={!formData.name || !formData.email || !formData.gender}
                                     >
                                         Continue
                                         <i className="fas fa-arrow-right"></i>
@@ -145,6 +242,8 @@ function RegisterPage() {
                                             type={passwordVisible ? "text" : "password"}
                                             className="form-control"
                                             id="password"
+                                            value={formData.password}
+                                            onChange={handleInputChange}
                                             placeholder="Create a password"
                                         />
                                         <button 
@@ -166,9 +265,12 @@ function RegisterPage() {
                                     <input
                                         type="password"
                                         className="form-control"
-                                        id="confirm-password"
+                                        id="confirmPassword"
+                                        value={formData.confirmPassword}
+                                        onChange={handleInputChange}
                                         placeholder="Confirm your password"
                                     />
+                                    {passwordError && <p className="password-error">{passwordError}</p>}
                                 </div>
                                 
                                 <div className="register-form-buttons">
@@ -196,31 +298,24 @@ function RegisterPage() {
                         {formStep === 3 && (
                             <div className="register-form-step animate-pop">
                                 <div className="form-group">
-                                    <label className="form-label">Learning Preferences</label>
-                                    <div className="language-preferences">
-                                        <div className="language-option">
-                                            <input type="radio" id="beginnerLevel" name="level" value="beginner" />
-                                            <label htmlFor="beginnerLevel" className="language-option-label">
-                                                <span className="language-icon">🌱</span>
-                                                <span className="language-name">Beginner</span>
-                                            </label>
-                                        </div>
-                                        
-                                        <div className="language-option">
-                                            <input type="radio" id="intermediateLevel" name="level" value="intermediate" />
-                                            <label htmlFor="intermediateLevel" className="language-option-label">
-                                                <span className="language-icon">🌿</span>
-                                                <span className="language-name">Intermediate</span>
-                                            </label>
-                                        </div>
-                                        
-                                        <div className="language-option">
-                                            <input type="radio" id="advancedLevel" name="level" value="advanced" />
-                                            <label htmlFor="advancedLevel" className="language-option-label">
-                                                <span className="language-icon">🌳</span>
-                                                <span className="language-name">Advanced</span>
-                                            </label>
-                                        </div>
+                                    <label className="form-label">Select Your Level</label>
+                                    <div className="level-grid">
+                                        {levels.map((level) => (
+                                            <div className="level-option" key={level.value}>
+                                                <input
+                                                    type="radio"
+                                                    id={`level${level.value}`}
+                                                    name="level"
+                                                    value={level.value}
+                                                    checked={formData.level === level.value}
+                                                    onChange={(e) => handleInputChange({ target: { id: 'level', value: e.target.value } })}
+                                                />
+                                                <label htmlFor={`level${level.value}`} className="level-option-label">
+                                                    <span className="level-icon">{level.icon}</span>
+                                                    <span className="level-name">{level.label}</span>
+                                                </label>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                                 
@@ -254,7 +349,11 @@ function RegisterPage() {
                                         Back
                                     </button>
                                     
-                                    <button type="submit" className="btn btn-primary btn-lg register-submit-btn">
+                                    <button 
+                                        type="submit" 
+                                        className="btn btn-primary btn-lg register-submit-btn"
+                                        disabled={!formData.level}
+                                    >
                                         <i className="fas fa-rocket"></i>
                                         Create Account
                                     </button>

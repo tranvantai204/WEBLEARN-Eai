@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 // Import components
 import Header from './components/Header.js';
@@ -52,9 +54,13 @@ const AppLayout = () => {
 
 function App() {
     return (
-        <Router>
-            <AppLayout />
-        </Router>
+        <LanguageProvider>
+            <AuthProvider>
+                <Router>
+                    <AppLayout />
+                </Router>
+            </AuthProvider>
+        </LanguageProvider>
     );
 }
 
