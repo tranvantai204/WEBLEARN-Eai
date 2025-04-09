@@ -80,4 +80,75 @@ export const FlagESIcon = () => (
         <rect width="900" height="600" fill="#c60b1e"/>
         <rect y="150" width="900" height="300" fill="#ffc400"/>
     </svg>
+);
+
+export const FlagITIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+        <rect width="300" height="600" fill="#009246"/>
+        <rect x="300" width="300" height="600" fill="#fff"/>
+        <rect x="600" width="300" height="600" fill="#ce2b37"/>
+    </svg>
+);
+
+export const FlagRUIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+        <rect width="900" height="200" fill="#fff"/>
+        <rect y="200" width="900" height="200" fill="#0039a6"/>
+        <rect y="400" width="900" height="200" fill="#d52b1e"/>
+    </svg>
+);
+
+export const FlagPTIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+        <rect width="900" height="600" fill="#006600"/>
+        <rect width="360" height="600" fill="#ff0000"/>
+        <circle cx="360" cy="300" r="129" fill="#ffff00"/>
+        <circle cx="360" cy="300" r="108" fill="#002776"/>
+    </svg>
+);
+
+export const FlagNLIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+        <rect width="900" height="200" fill="#ae1c28"/>
+        <rect y="200" width="900" height="200" fill="#fff"/>
+        <rect y="400" width="900" height="200" fill="#21468b"/>
+    </svg>
+);
+
+export const FlagARIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+        <rect width="900" height="200" fill="#000"/>
+        <rect y="200" width="900" height="200" fill="#fff"/>
+        <rect y="400" width="900" height="200" fill="#078930"/>
+        <rect x="200" width="500" height="600" fill="#ce1126"/>
+    </svg>
+);
+
+export const FlagHIIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+        <rect width="900" height="200" fill="#ff9933"/>
+        <rect y="200" width="900" height="200" fill="#fff"/>
+        <rect y="400" width="900" height="200" fill="#138808"/>
+        <circle cx="450" cy="300" r="80" fill="#000080"/>
+        <circle cx="450" cy="300" r="70" fill="#fff"/>
+        <circle cx="450" cy="300" r="17" fill="#000080"/>
+        <g transform="translate(450,300)" fill="#000080">
+            <polygon points="0,-60 4,-18 21,-54 -13,-22 34,-22 -13,22 21,54 4,18 0,60 -4,18 -21,54 13,22 -34,22 13,-22 -21,-54 -4,-18"/>
+        </g>
+    </svg>
+);
+
+export const FlagTHIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+        <rect width="900" height="600" fill="#ed1c24"/>
+        <rect y="100" width="900" height="400" fill="#fff"/>
+        <rect y="200" width="900" height="200" fill="#241d4f"/>
+    </svg>
+);
+
+export const FlagIDIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+        <rect width="900" height="300" fill="#ce1126"/>
+        <rect y="300" width="900" height="300" fill="#fff"/>
+    </svg>
 ); 

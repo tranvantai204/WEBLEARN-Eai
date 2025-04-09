@@ -320,3 +320,32 @@
         font-size: 12px;
     }
 }
+
+body.page-transition::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    animation: pageTransition 1.5s forwards;
+}
+
+@keyframes pageTransition {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    30% {
+        opacity: 0.1;
+    }
+    100% {
+        opacity: 0.9;
+        transform: translateY(0);
+        background-color: #ffffff;
+    }
+}

@@ -1,15 +1,148 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../css/components/Login.css';
 
 function LoginPage() {
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [redirecting, setRedirecting] = useState(false);
+
+    const { login } = useAuth();
+    const navigate = useNavigate();
+    
+    // Lấy API URL từ biến môi trường
+    const API_URL = process.env.REACT_APP_API_URL || 'https://1abd-42-118-114-121.ngrok-free.app/api';
+    
+    // Log URL API đang sử dụng
+    useEffect(() => {
+        console.log('Using API URL:', API_URL);
+    }, [API_URL]);
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
     };
 
+    // Hiệu ứng chuyển trang
+    useEffect(() => {
+        if (redirecting) {
+            const timer = setTimeout(() => {
+                navigate('/progress');
+            }, 1500); // Đợi 1.5 giây trước khi chuyển trang
+            return () => clearTimeout(timer);
+        }
+    }, [redirecting, navigate]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+        
+        try {
+            console.log('Sending login request to:', `${API_URL}/Auth/login`);
+            
+            const response = await fetch(`${API_URL}/Auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+            }
+            
+            const data = await response.json();
+            console.log('Login successful, received data:', { ...data, token: '[REDACTED]', refreshToken: '[REDACTED]' });
+            
+            // Tạo đối tượng user từ thông tin trong response
+            const userData = {
+                email: data.email,
+                roles: data.roles || [],
+                // Các thông tin khác có thể bổ sung nếu có
+            };
+            
+            // Gọi hàm login từ AuthContext với cấu trúc phù hợp
+            const loginSuccess = await login(
+                userData,           // user object
+                data.token,         // accessToken (đổi từ "token")
+                data.refreshToken   // refreshToken
+            );
+            
+            // Hiển thị thông báo thành công và bắt đầu chuyển trang
+            if (loginSuccess) {
+                setRedirecting(true);
+                toast.success('Đăng nhập thành công! Đang chuyển hướng...', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+                
+                // Thêm class chuyển trang
+                document.body.classList.add('page-transition');
+                
+                // Gọi API để lấy thông tin tiến độ học tập (nếu cần)
+                try {
+                    const progressResponse = await fetch(`${API_URL}/Learning/progress`, {
+                        headers: {
+                            'Authorization': `Bearer ${data.token}`
+                        }
+                    });
+                    
+                    if (progressResponse.ok) {
+                        const progressData = await progressResponse.json();
+                        console.log('Retrieved progress data:', progressData);
+                        // Có thể lưu thông tin progress vào localStorage hoặc Context nếu cần
+                    }
+                } catch (progressError) {
+                    console.error('Failed to fetch progress data:', progressError);
+                    // Không cần xử lý lỗi này, vì ta vẫn muốn điều hướng đến trang tiến độ
+                }
+            }
+        } catch (err) {
+            setError(err.message || 'Đã xảy ra lỗi khi đăng nhập');
+            console.error('Login error:', err);
+            
+            // Hiển thị thông báo lỗi
+            toast.error(err.message || 'Đã xảy ra lỗi khi đăng nhập', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div className="login-container">
+        <div className={`login-container ${redirecting ? 'fade-out' : ''}`}>
+            {/* Thêm ToastContainer để hiển thị thông báo */}
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
+            
             <div className="login-background-shapes">
                 <div className="shape shape-1"></div>
                 <div className="shape shape-2"></div>
@@ -68,14 +201,20 @@ function LoginPage() {
             </div>
             
             <div className="login-form-wrapper">
-                <div className="login-form-card">
+                <div className={`login-form-card ${redirecting ? 'scale-up' : ''}`}>
                     <div className="login-form-header">
                         <h2 className="login-form-title">Log In</h2>
                         <p className="login-form-subtitle">Welcome back! Please enter your details</p>
                     </div>
                     
+                    {error && (
+                        <div className="login-error-alert">
+                            <i className="fas fa-exclamation-circle"></i> {error}
+                        </div>
+                    )}
+                    
                     <div className="login-form-body">
-                        <form className="login-form">
+                        <form className="login-form" onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <label className="form-label" htmlFor="email">
                                     <i className="fas fa-envelope"></i>
@@ -86,6 +225,9 @@ function LoginPage() {
                                     className="form-control"
                                     id="email"
                                     placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
                                 />
                             </div>
                             
@@ -100,6 +242,9 @@ function LoginPage() {
                                         className="form-control"
                                         id="password"
                                         placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
                                     />
                                     <button 
                                         type="button" 
@@ -128,9 +273,27 @@ function LoginPage() {
                                 </Link>
                             </div>
                             
-                            <button type="submit" className="btn btn-primary btn-lg login-submit-btn">
-                                <i className="fas fa-sign-in-alt"></i>
-                                Log in
+                            <button 
+                                type="submit" 
+                                className={`btn btn-primary btn-lg login-submit-btn ${redirecting ? 'success-btn' : ''}`}
+                                disabled={loading || redirecting}
+                            >
+                                {loading ? (
+                                    <>
+                                        <i className="fas fa-spinner fa-spin"></i>
+                                        Logging in...
+                                    </>
+                                ) : redirecting ? (
+                                    <>
+                                        <i className="fas fa-check"></i>
+                                        Success!
+                                    </>
+                                ) : (
+                                    <>
+                                        <i className="fas fa-sign-in-alt"></i>
+                                        Log in
+                                    </>
+                                )}
                             </button>
                             
                             <div className="login-divider">

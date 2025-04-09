@@ -1,162 +1,125 @@
-import React, { useState } from 'react';
-import { toast, Bounce } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { Link, useNavigate } from 'react-router-dom';
+import { useFlashcard } from '../contexts/FlashcardContext';
 import '../css/components/Flashcards.css';
 
 function FlashcardsPage() {
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [activeSet, setActiveSet] = useState(null);
-    const [showTopicInput, setShowTopicInput] = useState(false);
-    const [topic, setTopic] = useState('');
+    const { translateText } = useLanguage();
+    const navigate = useNavigate();
+    const { getUserFlashcardSets, loading, error } = useFlashcard();
+    
+    const [flashcardSets, setFlashcardSets] = useState([]);
+    const [selectedSet, setSelectedSet] = useState(null);
+    const [currentCardIndex, setCurrentCardIndex] = useState(0);
+    const [isFlipped, setIsFlipped] = useState(false);
+    const [showAnswer, setShowAnswer] = useState(false);
 
-    const handleAIGenerate = () => {
-        if (!topic) {
-            toast.error('Please enter a topic first!');
-            return;
-        }
-        setIsGenerating(true);
-        toast('🤖 Generating flashcards for topic: ' + topic, {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-        });
+    // Fetch flashcard sets on component mount
+    useEffect(() => {
+        const fetchFlashcardSets = async () => {
+            try {
+                // In a real app, you would get the user ID from auth context
+                const userId = 'current'; // placeholder for the logged-in user
+                const result = await getUserFlashcardSets(userId);
+                if (result && result.flashcardSets) {
+                    setFlashcardSets(result.flashcardSets);
+                }
+            } catch (err) {
+                console.error('Failed to fetch flashcard sets', err);
+            }
+        };
         
-        // Simulate AI generation
-        setTimeout(() => {
-            setIsGenerating(false);
-            setShowTopicInput(false);
-            setTopic('');
-            toast('✨ Flashcards generated successfully!', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
-        }, 2000);
+        fetchFlashcardSets();
+    }, [getUserFlashcardSets]);
+
+    const handleSetSelect = (set) => {
+        // Navigate to the flashcard set details page
+        navigate(`/flashcards/${set.flashcardSetId || set.id}`);
     };
 
-    const handleStudyClick = (setTitle) => {
-        toast('📚 Starting study session: ' + setTitle, {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-        });
+    const handleNextCard = () => {
+        if (currentCardIndex < selectedSet.cards.length - 1) {
+            setCurrentCardIndex(currentCardIndex + 1);
+            setIsFlipped(false);
+            setShowAnswer(false);
+        }
     };
 
-    const handleEditClick = (setTitle) => {
-        toast('✏️ Editing set: ' + setTitle, {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-        });
+    const handlePrevCard = () => {
+        if (currentCardIndex > 0) {
+            setCurrentCardIndex(currentCardIndex - 1);
+            setIsFlipped(false);
+            setShowAnswer(false);
+        }
+    };
+
+    const handleFlipCard = () => {
+        setIsFlipped(!isFlipped);
+    };
+
+    const handleShowAnswer = () => {
+        setShowAnswer(true);
+    };
+
+    const handleCreateNew = () => {
+        navigate('/flashcards/create');
     };
 
     return (
-        <div className="main-content">
+        <div className="flashcards-page">
             <div className="flashcards-container">
-                <div className="flashcards-header">
-                    <h1 className="flashcards-title">Flashcards</h1>
-                    <div className="flashcards-actions">
-                        <div className="ai-generate-container">
-                            {showTopicInput ? (
-                                <div className="topic-input-group">
-                                    <input
-                                        type="text"
-                                        placeholder="Enter topic for flashcards..."
-                                        value={topic}
-                                        onChange={(e) => setTopic(e.target.value)}
-                                        className="topic-input"
-                                    />
-                                    <button 
-                                        className={`ai-generate-btn ${isGenerating ? 'generating' : ''}`}
-                                        onClick={handleAIGenerate}
-                                        disabled={isGenerating || !topic}
-                                    >
-                                        <i className={`fas ${isGenerating ? 'fa-spinner fa-spin' : 'fa-robot'}`}></i>
-                                        {isGenerating ? 'Generating...' : 'Generate'}
-                                    </button>
-                                    <button 
-                                        className="cancel-btn"
-                                        onClick={() => {
-                                            setShowTopicInput(false);
-                                            setTopic('');
-                                        }}
-                                    >
-                                        <i className="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            ) : (
-                                <button 
-                                    className="ai-generate-btn"
-                                    onClick={() => setShowTopicInput(true)}
-                                >
-                                    <i className="fas fa-robot"></i>
-                                    Generate with AI
-                                </button>
-                            )}
+                <div className="sets-grid">
+                    <div className="flashcards-header">
+                        <h1 className="page-title">{translateText('Flashcards')}</h1>
+                        <div className="flashcards-actions">
+                            <button 
+                                className="create-set-btn" 
+                                onClick={handleCreateNew}
+                            >
+                                <i className="fas fa-plus"></i>
+                                {translateText('Create New Set')}
+                            </button>
                         </div>
-                        <button className="create-set-btn">
-                            <i className="fas fa-plus"></i>
-                            Create New Set
-                        </button>
                     </div>
-                </div>
-
-                <div className="flashcards-grid">
-                    {['Basic Vocabulary', 'Business Terms', 'Travel Phrases'].map((title, index) => (
-                        <div 
-                            key={index}
-                            className={`flashcard-set ${activeSet === index ? 'active' : ''}`}
-                            onMouseEnter={() => setActiveSet(index)}
-                            onMouseLeave={() => setActiveSet(null)}
-                        >
-                            <h3 className="set-title">{title}</h3>
-                            <p className="set-description">
-                                {index === 0 && 'Essential words for everyday conversation'}
-                                {index === 1 && 'Professional vocabulary for the workplace'}
-                                {index === 2 && 'Common expressions for travelers'}
-                            </p>
-                            <div className="set-actions">
-                                <button 
-                                    className="set-btn study-btn"
-                                    onClick={() => handleStudyClick(title)}
-                                >
-                                    <i className="fas fa-play"></i>
-                                    Study
-                                </button>
-                                <button 
-                                    className="set-btn edit-btn"
-                                    onClick={() => handleEditClick(title)}
-                                >
-                                    <i className="fas fa-edit"></i>
-                                    Edit
-                                </button>
-                            </div>
+                    
+                    {loading ? (
+                        <div className="loading-spinner">
+                            <i className="fas fa-spinner fa-spin"></i> Loading...
                         </div>
-                    ))}
+                    ) : error ? (
+                        <div className="error-message">
+                            <i className="fas fa-exclamation-circle"></i> {error}
+                        </div>
+                    ) : flashcardSets.length > 0 ? (
+                        <div className="sets-list">
+                            {flashcardSets.map((set) => (
+                                <div 
+                                    key={set.flashcardSetId || set.id} 
+                                    className="set-card"
+                                    onClick={() => handleSetSelect(set)}
+                                >
+                                    <h3 className="set-title">{set.title}</h3>
+                                    <p className="set-description">{set.description}</p>
+                                    <div className="set-stats">
+                                        <span>{set.cardCount || '0'} cards</span>
+                                        <span className="set-language">{set.learningLanguage} → {set.nativeLanguage}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="no-sets-message">
+                            <p>{translateText('You haven\'t created any flashcard sets yet.')}</p>
+                            <button 
+                                className="btn btn-primary mt-3" 
+                                onClick={handleCreateNew}
+                            >
+                                <i className="fas fa-plus mr-2"></i>
+                                {translateText('Create Your First Set')}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

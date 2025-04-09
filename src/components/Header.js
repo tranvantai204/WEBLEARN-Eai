@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { 
     FaGlobeAmericas,
-    FaChevronUp, 
     FaChevronDown,
-    FaCheck
+    FaCheck,
+    FaBars,
+    FaTimes
 } from 'react-icons/fa';
 import {
     FlagVNIcon,
@@ -15,13 +16,23 @@ import {
     FlagCNIcon,
     FlagFRIcon,
     FlagDEIcon,
-    FlagESIcon
+    FlagESIcon,
+    FlagITIcon,
+    FlagRUIcon,
+    FlagPTIcon,
+    FlagNLIcon,
+    FlagARIcon,
+    FlagHIIcon,
+    FlagTHIcon,
+    FlagIDIcon
 } from './icons/FlagIcons';
 
 function Header() {
-  const { currentLanguage, languages: contextLanguages, changeLanguage, isTranslating, translateText } = useLanguage();
-  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-  const languageMenuRef = useRef(null);
+  const { currentLanguage, changeLanguage, translateText } = useLanguage();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showLanguageOptions, setShowLanguageOptions] = useState(false);
+  const mobileMenuRef = useRef(null);
+  const langOptionsRef = useRef(null);
   
   const languages = [
     { code: 'en', name: 'English', icon: FlagGBIcon },
@@ -32,9 +43,17 @@ function Header() {
     { code: 'fr', name: 'Français', icon: FlagFRIcon },
     { code: 'de', name: 'Deutsch', icon: FlagDEIcon },
     { code: 'es', name: 'Español', icon: FlagESIcon },
+    { code: 'it', name: 'Italiano', icon: FlagITIcon },
+    { code: 'ru', name: 'Русский', icon: FlagRUIcon },
+    { code: 'pt', name: 'Português', icon: FlagPTIcon },
+    { code: 'nl', name: 'Nederlands', icon: FlagNLIcon },
+    { code: 'ar', name: 'العربية', icon: FlagARIcon },
+    { code: 'hi', name: 'हिन्दी', icon: FlagHIIcon },
+    { code: 'th', name: 'ไทย', icon: FlagTHIcon },
+    { code: 'id', name: 'Bahasa Indonesia', icon: FlagIDIcon }
   ];
 
-  const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0]; // Default to English if not found
+  const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
   
   const [translations, setTranslations] = useState({
     flashcards: 'Flashcards',
@@ -42,15 +61,22 @@ function Header() {
     writing: 'Writing',
     discover: 'Discover',
     signIn: 'Sign In',
-    getStarted: 'Get Started',
-    selectLanguage: 'Select Language'
+    getStarted: 'Get Started'
   });
-  
+
   // Close menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (languageMenuRef.current && !languageMenuRef.current.contains(event.target)) {
-        setShowLanguageMenu(false);
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target) && 
+          !event.target.closest('.mobile-menu-btn')) {
+        setShowMobileMenu(false);
+      }
+      
+      if (showLanguageOptions && 
+          langOptionsRef.current && 
+          !langOptionsRef.current.contains(event.target) && 
+          !event.target.closest('.mobile-lang-btn')) {
+        setShowLanguageOptions(false);
       }
     }
 
@@ -58,27 +84,10 @@ function Header() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
-  
+  }, [showLanguageOptions]);
+
   // Update translations when language changes
   useEffect(() => {
-    const translateOnlyHome = localStorage.getItem('translateOnlyHome') === 'true';
-    
-    // Không dịch Header nếu chỉ dịch trang Home
-    if (translateOnlyHome) {
-      // Reset to English for Header
-      setTranslations({
-        flashcards: 'Flashcards',
-        readings: 'Readings',
-        writing: 'Writing',
-        discover: 'Discover',
-        signIn: 'Sign In',
-        getStarted: 'Get Started',
-        selectLanguage: 'Select Language'
-      });
-      return;
-    }
-    
     const updateTranslations = async () => {
       try {
         const newTranslations = {
@@ -87,8 +96,7 @@ function Header() {
           writing: await translateText('Writing'),
           discover: await translateText('Discover'),
           signIn: await translateText('Sign In'),
-          getStarted: await translateText('Get Started'),
-          selectLanguage: await translateText('Select Language')
+          getStarted: await translateText('Get Started')
         };
         setTranslations(newTranslations);
       } catch (error) {
@@ -99,18 +107,21 @@ function Header() {
     if (currentLanguage !== 'en') {
       updateTranslations();
     } else {
-      // Reset to English
       setTranslations({
         flashcards: 'Flashcards',
         readings: 'Readings',
         writing: 'Writing',
         discover: 'Discover',
         signIn: 'Sign In',
-        getStarted: 'Get Started',
-        selectLanguage: 'Select Language'
+        getStarted: 'Get Started'
       });
     }
   }, [currentLanguage, translateText]);
+
+  const handleLanguageChange = (langCode) => {
+    changeLanguage(langCode);
+    setShowLanguageOptions(false);
+  };
 
   return (
     <header className="main-header">
@@ -120,82 +131,92 @@ function Header() {
           <span className="logo-text">WordWise</span>
         </Link>
         
-        <nav className="main-nav">
-          <ul className="nav-list">
-            <li className="nav-item">
-              <Link to="/flashcards" className="nav-link">
+        <button 
+          className="mobile-menu-btn"
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          aria-label="Toggle menu"
+        >
+          {showMobileMenu ? <FaTimes /> : <FaBars />}
+        </button>
+        
+        {/* Menu */}
+        <div className={`mobile-menu ${showMobileMenu ? 'active' : ''}`} ref={mobileMenuRef}>
+          <ul className="mobile-nav-list">
+            <li className="mobile-nav-item">
+              <Link to="/flashcards" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
                 <i className="fas fa-layer-group"></i>
                 <span>{translations.flashcards}</span>
               </Link>
             </li>
-            <li className="nav-item">
-              <Link to="/readings" className="nav-link">
+            <li className="mobile-nav-item">
+              <Link to="/readings" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
                 <i className="fas fa-book"></i>
                 <span>{translations.readings}</span>
               </Link>
             </li>
-            <li className="nav-item">
-              <Link to="/writing" className="nav-link">
+            <li className="mobile-nav-item">
+              <Link to="/writing" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
                 <i className="fas fa-pen"></i>
                 <span>{translations.writing}</span>
               </Link>
             </li>
-            <li className="nav-item">
-              <Link to="/discover" className="nav-link">
+            <li className="mobile-nav-item">
+              <Link to="/discover" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
                 <i className="fas fa-compass"></i>
                 <span>{translations.discover}</span>
               </Link>
             </li>
           </ul>
-        </nav>
-        
-        <div className="header-actions">
-          <div className="language-selector" ref={languageMenuRef}>
-            <button 
-              className="lang-btn-main"
-              onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-            >
-              <span className="lang-flag">
-                <currentLang.icon />
-              </span>
-              <span className="lang-name">{currentLang.name}</span>
-              {showLanguageMenu ? <FaChevronUp /> : <FaChevronDown />}
-            </button>
-            
-            {showLanguageMenu && (
-              <div className="language-menu">
-                <div className="language-menu-header">
+          
+          {/* Language Selector in Menu */}
+          <div className="mobile-lang-section">
+            <div className="mobile-lang-selector">
+              <button 
+                className="mobile-lang-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowLanguageOptions(!showLanguageOptions);
+                }}
+              >
+                <div className="lang-content">
                   <FaGlobeAmericas className="globe-icon" />
-                  <span>{translations.selectLanguage}</span>
+                  <span className="lang-flag">
+                    <currentLang.icon />
+                  </span>
+                  <span className="lang-name">{currentLang.name}</span>
                 </div>
-                <div className="language-menu-list">
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      className={`language-option ${currentLanguage === lang.code ? 'active' : ''}`}
-                      onClick={() => {
-                        changeLanguage(lang.code);
-                        setShowLanguageMenu(false);
-                      }}
-                    >
-                      <span className="lang-flag">
-                        <lang.icon />
-                      </span>
-                      <span className="lang-name">{lang.name}</span>
-                      {currentLanguage === lang.code && <FaCheck className="check-icon" />}
-                    </button>
-                  ))}
-                </div>
+                <FaChevronDown />
+              </button>
+              
+              <div 
+                className={`language-options ${showLanguageOptions ? 'active' : ''}`} 
+                ref={langOptionsRef}
+              >
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    className={`language-option ${currentLanguage === lang.code ? 'active' : ''}`}
+                    onClick={() => handleLanguageChange(lang.code)}
+                  >
+                    <span className="lang-flag">
+                      <lang.icon />
+                    </span>
+                    <span className="lang-name">{lang.name}</span>
+                    {currentLanguage === lang.code && <FaCheck className="check-icon" />}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
           </div>
           
-          <Link to="/login" className="btn btn-outline btn-sm header-login">
-            {translations.signIn}
-          </Link>
-          <Link to="/register" className="btn btn-primary btn-sm header-signup">
-            {translations.getStarted}
-          </Link>
+          <div className="mobile-header-actions">
+            <Link to="/login" className="header-login" onClick={() => setShowMobileMenu(false)}>
+              {translations.signIn}
+            </Link>
+            <Link to="/register" className="header-signup" onClick={() => setShowMobileMenu(false)}>
+              {translations.getStarted}
+            </Link>
+          </div>
         </div>
       </div>
     </header>

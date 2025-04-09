@@ -1,22 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { 
-    FaGlobeAmericas,
-    FaChevronUp,
-    FaChevronDown,
-    FaCheck
-} from 'react-icons/fa';
-import {
-    FlagVNIcon,
-    FlagGBIcon,
-    FlagJPIcon,
-    FlagKRIcon,
-    FlagCNIcon,
-    FlagFRIcon,
-    FlagDEIcon,
-    FlagESIcon
-} from '../components/icons/FlagIcons';
 import '../css/components/Home.css';
 
 // Predefined translations instead of dynamic translation to improve performance
@@ -79,82 +63,13 @@ const allTranslations = {
 };
 
 function HomePage() {
-    const { currentLanguage, changeLanguage } = useLanguage();
-    const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-    const languageMenuRef = useRef(null);
-
-    const languages = [
-        { code: 'en', name: 'English', icon: FlagGBIcon },
-        { code: 'vi', name: 'Tiếng Việt', icon: FlagVNIcon },
-        { code: 'ja', name: '日本語', icon: FlagJPIcon },
-        { code: 'ko', name: '한국어', icon: FlagKRIcon },
-        { code: 'zh', name: '中文', icon: FlagCNIcon },
-        { code: 'fr', name: 'Français', icon: FlagFRIcon },
-        { code: 'de', name: 'Deutsch', icon: FlagDEIcon },
-        { code: 'es', name: 'Español', icon: FlagESIcon },
-    ];
-
-    const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
+    const { currentLanguage } = useLanguage();
     
     // Get translations for current language or fallback to English
     const translations = allTranslations[currentLanguage] || allTranslations.en;
 
-    // Close menu when clicking outside
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (languageMenuRef.current && !languageMenuRef.current.contains(event.target)) {
-                setShowLanguageMenu(false);
-            }
-        }
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
     return (
         <div className="home-container">
-            <div className="language-selector" ref={languageMenuRef}>
-                <button 
-                    className="lang-btn-main"
-                    onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                >
-                    <span className="lang-flag">
-                        {currentLang ? <currentLang.icon /> : <FlagGBIcon />}
-                    </span>
-                    <span className="lang-name">{currentLang ? currentLang.name : 'English'}</span>
-                    {showLanguageMenu ? <FaChevronUp /> : <FaChevronDown />}
-                </button>
-                
-                {showLanguageMenu && (
-                    <div className="language-menu">
-                        <div className="language-menu-header">
-                            <FaGlobeAmericas className="globe-icon" />
-                            <span>{translations.selectLanguage}</span>
-                        </div>
-                        <div className="language-menu-list">
-                            {languages.map((lang) => (
-                                <button
-                                    key={lang.code}
-                                    className={`language-option ${currentLanguage === lang.code ? 'active' : ''}`}
-                                    onClick={() => {
-                                        changeLanguage(lang.code);
-                                        setShowLanguageMenu(false);
-                                    }}
-                                >
-                                    <span className="lang-flag">
-                                        <lang.icon />
-                                    </span>
-                                    <span className="lang-name">{lang.name}</span>
-                                    {currentLanguage === lang.code && <FaCheck className="check-icon" />}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
-            
             <section className="hero-section">
                 <div className="hero-content">
                     <div className="hero-badge">
@@ -171,9 +86,9 @@ function HomePage() {
                     </p>
                     
                     <div className="hero-cta">
-                        <Link to="/register" className="btn-primary">
-                            {translations.startFree}
-                        </Link>
+                    <Link to="/register" className="btn-primary">
+                    {translations.register}
+                </Link>
                         <Link to="/how-it-works" className="btn-secondary">
                             {translations.learnMore}
                         </Link>

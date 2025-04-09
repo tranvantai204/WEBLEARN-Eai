@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { FlashcardProvider } from './contexts/FlashcardContext';
 
 // Import components
 import Header from './components/Header.js';
@@ -12,6 +13,7 @@ import RegisterPage from './components/RegisterPage.js';
 import DashboardPage from './components/DashboardPage.js';
 import FlashcardsPage from './components/FlashcardsPage.js';
 import CreateFlashcardsPage from './components/CreateFlashcardsPage.js';
+import FlashcardSetDetailsPage from './components/FlashcardSetDetailsPage.js';
 import StudyFlashcardsPage from './components/StudyFlashcardsPage.js';
 import ReadingsPage from './components/ReadingsPage.js';
 import CreateReadingPage from './components/CreateReadingPage.js';
@@ -19,6 +21,7 @@ import WritingPage from './components/WritingPage.js';
 import CreateWritingPage from './components/CreateWritingPage.js';
 import DiscoverPage from './components/DiscoverPage.js';
 import ProfilePage from './components/ProfilePage.js';
+import UserProgressPage from './components/UserProgressPage.js';
 
 // Layout wrapper component
 const AppLayout = () => {
@@ -38,6 +41,7 @@ const AppLayout = () => {
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/flashcards" element={<FlashcardsPage />} />
                     <Route path="/flashcards/create" element={<CreateFlashcardsPage />} />
+                    <Route path="/flashcards/:flashcardSetId" element={<FlashcardSetDetailsPage />} />
                     <Route path="/flashcards/study" element={<StudyFlashcardsPage />} />
                     <Route path="/readings" element={<ReadingsPage />} />
                     <Route path="/readings/create" element={<CreateReadingPage />} />
@@ -45,6 +49,7 @@ const AppLayout = () => {
                     <Route path="/writing/create" element={<CreateWritingPage />} />
                     <Route path="/discover" element={<DiscoverPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/progress" element={<UserProgressPage />} />
                 </Routes>
             </main>
             {!isAuthPage && <Footer />}
@@ -56,9 +61,11 @@ function App() {
     return (
         <LanguageProvider>
             <AuthProvider>
-                <Router>
-                    <AppLayout />
-                </Router>
+                <FlashcardProvider>
+                    <Router>
+                        <AppLayout />
+                    </Router>
+                </FlashcardProvider>
             </AuthProvider>
         </LanguageProvider>
     );

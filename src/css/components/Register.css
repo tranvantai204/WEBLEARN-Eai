@@ -805,18 +805,38 @@
 }
 
 .password-error {
-    color: #dc2626;
+    color: #e74c3c;
     font-size: 0.875rem;
     margin-top: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    animation: shakeError 0.6s;
+    transform-origin: center;
 }
 
-.password-error::before {
-    content: '\f071';
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
+@keyframes shakeError {
+    0% {
+        transform: translateX(0);
+    }
+    15% {
+        transform: translateX(5px);
+    }
+    30% {
+        transform: translateX(-5px);
+    }
+    45% {
+        transform: translateX(3px);
+    }
+    60% {
+        transform: translateX(-3px);
+    }
+    75% {
+        transform: translateX(1px);
+    }
+    90% {
+        transform: translateX(-1px);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
 
 .gender-options {
@@ -872,4 +892,47 @@
     .gender-option {
         width: 100%;
     }
+}
+
+/* Thêm hiệu ứng chuyển trang */
+.register-container.fade-out {
+    animation: fadeOut 1.5s forwards;
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Hiệu ứng scale-up cho form đăng ký thành công */
+.register-form-card.scale-up {
+    animation: scaleUp 0.5s forwards;
+    transform-origin: center;
+    box-shadow: 0 0 30px rgba(46, 204, 113, 0.3);
+    border-color: #2ecc71;
+}
+
+@keyframes scaleUp {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1.02);
+    }
+}
+
+/* Thay đổi màu nút khi đăng ký thành công */
+.register-submit-btn.success-btn {
+    background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+    border-color: #27ae60 !important;
+    color: white !important;
+    box-shadow: 0 8px 15px rgba(46, 204, 113, 0.3);
+    transition: all 0.3s ease;
 } 
