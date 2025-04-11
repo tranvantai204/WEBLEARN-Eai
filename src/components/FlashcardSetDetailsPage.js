@@ -8,8 +8,10 @@ import '../css/components/Flashcards.css';
 function FlashcardSetDetailsPage() {
     const { flashcardSetId } = useParams();
     const navigate = useNavigate();
-    const { getFlashcardSet, createFlashcard, getFlashcardsForSet, loading, error } = useFlashcard();
+    const { getFlashcardSet, createFlashcard, getFlashcardsForSet, deleteFlashcardSet, loading, error } = useFlashcard();
     
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState("alphabetical");
     const [flashcardSet, setFlashcardSet] = useState(null);
     const [flashcards, setFlashcards] = useState([]);
     const [loadingFlashcards, setLoadingFlashcards] = useState(false);
@@ -97,6 +99,36 @@ function FlashcardSetDetailsPage() {
         });
     };
 
+    const filteredFlashcards = flashcards
+        .filter((flashcard) =>
+            flashcard.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            flashcard.definition.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .sort((a, b) => {
+            if (sortBy === "alphabetical") {
+                return a.term.localeCompare(b.term);
+            } else if (sortBy === "created") {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            }
+            return 0;
+        });
+
+        const handleDeleteFlashCardSet = async (flashcardSetId) => {
+            try {
+                // Call the deleteFlashcardSet function and wait for the result
+                const result = await deleteFlashcardSet(flashcardSetId);
+        
+                // Check if the deletion was successful
+                if (result) {
+                    navigate('/flashcards'); // Redirect to the /flashcards page
+                }
+            } catch (err) {
+                console.error('Error while deleting flashcard set:', err);
+                alert('Failed to delete flashcard set. Please try again.');
+            }
+        };
+        
+ 
     // Handle flashcard form input changes with validation
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -406,13 +438,22 @@ function FlashcardSetDetailsPage() {
                                         <span>Created: {formatDate(flashcardSet.createdAt)}</span>
                                     </div>
                                     <div className="meta-item">
-                                        <i className="fas fa-users"></i>
-                                        <span>{flashcardSet.learnerCount || 0} Learners</span>
-                                    </div>
-                                    <div className="meta-item">
                                         <i className={`fas fa-${flashcardSet.isPublic ? 'eye' : 'lock'}`}></i>
                                         <span>{flashcardSet.isPublic ? 'Public' : 'Private'}</span>
                                     </div>
+                                    {/* Hiển thị thông tin user */}
+                                    {flashcardSet.user && (
+                                        <>
+                                            <div className="meta-item">
+                                                <i className="fas fa-user"></i>
+                                                <span>User: {flashcardSet.user.userName}</span>
+                                            </div>
+                                            <div className="meta-item">
+                                                <i className="fas fa-level-up-alt"></i>
+                                                <span>Level: {flashcardSet.user.level}</span>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                                 {flashcardSet.description && (
                                     <p className="set-description">{flashcardSet.description}</p>
@@ -435,26 +476,33 @@ function FlashcardSetDetailsPage() {
                                     <i className="fas fa-edit"></i>
                                     Edit Set
                                 </button>
-                                <button className="btn btn-outline-danger">
+                                <button className="btn btn-outline-danger" onClick={() => {handleDeleteFlashCardSet(flashcardSet.flashcardSetId)}}>
                                     <i className="fas fa-trash"></i>
                                     Delete
                                 </button>
                             </div>
                             
                             <div className="flashcards-list-header">
-                                <h2>Flashcards ({flashcards.length})</h2>
+                                <h2>Flashcards ({filteredFlashcards.length})</h2>
                                 <div className="list-controls">
-                                    <input 
-                                        type="text" 
-                                        className="search-input" 
+                                    <input
+                                        type="text"
+                                        className="search-input"
                                         placeholder="Search cards..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
                                     />
-                                    <select className="sort-select">
+                                    <select
+                                        className="sort-select"
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                    >
                                         <option value="alphabetical">Alphabetical</option>
                                         <option value="created">Recently Created</option>
                                     </select>
                                 </div>
                             </div>
+
                             
                             {flashcards.length > 0 ? (
                                 <div className="flashcards-table">
@@ -465,7 +513,7 @@ function FlashcardSetDetailsPage() {
                                         <div className="actions-cell">Actions</div>
                                     </div>
                                     
-                                    {flashcards.map((card, index) => (
+                                    {filteredFlashcards.map((card, index) => (
                                         <div className="table-row" key={index}>
                                             <div className="term-cell">{card.term}</div>
                                             <div className="definition-cell">{card.definition}</div>
@@ -480,6 +528,7 @@ function FlashcardSetDetailsPage() {
                                             </div>
                                         </div>
                                     ))}
+
                                 </div>
                             ) : (
                                 <div className="no-cards-message">

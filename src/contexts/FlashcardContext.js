@@ -370,7 +370,7 @@ export const FlashcardProvider = ({ children }) => {
       queryParams.append('page', page);
       queryParams.append('itemsPerPage', itemsPerPage);
       
-      const url = `${API_URL}/Flashcard/GetBySetId/${flashcardSetId}?${queryParams.toString()}`;
+      const url = `${API_URL}/FlashCardSet/${flashcardSetId}?${queryParams.toString()}`;
       console.log('Fetching flashcards for set:', flashcardSetId, 'URL:', url);
       
       const result = await apiRequest(url);

@@ -3,6 +3,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFlashcard } from '../contexts/FlashcardContext';
 import '../css/components/Flashcards.css';
+import { jwtDecode } from 'jwt-decode';
 
 function FlashcardsPage() {
     const { translateText } = useLanguage();
@@ -14,13 +15,19 @@ function FlashcardsPage() {
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [showAnswer, setShowAnswer] = useState(false);
+    const [userId, setUserId] = useState("");
 
     // Fetch flashcard sets on component mount
     useEffect(() => {
         const fetchFlashcardSets = async () => {
             try {
                 // In a real app, you would get the user ID from auth context
-                const userId = 'current'; // placeholder for the logged-in user
+                const token = localStorage.getItem("accessToken");
+
+                const decodedToken = jwtDecode(token);
+
+                const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+
                 const result = await getUserFlashcardSets(userId);
                 if (result && result.flashcardSets) {
                     setFlashcardSets(result.flashcardSets);
@@ -102,8 +109,12 @@ function FlashcardsPage() {
                                     <h3 className="set-title">{set.title}</h3>
                                     <p className="set-description">{set.description}</p>
                                     <div className="set-stats">
-                                        <span>{set.cardCount || '0'} cards</span>
+                                        <span>{set.totalVocabulary || '0'} cards</span>
                                         <span className="set-language">{set.learningLanguage} → {set.nativeLanguage}</span>
+                                        {/* Hiển thị thông tin level */}
+                                        <span className="set-level">Level: {set.level || 'N/A'}</span>
+                                        {/* Hiển thị thông tin learnerCount */}
+                                        <span className="set-learner-count">Learners: {set.learnerCount || '0'}</span>
                                     </div>
                                 </div>
                             ))}
