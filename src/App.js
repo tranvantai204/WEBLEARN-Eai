@@ -15,6 +15,7 @@ import FlashcardsPage from './components/FlashcardsPage.js';
 import CreateFlashcardsPage from './components/CreateFlashcardsPage.js';
 import FlashcardSetDetailsPage from './components/FlashcardSetDetailsPage.js';
 import StudyFlashcardsPage from './components/StudyFlashcardsPage.js';
+import FlashcardLearningPage from './components/FlashcardLearningPage.js';
 import ReadingsPage from './components/ReadingsPage.js';
 import CreateReadingPage from './components/CreateReadingPage.js';
 import WritingPage from './components/WritingPage.js';
@@ -41,8 +42,9 @@ const AppLayout = () => {
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/flashcards" element={<FlashcardsPage />} />
                     <Route path="/flashcards/create" element={<CreateFlashcardsPage />} />
-                    <Route path="/flashcards/:flashcardSetId" element={<FlashcardSetDetailsPage />} />
+                    <Route path="/flashcard-set/:flashcardSetId" element={<FlashcardSetDetailsPage />} />
                     <Route path="/flashcards/study" element={<StudyFlashcardsPage />} />
+                    <Route path="/learn-flashcards/:flashcardSetId" element={<FlashcardLearningPage />} />
                     <Route path="/readings" element={<ReadingsPage />} />
                     <Route path="/readings/create" element={<CreateReadingPage />} />
                     <Route path="/writing" element={<WritingPage />} />

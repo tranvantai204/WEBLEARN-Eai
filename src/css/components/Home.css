@@ -290,4 +290,172 @@
     .section-title {
         font-size: 36px;
     }
+}
+
+/* Authenticated Home Page Styles */
+
+.home-container.authenticated {
+    background-color: #f7f8fa;
+}
+
+.welcome-section {
+    padding: 60px 24px;
+    background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+    text-align: center;
+    min-height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.welcome-content {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.welcome-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: #ffffff;
+    border-radius: 100px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+.welcome-badge span {
+    font-weight: 600;
+    color: #3498db;
+    margin-left: 8px;
+}
+
+.welcome-title {
+    font-size: 42px;
+    line-height: 1.1;
+    font-weight: 800;
+    color: #000000;
+    margin-bottom: 48px;
+    letter-spacing: -1px;
+    max-width: 800px;
+}
+
+.learning-paths {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.learning-path-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: left;
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.learning-path-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.path-icon {
+    width: 64px;
+    height: 64px;
+    background: #f0f9ff;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    border: 1px solid #d0e8ff;
+}
+
+.path-icon i {
+    font-size: 30px;
+    color: #3498db;
+}
+
+.path-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.path-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 12px;
+}
+
+.path-description {
+    font-size: 16px;
+    color: #4a4a4a;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    flex: 1;
+}
+
+.path-actions {
+    margin-top: auto;
+}
+
+.path-actions .btn-primary {
+    width: 100%;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    border: none;
+    background: #3498db;
+    color: white;
+}
+
+.path-actions .btn-primary:hover {
+    background: #2980b9;
+}
+
+/* Responsive styles for authenticated page */
+@media (max-width: 1024px) {
+    .learning-paths {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .learning-paths {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .welcome-title {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .learning-paths {
+        grid-template-columns: 1fr;
+    }
+    
+    .welcome-title {
+        font-size: 30px;
+    }
+    
+    .welcome-section {
+        padding: 40px 16px;
+    }
 } 

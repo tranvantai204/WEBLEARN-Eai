@@ -28,13 +28,11 @@ function LoginPage() {
         setPasswordVisible(!passwordVisible);
     };
 
-    // Hiệu ứng chuyển trang
+    // Remove the page transition effect
     useEffect(() => {
         if (redirecting) {
-            const timer = setTimeout(() => {
-                navigate('/progress');
-            }, 1500); // Đợi 1.5 giây trước khi chuyển trang
-            return () => clearTimeout(timer);
+            // Navigate immediately without delay
+            navigate('/progress');
         }
     }, [redirecting, navigate]);
 
@@ -75,21 +73,16 @@ function LoginPage() {
                 data.refreshToken   // refreshToken
             );
             
-            // Hiển thị thông báo thành công và bắt đầu chuyển trang
+            // Hiển thị thông báo thành công và bắt đầu chuyển trang ngay lập tức
             if (loginSuccess) {
                 setRedirecting(true);
-                toast.success('Đăng nhập thành công! Đang chuyển hướng...', {
+                toast.success('Đăng nhập thành công!', {
                     position: "top-right",
                     autoClose: 1500,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
                 });
                 
-                // Thêm class chuyển trang
-                document.body.classList.add('page-transition');
+                // Remove page transition class
+                // document.body.classList.add('page-transition');
                 
                 // Gọi API để lấy thông tin tiến độ học tập (nếu cần)
                 try {
@@ -102,12 +95,13 @@ function LoginPage() {
                     if (progressResponse.ok) {
                         const progressData = await progressResponse.json();
                         console.log('Retrieved progress data:', progressData);
-                        // Có thể lưu thông tin progress vào localStorage hoặc Context nếu cần
                     }
                 } catch (progressError) {
                     console.error('Failed to fetch progress data:', progressError);
-                    // Không cần xử lý lỗi này, vì ta vẫn muốn điều hướng đến trang tiến độ
                 }
+                
+                // Navigate immediately
+                navigate('/progress');
             }
         } catch (err) {
             setError(err.message || 'Đã xảy ra lỗi khi đăng nhập');

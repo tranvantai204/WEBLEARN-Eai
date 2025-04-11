@@ -19,6 +19,7 @@
     width: 100%;
 }
 
+/* Logo */
 .header-logo {
     display: flex;
     align-items: center;
@@ -35,6 +36,15 @@
     font-size: 1.5rem;
     font-weight: 900;
     color: var(--primary-600);
+}
+
+/* Desktop Menu */
+.desktop-menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    margin-left: 2rem;
 }
 
 .main-nav {
@@ -80,6 +90,7 @@
     color: var(--primary-500);
 }
 
+/* Header Actions (Login/Register/Logout buttons) */
 .header-actions {
     display: flex;
     align-items: center;
@@ -107,7 +118,7 @@
     color: #3498db;
 }
 
-.header-signup {
+button.header-signup {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -120,11 +131,25 @@
     background: #07a50f;
     min-width: 100px;
     white-space: nowrap;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
 }
 
-.header-signup:hover {
+button.header-signup:hover {
     background: #ff5252;
     transform: translateY(-1px);
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: #333;
 }
 
 /* Mobile Menu */
@@ -300,20 +325,9 @@
     color: #3498db;
 }
 
-/* Mobile Menu Button */
-.mobile-menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    color: #333;
-}
-
+/* Responsive Breakpoints */
 @media (max-width: 900px) {
-    .main-nav,
-    .header-actions {
+    .desktop-menu {
         display: none;
     }
     
@@ -322,88 +336,23 @@
     }
 }
 
-/* Desktop Menu Button and Layout */
 @media (min-width: 901px) {
-    .mobile-menu-btn {
-        display: block;
-    }
-    
-    .main-nav {
-        display: none;
-    }
-    
-    .header-actions {
-        display: none;
-    }
-    
-    /* Horizontal Menu for Desktop */
-    .mobile-menu {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        height: 80px;
-        padding: 0 2rem;
-        transform: translateY(-100%);
-    }
-    
-    .mobile-menu.active {
-        transform: translateY(0);
-    }
-    
-    .mobile-nav-list {
+    .desktop-menu {
         display: flex;
-        flex-direction: row;
-        align-items: center;
-        flex: 0;
-        margin-right: 2rem;
     }
     
-    .mobile-nav-item {
-        margin-bottom: 0;
-        margin-right: 1rem;
-    }
-    
-    .mobile-header-actions {
-        flex-direction: row;
-        margin-top: 0;
-        margin-right: 2rem;
-    }
-    
-    .mobile-header-actions .header-login,
-    .mobile-header-actions .header-signup {
-        width: auto;
-        padding: 0.5rem 1.5rem;
-    }
-    
-    .mobile-lang-section {
-        margin-top: 0;
-        padding-top: 0;
-        border-top: none;
+    .mobile-menu-btn {
+        display: none;
     }
 }
 
 @media (max-width: 600px) {
     .header-container {
         padding: 0 1rem;
-        width: 100%;
-        min-height: 60px;
     }
     
     .logo-text {
         font-size: 1.25rem;
-    }
-    
-    .main-header {
-        width: 100%;
-        left: 0;
-        right: 0;
-    }
-    
-    /* Đảm bảo mobile menu hiển thị đúng */
-    .mobile-menu {
-        width: 100%;
-        left: 0;
-        right: 0;
     }
 }
 
@@ -427,5 +376,41 @@
     
     .header-container {
         width: 100%;
+    }
+}
+
+/* Desktop Menu Styles */
+.desktop-menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    margin-left: 2rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Responsive styles */
+@media (min-width: 768px) {
+    .desktop-menu {
+        display: flex;
+    }
+    
+    .mobile-menu-btn {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .desktop-menu {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
     }
 } 

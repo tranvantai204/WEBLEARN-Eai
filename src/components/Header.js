@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 import { 
     FaGlobeAmericas,
     FaChevronDown,
@@ -29,10 +30,12 @@ import {
 
 function Header() {
   const { currentLanguage, changeLanguage, translateText } = useLanguage();
+  const { isAuthenticated, logout } = useAuth();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showLanguageOptions, setShowLanguageOptions] = useState(false);
   const mobileMenuRef = useRef(null);
   const langOptionsRef = useRef(null);
+  const navigate = useNavigate();
   
   const languages = [
     { code: 'en', name: 'English', icon: FlagGBIcon },
@@ -61,7 +64,9 @@ function Header() {
     writing: 'Writing',
     discover: 'Discover',
     signIn: 'Sign In',
-    getStarted: 'Get Started'
+    getStarted: 'Get Started',
+    profile: 'Progress',
+    logout: 'Logout'
   });
 
   // Close menu when clicking outside
@@ -96,7 +101,9 @@ function Header() {
           writing: await translateText('Writing'),
           discover: await translateText('Discover'),
           signIn: await translateText('Sign In'),
-          getStarted: await translateText('Get Started')
+          getStarted: await translateText('Get Started'),
+          profile: await translateText('Progress'),
+          logout: await translateText('Logout')
         };
         setTranslations(newTranslations);
       } catch (error) {
@@ -113,7 +120,9 @@ function Header() {
         writing: 'Writing',
         discover: 'Discover',
         signIn: 'Sign In',
-        getStarted: 'Get Started'
+        getStarted: 'Get Started',
+        profile: 'Progress',
+        logout: 'Logout'
       });
     }
   }, [currentLanguage, translateText]);
@@ -121,6 +130,12 @@ function Header() {
   const handleLanguageChange = (langCode) => {
     changeLanguage(langCode);
     setShowLanguageOptions(false);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    setShowMobileMenu(false);
+    navigate('/');
   };
 
   return (
@@ -139,7 +154,7 @@ function Header() {
           {showMobileMenu ? <FaTimes /> : <FaBars />}
         </button>
         
-        {/* Menu */}
+        {/* Mobile Menu */}
         <div className={`mobile-menu ${showMobileMenu ? 'active' : ''}`} ref={mobileMenuRef}>
           <ul className="mobile-nav-list">
             <li className="mobile-nav-item">
@@ -210,12 +225,79 @@ function Header() {
           </div>
           
           <div className="mobile-header-actions">
-            <Link to="/login" className="header-login" onClick={() => setShowMobileMenu(false)}>
-              {translations.signIn}
-            </Link>
-            <Link to="/register" className="header-signup" onClick={() => setShowMobileMenu(false)}>
-              {translations.getStarted}
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link to="/progress" className="header-login" onClick={() => setShowMobileMenu(false)}>
+                  <i className="fas fa-chart-line"></i> {translations.profile}
+                </Link>
+                <button className="header-signup" onClick={handleLogout}>
+                  <i className="fas fa-sign-out-alt"></i> {translations.logout}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="header-login" onClick={() => setShowMobileMenu(false)}>
+                  {translations.signIn}
+                </Link>
+                <Link to="/register" className="header-signup" onClick={() => setShowMobileMenu(false)}>
+                  {translations.getStarted}
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+        
+        {/* Desktop Navigation */}
+        <div className="desktop-menu">
+          <nav className="main-nav">
+            <ul className="nav-list">
+              <li className="nav-item">
+                <Link to="/flashcards" className="nav-link">
+                  <i className="fas fa-layer-group"></i>
+                  <span>{translations.flashcards}</span>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/readings" className="nav-link">
+                  <i className="fas fa-book"></i>
+                  <span>{translations.readings}</span>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/writing" className="nav-link">
+                  <i className="fas fa-pen"></i>
+                  <span>{translations.writing}</span>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/discover" className="nav-link">
+                  <i className="fas fa-compass"></i>
+                  <span>{translations.discover}</span>
+                </Link>
+              </li>
+            </ul>
+          </nav>
+          
+          <div className="header-actions">
+            {isAuthenticated ? (
+              <>
+                <Link to="/progress" className="header-login">
+                  <i className="fas fa-chart-line"></i> {translations.profile}
+                </Link>
+                <button className="header-signup" onClick={handleLogout}>
+                  <i className="fas fa-sign-out-alt"></i> {translations.logout}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="header-login">
+                  {translations.signIn}
+                </Link>
+                <Link to="/register" className="header-signup">
+                  {translations.getStarted}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

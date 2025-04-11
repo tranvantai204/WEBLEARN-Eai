@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 import '../css/components/Home.css';
 
 // Predefined translations instead of dynamic translation to improve performance
@@ -30,7 +31,20 @@ const allTranslations = {
         ],
         ctaTitle: 'Ready to Start?',
         ctaSubtitle: 'Join millions of learners using WordWise',
-        register: 'Register for Free'
+        register: 'Register for Free',
+        // Logged in user translations
+        welcomeBack: 'Welcome Back!',
+        continueProgress: 'Continue your learning progress',
+        recentActivity: 'Your Recent Activity',
+        noActivity: 'No recent activity found. Start learning now!',
+        flashcardsSummary: 'Flashcards',
+        flashcardsDescription: 'Review your flashcard sets and continue learning vocabulary',
+        readingSummary: 'Readings',
+        readingsDescription: 'Improve your comprehension with reading exercises',
+        writingSummary: 'Writing',
+        writingsDescription: 'Enhance your written expression through practice',
+        viewAll: 'View All',
+        continueLearning: 'Continue Learning'
     },
     vi: {
         selectLanguage: 'Chọn Ngôn Ngữ',
@@ -57,87 +71,204 @@ const allTranslations = {
         ],
         ctaTitle: 'Sẵn Sàng Bắt Đầu?',
         ctaSubtitle: 'Tham gia cùng hàng triệu người học đang sử dụng WordWise',
-        register: 'Đăng Ký Miễn Phí'
+        register: 'Đăng Ký Miễn Phí',
+        // Logged in user translations
+        welcomeBack: 'Chào Mừng Trở Lại!',
+        continueProgress: 'Tiếp tục quá trình học tập của bạn',
+        recentActivity: 'Hoạt Động Gần Đây Của Bạn',
+        noActivity: 'Không tìm thấy hoạt động gần đây. Bắt đầu học ngay!',
+        flashcardsSummary: 'Thẻ Ghi Nhớ',
+        flashcardsDescription: 'Xem lại bộ thẻ ghi nhớ và tiếp tục học từ vựng',
+        readingSummary: 'Bài Đọc',
+        readingsDescription: 'Cải thiện khả năng đọc hiểu với các bài tập đọc',
+        writingSummary: 'Viết',
+        writingsDescription: 'Nâng cao kỹ năng viết thông qua luyện tập',
+        viewAll: 'Xem Tất Cả',
+        continueLearning: 'Tiếp Tục Học'
     }
     // Other languages can be added here as needed
 };
 
 function HomePage() {
     const { currentLanguage } = useLanguage();
+    const { isAuthenticated } = useAuth();
     
     // Get translations for current language or fallback to English
     const translations = allTranslations[currentLanguage] || allTranslations.en;
 
-    return (
-        <div className="home-container">
-            <section className="hero-section">
-                <div className="hero-content">
-                    <div className="hero-badge">
-                        <i className="fas fa-star"></i>
-                        <span>{translations.heroBadge}</span>
-                    </div>
-                    
-                    <h1 className="hero-title">
-                        {translations.heroTitle}
-                    </h1>
-                    
-                    <p className="hero-subtitle">
-                        {translations.heroSubtitle}
-                    </p>
-                    
-                    <div className="hero-cta">
-                    <Link to="/register" className="btn-primary">
-                    {translations.register}
-                </Link>
-                        <Link to="/how-it-works" className="btn-secondary">
-                            {translations.learnMore}
-                        </Link>
-                    </div>
-                    
-                    <div className="hero-image">
-                        <img 
-                            src="/images/dashboard-preview.png" 
-                            alt="WordWise Dashboard" 
-                            loading="lazy" 
-                            width="600" 
-                            height="400" 
-                        />
-                    </div>
-                </div>
-            </section>
-
-            <section className="features-section">
-                <div className="section-header">
-                    <h2 className="section-title">{translations.featuresTitle}</h2>
-                    <p className="section-subtitle">
-                        {translations.featuresSubtitle}
-                    </p>
-                </div>
-
-                <div className="features-grid">
-                    {translations.features.map((feature, index) => (
-                        <div className="feature-card" key={index}>
-                            <div className="feature-icon">
-                                <i className={`fas ${index === 0 ? 'fa-brain' : index === 1 ? 'fa-chart-line' : 'fa-sync'}`}></i>
-                            </div>
-                            <h3 className="feature-title">{feature.title}</h3>
-                            <p className="feature-description">{feature.description}</p>
+    // Render different content based on authentication status
+    const renderAuthenticatedContent = () => {
+        return (
+            <div className="home-container authenticated">
+                <section className="welcome-section">
+                    <div className="welcome-content">
+                        <div className="welcome-badge">
+                            <i className="fas fa-star"></i>
+                            <span>{translations.welcomeBack}</span>
                         </div>
-                    ))}
-                </div>
-            </section>
+                        
+                        <h1 className="welcome-title">
+                            {translations.continueProgress}
+                        </h1>
+                        
+                        <div className="learning-paths">
+                            {/* Flashcards Summary */}
+                            <div className="learning-path-card">
+                                <div className="path-icon">
+                                    <i className="fas fa-layer-group"></i>
+                                </div>
+                                <div className="path-content">
+                                    <h3 className="path-title">{translations.flashcardsSummary}</h3>
+                                    <p className="path-description">{translations.flashcardsDescription}</p>
+                                    <div className="path-actions">
+                                        <Link to="/flashcards" className="btn-primary">
+                                            {translations.viewAll}
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Readings Summary */}
+                            <div className="learning-path-card">
+                                <div className="path-icon">
+                                    <i className="fas fa-book"></i>
+                                </div>
+                                <div className="path-content">
+                                    <h3 className="path-title">{translations.readingSummary}</h3>
+                                    <p className="path-description">{translations.readingsDescription}</p>
+                                    <div className="path-actions">
+                                        <Link to="/readings" className="btn-primary">
+                                            {translations.viewAll}
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Writings Summary */}
+                            <div className="learning-path-card">
+                                <div className="path-icon">
+                                    <i className="fas fa-pen"></i>
+                                </div>
+                                <div className="path-content">
+                                    <h3 className="path-title">{translations.writingSummary}</h3>
+                                    <p className="path-description">{translations.writingsDescription}</p>
+                                    <div className="path-actions">
+                                        <Link to="/writing" className="btn-primary">
+                                            {translations.viewAll}
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-            <section className="cta-section">
-                <h2 className="cta-title">{translations.ctaTitle}</h2>
-                <p className="cta-subtitle">
-                    {translations.ctaSubtitle}
-                </p>
-                <Link to="/register" className="btn-primary">
-                    {translations.register}
-                </Link>
-            </section>
-        </div>
-    );
+                <section className="features-section">
+                    <div className="section-header">
+                        <h2 className="section-title">{translations.recentActivity}</h2>
+                        <p className="section-subtitle">
+                            {translations.noActivity}
+                        </p>
+                    </div>
+
+                    <div className="features-grid">
+                        {translations.features.map((feature, index) => (
+                            <div className="feature-card" key={index}>
+                                <div className="feature-icon">
+                                    <i className={`fas ${index === 0 ? 'fa-brain' : index === 1 ? 'fa-chart-line' : 'fa-sync'}`}></i>
+                                </div>
+                                <h3 className="feature-title">{feature.title}</h3>
+                                <p className="feature-description">{feature.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                <section className="cta-section">
+                    <h2 className="cta-title">{translations.continueProgress}</h2>
+                    <Link to="/progress" className="btn-primary">
+                        {translations.continueLearning}
+                    </Link>
+                </section>
+            </div>
+        );
+    };
+
+    // Render content for non-authenticated users
+    const renderNonAuthenticatedContent = () => {
+        return (
+            <div className="home-container">
+                <section className="hero-section">
+                    <div className="hero-content">
+                        <div className="hero-badge">
+                            <i className="fas fa-star"></i>
+                            <span>{translations.heroBadge}</span>
+                        </div>
+                        
+                        <h1 className="hero-title">
+                            {translations.heroTitle}
+                        </h1>
+                        
+                        <p className="hero-subtitle">
+                            {translations.heroSubtitle}
+                        </p>
+                        
+                        <div className="hero-cta">
+                            <Link to="/register" className="btn-primary">
+                                {translations.register}
+                            </Link>
+                            <Link to="/how-it-works" className="btn-secondary">
+                                {translations.learnMore}
+                            </Link>
+                        </div>
+                        
+                        <div className="hero-image">
+                            <img 
+                                src="/images/dashboard-preview.png" 
+                                alt="WordWise Dashboard" 
+                                loading="lazy" 
+                                width="600" 
+                                height="400" 
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                <section className="features-section">
+                    <div className="section-header">
+                        <h2 className="section-title">{translations.featuresTitle}</h2>
+                        <p className="section-subtitle">
+                            {translations.featuresSubtitle}
+                        </p>
+                    </div>
+
+                    <div className="features-grid">
+                        {translations.features.map((feature, index) => (
+                            <div className="feature-card" key={index}>
+                                <div className="feature-icon">
+                                    <i className={`fas ${index === 0 ? 'fa-brain' : index === 1 ? 'fa-chart-line' : 'fa-sync'}`}></i>
+                                </div>
+                                <h3 className="feature-title">{feature.title}</h3>
+                                <p className="feature-description">{feature.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                <section className="cta-section">
+                    <h2 className="cta-title">{translations.ctaTitle}</h2>
+                    <p className="cta-subtitle">
+                        {translations.ctaSubtitle}
+                    </p>
+                    <Link to="/register" className="btn-primary">
+                        {translations.register}
+                    </Link>
+                </section>
+            </div>
+        );
+    };
+
+    return isAuthenticated ? renderAuthenticatedContent() : renderNonAuthenticatedContent();
 }
 
 export default HomePage; 

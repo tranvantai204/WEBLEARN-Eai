@@ -48,17 +48,21 @@ export const AuthProvider = ({ children }) => {
   // Hàm làm mới token
   const refreshAccessToken = async () => {
     if (!refreshToken) {
+      console.log('No refresh token available');
       await logout();
       return null;
     }
 
     try {
-      console.log('Sending refresh token request to:', `${API_URL}/Auth/refresh-token`);
+      const refreshUrl = `${API_URL}/Auth/refresh-token`;
+      console.log('Sending refresh token request to:', refreshUrl);
       
-      const response = await fetch(`${API_URL}/Auth/refresh-token`, {
+      const response = await fetch(refreshUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
         },
         body: JSON.stringify({ refreshToken }),
       });

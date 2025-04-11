@@ -21,16 +21,45 @@ function FlashcardsPage() {
     useEffect(() => {
         const fetchFlashcardSets = async () => {
             try {
-                // In a real app, you would get the user ID from auth context
+                // Get token from localStorage
                 const token = localStorage.getItem("accessToken");
-
-                const decodedToken = jwtDecode(token);
-
-                const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-
-                const result = await getUserFlashcardSets(userId);
-                if (result && result.flashcardSets) {
-                    setFlashcardSets(result.flashcardSets);
+                
+                if (!token) {
+                    console.error('No access token found in localStorage');
+                    return;
+                }
+                
+                console.log('Token exists:', !!token);
+                
+                try {
+                    const decodedToken = jwtDecode(token);
+                    console.log('Decoded token:', decodedToken);
+                    
+                    const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+                    console.log('Using userId:', userId);
+                    
+                    if (!userId) {
+                        console.error('No userId found in decoded token');
+                        return;
+                    }
+                    
+                    try {
+                        // Log API URL from environment to verify it's correct
+                        console.log('API URL from env:', process.env.REACT_APP_API_URL);
+                        
+                        const result = await getUserFlashcardSets(userId);
+                        console.log('API response:', result);
+                        
+                        if (result && result.flashcardSets) {
+                            setFlashcardSets(result.flashcardSets);
+                        } else {
+                            console.log('No flashcards found or response format unexpected');
+                        }
+                    } catch (apiError) {
+                        console.error('API request failed:', apiError);
+                    }
+                } catch (tokenError) {
+                    console.error('Error decoding token:', tokenError);
                 }
             } catch (err) {
                 console.error('Failed to fetch flashcard sets', err);
@@ -42,7 +71,7 @@ function FlashcardsPage() {
 
     const handleSetSelect = (set) => {
         // Navigate to the flashcard set details page
-        navigate(`/flashcards/${set.flashcardSetId || set.id}`);
+        navigate(`/flashcard-set/${set.flashcardSetId || set.id}`);
     };
 
     const handleNextCard = () => {
