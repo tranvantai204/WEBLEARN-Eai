@@ -318,8 +318,8 @@ export const FlashcardProvider = ({ children }) => {
     queryParams.append('itemPerPage', itemPerPage);
     
     // Use hardcoded URL to avoid any potential environment variable issues
-    const apiUrl = "https://6d2c-115-76-51-131.ngrok-free.app/api";
-    const requestUrl = `${apiUrl}/FlashCardSet/GetAll/${userId}?${queryParams.toString()}`;
+    
+    const requestUrl = `${API_URL}/api/FlashCardSet/GetAll/${userId}?${queryParams.toString()}`;
     
     console.log('Request URL:', requestUrl);
     

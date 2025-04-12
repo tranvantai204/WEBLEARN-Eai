@@ -13,7 +13,7 @@ function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [redirecting, setRedirecting] = useState(false);
 
-    const { login } = useAuth();
+    const { login, updateStreak } = useAuth();
     const navigate = useNavigate();
     
     // Lấy API URL từ biến môi trường
@@ -72,6 +72,8 @@ function LoginPage() {
                 data.token,         // accessToken (đổi từ "token")
                 data.refreshToken   // refreshToken
             );
+
+            await updateStreak()
             
             // Hiển thị thông báo thành công và bắt đầu chuyển trang ngay lập tức
             if (loginSuccess) {

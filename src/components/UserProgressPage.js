@@ -10,6 +10,7 @@ function UserProgressPage() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { accessToken, isAuthenticated } = useAuth();
+    const [calendarDays, setCalendarDays] = useState([]);
 
     // API URL
     const baseUrl = process.env.REACT_APP_API_URL || 'https://6d2c-115-76-51-131.ngrok-free.app';
@@ -46,6 +47,9 @@ function UserProgressPage() {
                 const data = await response.json();
                 console.log('Learning statistics data:', data);
                 setProgressData(data);
+
+                const generatedDays = generateCalendarDays(data.lastLearningDate, data.currentStreak);
+                setCalendarDays(generatedDays);
             } catch (err) {
                 console.error('Error fetching user progress:', err);
                 toast.error('Không thể tải dữ liệu tiến độ. Vui lòng thử lại sau.');
@@ -115,6 +119,66 @@ function UserProgressPage() {
         }).format(date);
     };
 
+    const getLocalDateString = (date) => {
+        const offset = date.getTimezoneOffset();
+        const adjustedDate = new Date(date.getTime() - (offset * 60 * 1000));
+        return adjustedDate.toISOString().split('T')[0];
+    };
+
+    const generateCalendarDays = (lastLearningStr, currentStreak) => {
+        const days = [];
+        const today = new Date();
+        const todayString = getLocalDateString(today);
+        const dayLabels = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']; // CN=0, T2=1... T7=6
+    
+        let lastLearnedDate = null; // Ngày học cuối cùng dạng Date object
+        if (lastLearningStr) {
+            try {
+                lastLearnedDate = new Date(lastLearningStr);
+                 // Kiểm tra xem ngày có hợp lệ không
+                if (isNaN(lastLearnedDate.getTime())) {
+                    lastLearnedDate = null;
+                    console.warn("Ngày học cuối cùng không hợp lệ:", lastLearningStr);
+                }
+            } catch (e) {
+                console.error("Lỗi phân tích ngày học cuối cùng:", e);
+                lastLearnedDate = null;
+            }
+        }
+        const lastLearnedDateString = lastLearnedDate ? getLocalDateString(lastLearnedDate) : null; // Ngày học cuối dạng YYYY-MM-DD
+    
+        // Tạo 7 ngày từ quá khứ đến hiện tại
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i); // Tính ngày thứ i trong quá khứ
+            const dateString = getLocalDateString(date); // Ngày dạng YYYY-MM-DD
+            const dayOfWeek = date.getDay(); // 0 = CN, 1 = T2, ..., 6 = T7
+    
+            let isCompleted = false; // Mặc định là chưa học
+    
+            // --- Logic phỏng đoán ngày đã học (chỉ dựa vào streak gần nhất) ---
+            if (lastLearnedDateString && currentStreak > 0) {
+                // Tính số ngày chênh lệch giữa ngày học cuối và ngày đang xét
+                const diffTime = lastLearnedDate.getTime() - date.getTime();
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+                // Nếu ngày đang xét là ngày học cuối cùng hoặc nằm trong chuỗi streak trước đó
+                if (diffDays >= 0 && diffDays < currentStreak) {
+                   isCompleted = true; // Đánh dấu là đã học
+                }
+            }
+            // --- Hết logic phỏng đoán ---
+    
+            days.push({
+                key: dateString, // Key cho React
+                label: dayLabels[dayOfWeek], // Nhãn Thứ (T2, T3...)
+                isCurrent: dateString === todayString, // Có phải ngày hiện tại không?
+                isCompleted: isCompleted, // Có được đánh dấu là đã học không?
+            });
+        }
+        return days; // Trả về mảng 7 ngày
+    };
+
     return (
         <div className="main-content">
             <ToastContainer position="top-right" autoClose={3000} />
@@ -178,39 +242,34 @@ function UserProgressPage() {
                         </div>
 
                         <div className="streak-calendar">
-                            <h2 className="section-title">Lịch Học 7 Ngày Gần Đây</h2>
-                            <div className="calendar-grid">
-                                {/* Giả lập dữ liệu lịch học 7 ngày gần đây - Sẽ cập nhật sau khi API cung cấp dữ liệu lịch học */}
-                                <div className="calendar-day completed">
-                                    <span className="day-label">CN</span>
+                    <h2 className="section-title">Lịch Học 7 Ngày Gần Đây</h2>
+                    {/* --- BẮT ĐẦU HIỂN THỊ ĐỘNG --- */}
+                    {calendarDays.length > 0 ? (
+                        <div className="calendar-grid">
+                            {calendarDays.map(day => (
+                                <div
+                                    key={day.key}
+                                    // Thêm class 'completed' nếu isCompleted là true
+                                    // Thêm class 'current' nếu isCurrent là true
+                                    className={`calendar-day ${day.isCompleted ? 'completed' : ''} ${day.isCurrent ? 'current' : ''}`}
+                                    title={day.key} // Hiện ngày dạng YYYY-MM-DD khi hover (tùy chọn)
+                                >
+                                    <span className="day-label">{day.label}</span>
                                     <div className="day-indicator"></div>
                                 </div>
-                                <div className="calendar-day">
-                                    <span className="day-label">T2</span>
-                                    <div className="day-indicator"></div>
-                                </div>
-                                <div className="calendar-day">
-                                    <span className="day-label">T3</span>
-                                    <div className="day-indicator"></div>
-                                </div>
-                                <div className="calendar-day">
-                                    <span className="day-label">T4</span>
-                                    <div className="day-indicator"></div>
-                                </div>
-                                <div className="calendar-day">
-                                    <span className="day-label">T5</span>
-                                    <div className="day-indicator"></div>
-                                </div>
-                                <div className="calendar-day">
-                                    <span className="day-label">T6</span>
-                                    <div className="day-indicator"></div>
-                                </div>
-                                <div className="calendar-day current">
-                                    <span className="day-label">T7</span>
-                                    <div className="day-indicator"></div>
-                                </div>
-                            </div>
+                            ))}
                         </div>
+                    ) : (
+                        // Hiển thị nếu không tạo được lịch
+                        <p>Không có dữ liệu lịch học.</p>
+                    )}
+                     {/* --- KẾT THÚC HIỂN THỊ ĐỘNG --- */}
+
+                     {/* !!! QUAN TRỌNG: Thêm ghi chú giải thích đây là phỏng đoán !!! */}
+                     <p style={{fontSize: '0.8em', color: '#888', textAlign: 'center', marginTop: '10px'}}>
+                         <i>Lưu ý: Lịch chỉ hiển thị chuỗi ngày học liên tục gần nhất.</i>
+                     </p>
+                </div>
 
                         <div className="progress-actions">
                             <button 

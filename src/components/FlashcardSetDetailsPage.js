@@ -18,6 +18,8 @@ const modalStyles = `
   }
 `;
 
+const baseUrl = process.env.REACT_APP_API_URL;
+
 // Tạo một component Modal riêng biệt
 function Modal({ show, onClose, children }) {
     if (!show) return null;
@@ -558,7 +560,7 @@ function FlashcardSetDetailsPage() {
             console.log('Updating flashcard set with data:', updateData);
             
             // Call the API to update the flashcard set
-            const response = await fetch(`https://6d2c-115-76-51-131.ngrok-free.app/api/FlashCardSet/Update/${flashcardSetId}`, {
+            const response = await fetch(`${baseUrl}/FlashCardSet/Update/${flashcardSetId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

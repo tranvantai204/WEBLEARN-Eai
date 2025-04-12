@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || null);
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || null);
   const [loading, setLoading] = useState(true);
+  const [isUpdateStreek, setIsUpdateStreek] = useState(false);
   
   // Lấy API URL từ biến môi trường
   const API_URL = process.env.REACT_APP_API_URL || 'https://1abd-42-118-114-121.ngrok-free.app/api';
@@ -32,6 +33,33 @@ export const AuthProvider = ({ children }) => {
     // Trả về true để component cha có thể xử lý điều hướng
     return true;
   };
+
+
+  const updateStreak = async () => {
+    const url = `${API_URL}/UserLearningStats/UpdateStreak`; // API endpoint
+    try {
+        // Send POST request with the Authorization header
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, // Replace with your actual token
+                'Content-Type': 'application/json', // Ensure correct content type
+            },
+        });
+
+        // Check if the request was successful
+        if (response.ok) {
+            const data = await response.json(); // Parse JSON response if necessary
+            console.log('Streak updated successfully:', data);
+        } else {
+            console.error('Failed to update streak. Status:', response.status);
+        }
+    } catch (error) {
+        console.error('An error occurred while updating streak:', error);
+    }
+};
+
+  
 
   // Hàm đăng xuất
   const logout = async () => {
@@ -106,6 +134,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     refreshAccessToken,
+    updateStreak,
     isAuthenticated: !!accessToken,
     loading,
   };
