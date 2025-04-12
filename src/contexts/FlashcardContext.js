@@ -30,46 +30,6 @@ export const FlashcardProvider = ({ children }) => {
   // Log URL API
   useEffect(() => {
     console.log('FlashcardContext using API URL:', API_URL);
-    
-    // Check if API is reachable
-    const checkApiConnection = async () => {
-      try {
-        console.log('Checking API connection to:', `${API_URL}/health`);
-        
-        // Set up request with proper headers and mode
-        const response = await fetch(`${API_URL}/health`, { 
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': 'true'
-          },
-          mode: 'cors',
-          credentials: 'omit'
-        });
-        
-        console.log('Health check response status:', response.status);
-        
-        // Get content type
-        const contentType = response.headers.get('content-type');
-        console.log('Health check response content-type:', contentType);
-        
-        // Look at the first part of the response
-        const text = await response.text();
-        console.log('Health check response preview:', text.substring(0, 200));
-        
-        if (response.ok) {
-          console.log('API connection successful');
-        } else {
-          console.warn(`API health check failed with status: ${response.status}`);
-          console.log('Trying alternative URL format in case the URL is not correct...');
-        }
-      } catch (err) {
-        console.error('API connection error:', err.message);
-        console.log('Will try to use API endpoints directly without health check...');
-      }
-    };
-    
-    checkApiConnection();
   }, [API_URL]);
 
   // Helper function to handle API requests with token refresh
@@ -590,6 +550,246 @@ export const FlashcardProvider = ({ children }) => {
     }
   }, [API_URL, accessToken, currentSet, getFlashcardSet]);
 
+  // Endpoint to get/check user's API key - kiểm tra từ localStorage trước
+  const getUserApiKey = useCallback(async () => {
+    try {
+      // Đầu tiên kiểm tra localStorage
+      const localApiKey = localStorage.getItem('gemini_api_key');
+      const timestamp = localStorage.getItem('gemini_api_key_timestamp');
+      
+      if (localApiKey && timestamp) {
+        // Kiểm tra xem API key có còn hiệu lực không (2 giờ)
+        const now = Date.now();
+        const saved = parseInt(timestamp, 10);
+        const twoHoursMs = 2 * 60 * 60 * 1000;
+        
+        if (now - saved <= twoHoursMs) {
+          console.log('Sử dụng API key từ localStorage');
+          return localApiKey;
+        } else {
+          // API key đã hết hạn, xóa khỏi localStorage
+          console.log('API key trong localStorage đã hết hạn');
+          localStorage.removeItem('gemini_api_key');
+          localStorage.removeItem('gemini_api_key_timestamp');
+        }
+      }
+      
+      // Nếu không có trong localStorage, quay lại giá trị true để cho phép tiếp tục sử dụng chức năng AI
+      console.log('Không tìm thấy API key trong localStorage, giả định đã có API key trên server');
+      return true;
+    } catch (err) {
+      console.error('Lỗi khi kiểm tra API key:', err);
+      return null;
+    }
+  }, []);
+  
+  // Update user's API key
+  const updateUserApiKey = useCallback(async (apiKey) => {
+    try {
+      if (!isAuthenticated || !accessToken) {
+        throw new Error('User not authenticated, cannot update API key');
+      }
+      
+      // Đảm bảo URL có /api/ prefix
+      let storeKeyUrl = `${API_URL}/Auth/store-key`;
+      if (!storeKeyUrl.includes('/api/')) {
+        storeKeyUrl = `${API_URL}/api/Auth/store-key`;
+      }
+      
+      console.log('Gửi API key đến server:', storeKeyUrl);
+      
+      // Sử dụng fetch trực tiếp thay vì apiRequest để đảm bảo gọi đúng API
+      const response = await fetch(storeKeyUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ apiKey })
+      });
+      
+      console.log('Kết quả lưu API key:', response.status, response.statusText);
+      return response.ok;
+    } catch (err) {
+      console.error('Lỗi khi cập nhật API key của người dùng:', err);
+      throw err;
+    }
+  }, [API_URL, isAuthenticated, accessToken]);
+
+  // Delete a flashcard by ID
+  const deleteFlashcard = useCallback(async (flashcardId) => {
+    try {
+      setLoading(true);
+      
+      // Get token from various sources
+      const currentToken = localStorage.getItem('accessToken');
+      const tokenToUse = accessToken || currentToken;
+      
+      if (!tokenToUse) {
+        throw new Error('Authentication required to delete flashcard');
+      }
+      
+      // Construct the API URL
+      const apiUrl = `${API_URL}/api/FlashCard/Delete/${flashcardId}`;
+      console.log(`Deleting flashcard with ID ${flashcardId} from: ${apiUrl}`);
+      
+      // Send DELETE request
+      const response = await fetch(apiUrl, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          'Authorization': `Bearer ${tokenToUse}`
+        }
+      });
+      
+      console.log(`Delete flashcard response status: ${response.status}`);
+      
+      // Check if response is successful
+      if (!response.ok) {
+        let errorMessage = `Error deleting flashcard: ${response.status} ${response.statusText}`;
+        
+        // Try to get detailed error from response
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.title || errorMessage;
+          console.error('Error response:', errorData);
+        } catch (parseError) {
+          console.error('Could not parse error response:', parseError);
+        }
+        
+        throw new Error(errorMessage);
+      }
+      
+      // Parse successful response
+      let deletedFlashcard = null;
+      try {
+        deletedFlashcard = await response.json();
+        console.log('Successfully deleted flashcard:', deletedFlashcard);
+      } catch (parseError) {
+        // Some APIs return 200 with no content for delete operations
+        console.log('No content returned after successful delete');
+      }
+      
+      // If the flashcard is in the current set, remove it
+      if (currentSet) {
+        const updatedFlashcards = currentSet.flashcards?.filter(
+          card => card.flashcardId !== flashcardId
+        ) || [];
+        
+        setCurrentSet({
+          ...currentSet,
+          flashcards: updatedFlashcards
+        });
+      }
+      
+      return { success: true, deletedFlashcard };
+    } catch (error) {
+      console.error('Failed to delete flashcard:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, [API_URL, accessToken, currentSet]);
+
+  // Update a flashcard
+  const updateFlashcard = useCallback(async (flashcardId, flashcardData) => {
+    setLoading(true);
+    
+    try {
+      // Get access token from localStorage or context
+      const accessToken = localStorage.getItem('accessToken') || "";
+      
+      if (!accessToken) {
+        throw new Error('Authentication required. Please log in.');
+      }
+      
+      // Construct API URL
+      const apiUrl = `${API_URL}/api/FlashCard/Update/${flashcardId}`;
+      console.log(`Updating flashcard at: ${apiUrl}`);
+      
+      // Send request to update the flashcard
+      const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(flashcardData)
+      });
+      
+      console.log(`Update flashcard response status: ${response.status}`);
+      
+      // Check for successful response
+      if (!response.ok) {
+        let errorMessage = `Failed to update flashcard: ${response.status} ${response.statusText}`;
+        
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            // Try to parse error response as JSON
+            const errorData = await response.json();
+            if (errorData.message) {
+              errorMessage = errorData.message;
+            }
+          } catch (parseError) {
+            console.error('Error parsing error response:', parseError);
+          }
+        } else {
+          try {
+            // If not JSON, try to get error as text
+            const errorText = await response.text();
+            if (errorText) {
+              errorMessage = errorText;
+            }
+          } catch (textError) {
+            console.error('Error reading error response text:', textError);
+          }
+        }
+        
+        throw new Error(errorMessage);
+      }
+      
+      // Parse response data
+      const updatedFlashcard = await response.json();
+      console.log('Flashcard updated successfully:', updatedFlashcard);
+      
+      // If the flashcard is in the current set, update it
+      if (currentSet) {
+        setCurrentSet(prevSet => {
+          if (!prevSet || !prevSet.flashcards) return prevSet;
+          
+          // Create a new array with the updated flashcard
+          const updatedFlashcards = prevSet.flashcards.map(card => 
+            card.flashcardId === flashcardId ? {...card, ...flashcardData} : card
+          );
+          
+          return {...prevSet, flashcards: updatedFlashcards};
+        });
+      }
+      
+      return {
+        success: true,
+        flashcard: updatedFlashcard
+      };
+      
+    } catch (err) {
+      console.error('Error updating flashcard:', err);
+      setError(err.message || 'Failed to update flashcard');
+      
+      return {
+        success: false,
+        error: err.message || 'Unknown error occurred'
+      };
+    } finally {
+      setLoading(false);
+    }
+  }, [API_URL, currentSet]);
+
   // Value provided by the context
   const value = {
     flashcardSets,
@@ -609,7 +809,11 @@ export const FlashcardProvider = ({ children }) => {
     createFlashcard,
     directCreateFlashcard,
     getFlashcardsForSet,
-    clearCurrentSet
+    clearCurrentSet,
+    getUserApiKey,
+    updateUserApiKey,
+    deleteFlashcard,
+    updateFlashcard
   };
 
   return (

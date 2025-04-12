@@ -13,6 +13,7 @@ import RegisterPage from './components/RegisterPage.js';
 import DashboardPage from './components/DashboardPage.js';
 import FlashcardsPage from './components/FlashcardsPage.js';
 import CreateFlashcardsPage from './components/CreateFlashcardsPage.js';
+import CreateAIFlashcardsPage from './components/CreateAIFlashcardsPage.js';
 import FlashcardSetDetailsPage from './components/FlashcardSetDetailsPage.js';
 import StudyFlashcardsPage from './components/StudyFlashcardsPage.js';
 import FlashcardLearningPage from './components/FlashcardLearningPage.js';
@@ -23,6 +24,7 @@ import CreateWritingPage from './components/CreateWritingPage.js';
 import DiscoverPage from './components/DiscoverPage.js';
 import ProfilePage from './components/ProfilePage.js';
 import UserProgressPage from './components/UserProgressPage.js';
+import ResourcesPage from './components/ResourcesPage.js';
 
 // Layout wrapper component
 const AppLayout = () => {
@@ -42,6 +44,7 @@ const AppLayout = () => {
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/flashcards" element={<FlashcardsPage />} />
                     <Route path="/flashcards/create" element={<CreateFlashcardsPage />} />
+                    <Route path="/flashcards/create-ai" element={<CreateAIFlashcardsPage />} />
                     <Route path="/flashcard-set/:flashcardSetId" element={<FlashcardSetDetailsPage />} />
                     <Route path="/flashcards/study" element={<StudyFlashcardsPage />} />
                     <Route path="/learn-flashcards/:flashcardSetId" element={<FlashcardLearningPage />} />
@@ -52,6 +55,7 @@ const AppLayout = () => {
                     <Route path="/discover" element={<DiscoverPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/progress" element={<UserProgressPage />} />
+                    <Route path="/resources" element={<ResourcesPage />} />
                 </Routes>
             </main>
             {!isAuthPage && <Footer />}

@@ -1,10 +1,11 @@
 /* Footer Styles */
 .main-footer {
-    background-color: var(--gray-900);
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
     color: white;
     padding: 4rem 0 2rem;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .main-footer::after {
@@ -15,6 +16,13 @@
     width: 100%;
     height: 6px;
     background: linear-gradient(to right, var(--primary-500), var(--accent-500), var(--success-500), var(--warning-500));
+    animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .footer-container {
@@ -47,12 +55,26 @@
     height: 36px;
     width: auto;
     filter: brightness(0) invert(1);
+    transition: transform 0.3s ease;
+}
+
+.footer-logo:hover .footer-logo-image {
+    transform: rotate(5deg);
 }
 
 .footer-logo-text {
     font-size: 1.5rem;
     font-weight: 800;
     color: white;
+    background: linear-gradient(90deg, #fff, #e2e8f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: shine 3s linear infinite;
+}
+
+@keyframes shine {
+    to { background-position: 200% center; }
 }
 
 .footer-tagline {
@@ -74,14 +96,17 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: var(--gray-800);
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .social-link:hover {
-    background-color: var(--primary-500);
-    transform: translateY(-3px);
+    background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
 .footer-links {
@@ -96,6 +121,55 @@
     min-width: 160px;
 }
 
+/* Enhanced Resources Section */
+.footer-column:nth-child(3) {
+    position: relative;
+}
+
+.footer-column:nth-child(3)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -15px;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--primary-500), var(--accent-500));
+    border-radius: 3px;
+}
+
+.footer-column:nth-child(3) .footer-heading {
+    color: #fff;
+    font-size: 1.35rem;
+}
+
+.footer-column:nth-child(3) .footer-heading::after {
+    width: 40px;
+    height: 4px;
+    background: linear-gradient(to right, var(--primary-500), var(--accent-500));
+}
+
+.footer-column:nth-child(3) .footer-link {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    padding: 0.35rem 0;
+    position: relative;
+}
+
+.footer-column:nth-child(3) .footer-link:hover {
+    color: white;
+    transform: translateX(6px);
+}
+
+.footer-column:nth-child(3) .footer-link:hover::before {
+    content: '→ ';
+    position: absolute;
+    left: -20px;
+    color: var(--primary-500);
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+/* General Headings */
 .footer-heading {
     font-size: 1.25rem;
     font-weight: 700;
@@ -124,6 +198,11 @@
 
 .footer-nav li {
     margin-bottom: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+.footer-nav li:hover {
+    transform: translateY(-2px);
 }
 
 .footer-link {
@@ -146,7 +225,7 @@
     justify-content: space-between;
     align-items: center;
     padding-top: 2rem;
-    border-top: 1px solid var(--gray-800);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     gap: 1rem;
 }
 
@@ -164,11 +243,27 @@
     color: var(--gray-500);
     text-decoration: none;
     font-size: 0.9rem;
-    transition: color 0.2s ease;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .legal-link:hover {
     color: white;
+}
+
+.legal-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: white;
+    transition: width 0.3s ease;
+}
+
+.legal-link:hover::after {
+    width: 100%;
 }
 
 /* Responsive Styles */
@@ -180,6 +275,13 @@
     
     .footer-links {
         width: 100%;
+    }
+
+    .footer-column:nth-child(3)::before {
+        left: 0;
+        height: 3px;
+        width: 80px;
+        top: -10px;
     }
 }
 
@@ -195,6 +297,13 @@
     .footer-links {
         flex-direction: column;
         gap: 2rem;
+    }
+
+    .footer-column:nth-child(3) {
+        order: -1;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .footer-bottom {

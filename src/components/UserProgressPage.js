@@ -3,14 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/UserProgress.css';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';      
+import ApiKeyForm from './ApiKeyForm';
+import { useFlashcard } from '../contexts/FlashcardContext';
 
 function UserProgressPage() {
     const [progressData, setProgressData] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const { accessToken, isAuthenticated } = useAuth();
+    const { accessToken, isAuthenticated, currentUser, fetchUserProgress, logout } = useAuth();
+    const { getUserApiKey } = useFlashcard();
     const [calendarDays, setCalendarDays] = useState([]);
+    const [showApiKeyForm, setShowApiKeyForm] = useState(false);
+    const [apiKeyChecked, setApiKeyChecked] = useState(false);
 
     // API URL
     const baseUrl = process.env.REACT_APP_API_URL || 'https://6d2c-115-76-51-131.ngrok-free.app';
@@ -179,6 +184,60 @@ function UserProgressPage() {
         return days; // Trả về mảng 7 ngày
     };
 
+    // Update API key checking effect 
+    useEffect(() => {
+        const checkApiKey = async () => {
+            try {
+                if (isAuthenticated && !apiKeyChecked) {
+                    console.log('Kiểm tra API key trong UserProgressPage...');
+                    
+                    // Kiểm tra API key trong localStorage
+                    const localApiKey = localStorage.getItem('gemini_api_key');
+                    const timestamp = localStorage.getItem('gemini_api_key_timestamp');
+                    
+                    if (localApiKey && timestamp) {
+                        // Kiểm tra xem API key có còn hiệu lực không (2 giờ)
+                        const now = Date.now();
+                        const saved = parseInt(timestamp, 10);
+                        const twoHoursMs = 2 * 60 * 60 * 1000;
+                        
+                        if (now - saved <= twoHoursMs) {
+                            console.log('Sử dụng API key từ localStorage, không hiển thị form');
+                            setApiKeyChecked(true);
+                            return; // Đã có API key trong localStorage, không hiển thị form
+                        } else {
+                            // API key đã hết hạn, xóa khỏi localStorage
+                            console.log('API key trong localStorage đã hết hạn');
+                            localStorage.removeItem('gemini_api_key');
+                            localStorage.removeItem('gemini_api_key_timestamp');
+                        }
+                    }
+                    
+                    // Nếu không có trong localStorage, hiển thị form nhập API key
+                    setShowApiKeyForm(true);
+                    setApiKeyChecked(true);
+                }
+            } catch (error) {
+                console.error('Lỗi khi kiểm tra API key:', error);
+                setApiKeyChecked(true);
+            }
+        };
+        
+        checkApiKey();
+    }, [isAuthenticated, apiKeyChecked]);
+
+    // Handle API key form success
+    const handleApiKeySuccess = () => {
+        setShowApiKeyForm(false);
+        toast.success('API key đã được lưu thành công!');
+    };
+    
+    // Skip API key for now
+    const handleSkipApiKey = () => {
+        setShowApiKeyForm(false);
+        toast.info('Bạn có thể thêm API key sau trong phần cài đặt.');
+    };
+
     return (
         <div className="main-content">
             <ToastContainer position="top-right" autoClose={3000} />
@@ -343,6 +402,11 @@ function UserProgressPage() {
                     </div>
                 )}
             </div>
+
+            {/* Show API Key form as a popup overlay when needed */}
+            {showApiKeyForm && (
+                <ApiKeyForm onSuccess={handleApiKeySuccess} onSkip={handleSkipApiKey} />
+            )}
         </div>
     );
 }

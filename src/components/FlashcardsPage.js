@@ -102,6 +102,10 @@ function FlashcardsPage() {
         navigate('/flashcards/create');
     };
 
+    const handleCreateAI = () => {
+        navigate('/flashcards/create-ai');
+    };
+
     return (
         <div className="flashcards-page">
             <div className="flashcards-container">
@@ -112,9 +116,23 @@ function FlashcardsPage() {
                             <button 
                                 className="create-set-btn" 
                                 onClick={handleCreateNew}
+                                style={{ marginRight: '10px' }}
                             >
                                 <i className="fas fa-plus"></i>
-                                {translateText('Create New Set')}
+                                {translateText('Create Manual Set')}
+                            </button>
+                            <button 
+                                className="create-set-btn create-ai-btn" 
+                                onClick={handleCreateAI}
+                                style={{ 
+                                    background: 'linear-gradient(135deg, #4285f4, #0d47a1)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem'
+                                }}
+                            >
+                                <i className="fas fa-magic"></i>
+                                {translateText('Create AI Set')}
                             </button>
                         </div>
                     </div>
@@ -151,13 +169,30 @@ function FlashcardsPage() {
                     ) : (
                         <div className="no-sets-message">
                             <p>{translateText('You haven\'t created any flashcard sets yet.')}</p>
-                            <button 
-                                className="btn btn-primary mt-3" 
-                                onClick={handleCreateNew}
-                            >
-                                <i className="fas fa-plus mr-2"></i>
-                                {translateText('Create Your First Set')}
-                            </button>
+                            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '1rem' }}>
+                                <button 
+                                    className="btn btn-primary" 
+                                    onClick={handleCreateNew}
+                                    style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                                >
+                                    <i className="fas fa-plus"></i>
+                                    {translateText('Create Manual Set')}
+                                </button>
+                                <button 
+                                    className="btn btn-primary" 
+                                    onClick={handleCreateAI}
+                                    style={{ 
+                                        background: 'linear-gradient(135deg, #4285f4, #0d47a1)',
+                                        border: 'none',
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: '8px'
+                                    }}
+                                >
+                                    <i className="fas fa-magic"></i>
+                                    {translateText('Create AI Set')}
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>

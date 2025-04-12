@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../css/components/Footer.css';
 
 function Footer() {
   const currentYear = new Date().getFullYear();
@@ -56,10 +57,10 @@ function Footer() {
             <div className="footer-column">
               <h3 className="footer-heading">Resources</h3>
               <ul className="footer-nav">
-                <li><Link to="/blog" className="footer-link">Blog</Link></li>
-                <li><Link to="/help" className="footer-link">Help Center</Link></li>
-                <li><Link to="/faq" className="footer-link">FAQ</Link></li>
-                <li><Link to="/contact" className="footer-link">Contact Us</Link></li>
+                <li><Link to="/resources" className="footer-link">Blog</Link></li>
+                <li><Link to="/resources" className="footer-link">Help Center</Link></li>
+                <li><Link to="/resources" className="footer-link">FAQ</Link></li>
+                <li><Link to="/resources" className="footer-link">Contact Us</Link></li>
               </ul>
             </div>
           </div>
@@ -70,9 +71,9 @@ function Footer() {
             &copy; {currentYear} WordWise. All rights reserved.
           </p>
           <div className="legal-links">
-            <Link to="/terms" className="legal-link">Terms of Service</Link>
-            <Link to="/privacy" className="legal-link">Privacy Policy</Link>
-            <Link to="/cookies" className="legal-link">Cookie Policy</Link>
+            <Link to="/resources" className="legal-link">Terms of Service</Link>
+            <Link to="/resources" className="legal-link">Privacy Policy</Link>
+            <Link to="/resources" className="legal-link">Cookie Policy</Link>
           </div>
         </div>
       </div>

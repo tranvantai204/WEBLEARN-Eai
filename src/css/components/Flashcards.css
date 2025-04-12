@@ -125,6 +125,20 @@
     font-size: 1.1rem;
 }
 
+.create-ai-btn {
+    background: linear-gradient(135deg, #4285f4, #0d47a1) !important;
+    box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+}
+
+.create-ai-btn:hover {
+    box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
+}
+
+.create-ai-btn i {
+    font-size: 1.1rem;
+    color: white;
+}
+
 .flashcards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -1484,4 +1498,118 @@
 
 .char-count.limit-reached {
     color: #e74c3c;
+}
+
+/* Loading Popup styles */
+.loading-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+.loading-popup-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    animation: popup-fade-in 0.3s ease-out;
+}
+
+.loading-spinner {
+    font-size: 3rem;
+    color: #3b82f6;
+    margin-bottom: 20px;
+    animation: spin 1.5s linear infinite;
+}
+
+.loading-popup-container h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.loading-popup-container p {
+    color: #666;
+    margin-top: 10px;
+}
+
+@keyframes popup-fade-in {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-steps {
+    margin-top: 20px;
+    text-align: left;
+    padding: 0 15px;
+}
+
+.loading-step {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    color: #4b5563;
+    font-size: 0.95rem;
+}
+
+.loading-step i {
+    margin-right: 10px;
+    color: #3b82f6;
+    width: 20px;
+    text-align: center;
+}
+
+.loading-tips {
+    margin-top: 20px;
+    color: #6b7280;
+    font-size: 0.85rem;
+    background-color: #f3f4f6;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+/* Animation for the loading message */
+.loading-popup-container h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #2563eb;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
 } 

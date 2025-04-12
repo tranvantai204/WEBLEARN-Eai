@@ -12,12 +12,13 @@ function LoginPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [redirecting, setRedirecting] = useState(false);
+    const [loginSuccess, setLoginSuccess] = useState(false);
 
     const { login, updateStreak } = useAuth();
     const navigate = useNavigate();
     
     // Lấy API URL từ biến môi trường
-    const API_URL = process.env.REACT_APP_API_URL || 'https://1abd-42-118-114-121.ngrok-free.app/api';
+    const API_URL = process.env.REACT_APP_API_URL || 'https://da20-115-76-51-131.ngrok-free.app/api';
     
     // Log URL API đang sử dụng
     useEffect(() => {
@@ -26,6 +27,12 @@ function LoginPage() {
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
+    };
+
+    // Handle login completion
+    const handleLoginComplete = () => {
+        setRedirecting(true);
+        navigate('/progress');
     };
 
     // Remove the page transition effect
@@ -42,22 +49,34 @@ function LoginPage() {
         setLoading(true);
         
         try {
-            console.log('Sending login request to:', `${API_URL}/Auth/login`);
+            // Add more detailed logging
+            console.log('Starting login process...');
+            console.log('Login endpoint:', `${API_URL}/Auth/login`);
+            console.log('Request payload:', JSON.stringify({ email, password: '******' }));
             
             const response = await fetch(`${API_URL}/Auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'ngrok-skip-browser-warning': 'true'
                 },
                 body: JSON.stringify({ email, password }),
             });
             
+            console.log('Login response status:', response.status);
+            console.log('Login response headers:', Object.fromEntries(response.headers.entries()));
+            
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Login failed response:', errorText);
                 throw new Error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
             }
             
             const data = await response.json();
-            console.log('Login successful, received data:', { ...data, token: '[REDACTED]', refreshToken: '[REDACTED]' });
+            console.log('Login successful, received data structure:', Object.keys(data));
+            console.log('Token present:', !!data.token);
+            console.log('RefreshToken present:', !!data.refreshToken);
             
             // Tạo đối tượng user từ thông tin trong response
             const userData = {
@@ -66,44 +85,59 @@ function LoginPage() {
                 // Các thông tin khác có thể bổ sung nếu có
             };
             
-            // Gọi hàm login từ AuthContext với cấu trúc phù hợp
-            const loginSuccess = await login(
-                userData,           // user object
-                data.token,         // accessToken (đổi từ "token")
-                data.refreshToken   // refreshToken
-            );
-
-            await updateStreak()
+            console.log('Calling login function with userData:', userData);
             
-            // Hiển thị thông báo thành công và bắt đầu chuyển trang ngay lập tức
-            if (loginSuccess) {
-                setRedirecting(true);
-                toast.success('Đăng nhập thành công!', {
-                    position: "top-right",
-                    autoClose: 1500,
-                });
+            try {
+                // Gọi hàm login từ AuthContext với cấu trúc phù hợp
+                const loginSuccess = await login(
+                    userData,           // user object
+                    data.token,         // accessToken (đổi từ "token")
+                    data.refreshToken   // refreshToken
+                );
+
+                console.log('Login function returned:', loginSuccess);
                 
-                // Remove page transition class
-                // document.body.classList.add('page-transition');
-                
-                // Gọi API để lấy thông tin tiến độ học tập (nếu cần)
+                console.log('Calling updateStreak function...');
                 try {
-                    const progressResponse = await fetch(`${API_URL}/Learning/progress`, {
-                        headers: {
-                            'Authorization': `Bearer ${data.token}`
-                        }
+                    await updateStreak();
+                    console.log('UpdateStreak called successfully');
+                } catch (streakError) {
+                    console.error('UpdateStreak error (non-critical):', streakError);
+                    // Continue anyway - this shouldn't block login
+                }
+            
+                // Hiển thị thông báo thành công
+                if (loginSuccess) {
+                    setLoginSuccess(true);
+                    toast.success('Đăng nhập thành công!', {
+                        position: "top-right",
+                        autoClose: 1500,
                     });
                     
-                    if (progressResponse.ok) {
-                        const progressData = await progressResponse.json();
-                        console.log('Retrieved progress data:', progressData);
+                    // Gọi API để lấy thông tin tiến độ học tập (nếu cần)
+                    try {
+                        const progressResponse = await fetch(`${API_URL}/Learning/progress`, {
+                            headers: {
+                                'Authorization': `Bearer ${data.token}`
+                            }
+                        });
+                        
+                        if (progressResponse.ok) {
+                            const progressData = await progressResponse.json();
+                            console.log('Retrieved progress data:', progressData);
+                        }
+                    } catch (progressError) {
+                        console.error('Failed to fetch progress data:', progressError);
                     }
-                } catch (progressError) {
-                    console.error('Failed to fetch progress data:', progressError);
+                    
+                    // Navigate directly to the progress page
+                    handleLoginComplete();
                 }
-                
-                // Navigate immediately
-                navigate('/progress');
+            } catch (loginError) {
+                console.error('Error during auth context login:', loginError);
+                setError('Lỗi xác thực: ' + (loginError.message || 'Đã xảy ra lỗi không xác định'));
+                toast.error('Lỗi xác thực: ' + (loginError.message || 'Đã xảy ra lỗi không xác định'));
+                setLoading(false);
             }
         } catch (err) {
             setError(err.message || 'Đã xảy ra lỗi khi đăng nhập');
@@ -271,7 +305,7 @@ function LoginPage() {
                             
                             <button 
                                 type="submit" 
-                                className={`btn btn-primary btn-lg login-submit-btn ${redirecting ? 'success-btn' : ''}`}
+                                className={`btn btn-primary btn-lg login-submit-btn ${loginSuccess ? 'success-btn' : ''}`}
                                 disabled={loading || redirecting}
                             >
                                 {loading ? (
@@ -279,7 +313,7 @@ function LoginPage() {
                                         <i className="fas fa-spinner fa-spin"></i>
                                         Logging in...
                                     </>
-                                ) : redirecting ? (
+                                ) : loginSuccess ? (
                                     <>
                                         <i className="fas fa-check"></i>
                                         Success!

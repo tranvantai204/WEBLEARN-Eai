@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import '../css/components/Profile.css';
+import ApiKeyForm from './ApiKeyForm';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ProfilePage() {
     const [profileData, setProfileData] = useState({
@@ -25,6 +28,7 @@ function ProfilePage() {
 
     return (
         <div className="main-content">
+            <ToastContainer position="top-right" />
             <div className="profile-container">
                 <div className="profile-header">
                     <h1 className="profile-title">Profile Settings</h1>
@@ -128,6 +132,12 @@ function ProfilePage() {
                                 </select>
                             </div>
                         </form>
+                    </div>
+                    
+                    {/* API Key Form Section */}
+                    <div className="profile-card" style={{ gridColumn: "1 / -1" }}>
+                        <h2 className="section-title">AI Features</h2>
+                        <ApiKeyForm onSuccess={() => toast.success('Settings updated successfully')} />
                     </div>
                 </div>
             </div>

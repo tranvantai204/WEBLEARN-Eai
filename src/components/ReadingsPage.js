@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast, Bounce } from 'react-toastify';
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useFlashcard } from '../contexts/FlashcardContext';
+import ApiKeyForm from './ApiKeyForm';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Reading.css';
 
@@ -11,7 +13,9 @@ function ReadingsPage() {
     const [isGenerating, setIsGenerating] = useState(false);
     const [showAIOptions, setShowAIOptions] = useState(false);
     const [topic, setTopic] = useState('');
+    const [showApiKeyForm, setShowApiKeyForm] = useState(false);
     const { translateText, currentLanguage } = useLanguage();
+    const { getUserApiKey } = useFlashcard();
     
     // State for translated content
     const [translations, setTranslations] = useState({
@@ -68,12 +72,25 @@ function ReadingsPage() {
         }
     }, [currentLanguage, translateText]);
 
-    const handleAIGenerate = () => {
-        if (!topic.trim()) {
-            toast.error(translatedMessages.errorEmptyTopic);
-            return;
+    // Handle API key form success
+    const handleApiKeySuccess = () => {
+        setShowApiKeyForm(false);
+        toast.success('API key saved successfully!');
+        
+        // Continue with AI generation if that was the original action
+        if (topic.trim()) {
+            generateWithAI();
         }
-
+    };
+    
+    // Skip API key for now
+    const handleSkipApiKey = () => {
+        setShowApiKeyForm(false);
+        toast.info('You can add your API key later in settings. AI features will not work without an API key.');
+    };
+    
+    // Actual AI generation function - called after API key check
+    const generateWithAI = () => {
         setIsGenerating(true);
         toast.info(translatedMessages.generatingMsg);
 
@@ -85,6 +102,53 @@ function ReadingsPage() {
             toast.success(translatedMessages.successMsg);
             navigate('/readings/generated');
         }, 2000);
+    };
+
+    const handleAIGenerate = async () => {
+        if (!topic.trim()) {
+            toast.error(translatedMessages.errorEmptyTopic);
+            return;
+        }
+
+        // Kiểm tra API key trong localStorage trước
+        const localApiKey = localStorage.getItem('gemini_api_key');
+        const timestamp = localStorage.getItem('gemini_api_key_timestamp');
+        
+        if (localApiKey && timestamp) {
+            // Kiểm tra xem API key có còn hiệu lực không (2 giờ)
+            const now = Date.now();
+            const saved = parseInt(timestamp, 10);
+            const twoHoursMs = 2 * 60 * 60 * 1000;
+            
+            if (now - saved <= twoHoursMs) {
+                console.log('Sử dụng API key từ localStorage');
+                // Bỏ qua hiển thị form API key
+                generateWithAI();
+                return;
+            } else {
+                // API key đã hết hạn, xóa khỏi localStorage
+                console.log('API key trong localStorage đã hết hạn');
+                localStorage.removeItem('gemini_api_key');
+                localStorage.removeItem('gemini_api_key_timestamp');
+            }
+        }
+
+        // Check if API key is set
+        try {
+            const key = await getUserApiKey();
+            if (!key) {
+                setShowApiKeyForm(true);
+                toast.warn('AI features require an API key');
+                return;
+            }
+            
+            // If we have an API key, proceed with generation
+            generateWithAI();
+        } catch (error) {
+            console.error('Error checking API key:', error);
+            // In case of error checking API key, try to generate anyway
+            generateWithAI();
+        }
     };
 
     return (
@@ -205,6 +269,11 @@ function ReadingsPage() {
                     </div>
                 </div>
             </div>
+            
+            {/* Show API Key form as a popup overlay when needed */}
+            {showApiKeyForm && (
+                <ApiKeyForm onSuccess={handleApiKeySuccess} onSkip={handleSkipApiKey} />
+            )}
         </div>
     );
 }

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useFlashcard } from '../contexts/FlashcardContext';
+import { useAuth } from '../contexts/AuthContext';
+import ApiKeyForm from './ApiKeyForm';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Flashcards.css';
@@ -63,7 +65,8 @@ function Modal({ show, onClose, children }) {
 function FlashcardSetDetailsPage() {
     const { flashcardSetId } = useParams();
     const navigate = useNavigate();
-    const { getFlashcardSet, createFlashcard, directCreateFlashcard, getFlashcardsForSet, deleteFlashcardSet, updateFlashcardSet, togglePublicStatus, loading, error } = useFlashcard();
+    const { getFlashcardSet, createFlashcard, directCreateFlashcard, getFlashcardsForSet, deleteFlashcardSet, updateFlashcardSet, togglePublicStatus, loading, error, getUserApiKey, deleteFlashcard, updateFlashcard } = useFlashcard();
+    const { isAuthenticated } = useAuth();
     
     const [searchTerm, setSearchTerm] = useState("");
     const [sortBy, setSortBy] = useState("alphabetical");
@@ -74,6 +77,9 @@ function FlashcardSetDetailsPage() {
     const [showEditSetModal, setShowEditSetModal] = useState(false);
     const [showVisibilityModal, setShowVisibilityModal] = useState(false);
     const [changingVisibility, setChangingVisibility] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [deletingFlashcardId, setDeletingFlashcardId] = useState(null);
+    const [deletingFlashcard, setDeletingFlashcard] = useState(false);
     const [newFlashcard, setNewFlashcard] = useState({
         term: '',
         definition: '',
@@ -97,6 +103,23 @@ function FlashcardSetDetailsPage() {
     });
     const [creatingCard, setCreatingCard] = useState(false);
     const [formErrors, setFormErrors] = useState({
+        term: '',
+        definition: '',
+        example: ''
+    });
+    const [generatingWithAI, setGeneratingWithAI] = useState(false);
+    const [showApiKeyForm, setShowApiKeyForm] = useState(false);
+    
+    // States for editing flashcard
+    const [showEditFlashcardModal, setShowEditFlashcardModal] = useState(false);
+    const [editingFlashcardId, setEditingFlashcardId] = useState(null);
+    const [editFlashcard, setEditFlashcard] = useState({
+        term: '',
+        definition: '',
+        example: ''
+    });
+    const [updatingFlashcard, setUpdatingFlashcard] = useState(false);
+    const [editFlashcardErrors, setEditFlashcardErrors] = useState({
         term: '',
         definition: '',
         example: ''
@@ -163,6 +186,42 @@ function FlashcardSetDetailsPage() {
             setFlashcards([]);
         } finally {
             setLoadingFlashcards(false);
+        }
+    };
+    
+    // Opens delete confirmation modal for a specific flashcard
+    const handleConfirmDeleteFlashcard = (flashcardId) => {
+        setDeletingFlashcardId(flashcardId);
+        setShowDeleteConfirmation(true);
+    };
+    
+    // Closes the delete confirmation modal
+    const closeDeleteConfirmation = () => {
+        setShowDeleteConfirmation(false);
+        setDeletingFlashcardId(null);
+    };
+    
+    // Handles the actual deletion of a flashcard
+    const handleDeleteFlashcard = async () => {
+        if (!deletingFlashcardId) return;
+        
+        try {
+            setDeletingFlashcard(true);
+            
+            // Call the delete flashcard function from context
+            const result = await deleteFlashcard(deletingFlashcardId);
+            
+            if (result && result.success) {
+                // Remove the deleted flashcard from the state
+                setFlashcards(prev => prev.filter(card => card.flashcardId !== deletingFlashcardId));
+                toast.success('Flashcard deleted successfully');
+            }
+        } catch (err) {
+            console.error('Error deleting flashcard:', err);
+            toast.error(`Failed to delete flashcard: ${err.message || 'Unknown error'}`);
+        } finally {
+            setDeletingFlashcard(false);
+            closeDeleteConfirmation();
         }
     };
 
@@ -312,7 +371,7 @@ function FlashcardSetDetailsPage() {
             console.log('Creating flashcard with data:', flashcardData);
             
             // Sử dụng API endpoint từ yêu cầu của người dùng
-            const response = await fetch("https://6d2c-115-76-51-131.ngrok-free.app/api/FlashCard/Create", {
+            const response = await fetch(`${baseUrl}/FlashCard/Create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -953,6 +1012,270 @@ function FlashcardSetDetailsPage() {
         setShowVisibilityModal(false);
     };
 
+    // Kiểm tra API key và hiển thị form nếu cần
+    const handleGenerateWithAI = async () => {
+        // Kiểm tra xem từ đã được nhập hay chưa
+        if (!newFlashcard.term.trim()) {
+            toast.error('Vui lòng nhập từ để tạo nội dung với AI');
+            return;
+        }
+        
+        // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+        if (!isAuthenticated) {
+            toast.error('Bạn cần đăng nhập để sử dụng tính năng này');
+            navigate('/login');
+            return;
+        }
+        
+        // Kiểm tra API key trong localStorage
+        const localApiKey = localStorage.getItem('gemini_api_key');
+        const timestamp = localStorage.getItem('gemini_api_key_timestamp');
+        
+        if (localApiKey && timestamp) {
+            // Kiểm tra xem API key có còn hiệu lực không (2 giờ)
+            const now = Date.now();
+            const saved = parseInt(timestamp, 10);
+            const twoHoursMs = 2 * 60 * 60 * 1000;
+            
+            if (now - saved <= twoHoursMs) {
+                console.log('Sử dụng API key từ localStorage');
+                // Bỏ qua hiển thị form API key
+                handleGenerateContentWithAI();
+                return;
+            } else {
+                // API key đã hết hạn, xóa khỏi localStorage
+                console.log('API key trong localStorage đã hết hạn');
+                localStorage.removeItem('gemini_api_key');
+                localStorage.removeItem('gemini_api_key_timestamp');
+            }
+        }
+        
+        // Hiển thị form nhập API key nếu không có trong localStorage
+        setShowApiKeyForm(true);
+    };
+    
+    // Xử lý khi người dùng nhập API key thành công
+    const handleApiKeySuccess = () => {
+        setShowApiKeyForm(false);
+        toast.success('API key đã được lưu thành công!');
+        
+        // Tự động tiếp tục tạo nội dung flashcard
+        if (newFlashcard.term.trim()) {
+            handleGenerateContentWithAI();
+        }
+    };
+    
+    // Xử lý khi người dùng bỏ qua việc nhập API key
+    const handleSkipApiKey = () => {
+        setShowApiKeyForm(false);
+        toast.info('Bạn có thể thêm API key sau trong phần cài đặt. Lưu ý rằng các tính năng AI sẽ không hoạt động nếu không có API key.');
+    };
+    
+    // Hàm thực tế tạo nội dung bằng AI
+    const handleGenerateContentWithAI = async () => {
+        // Kiểm tra lại xem từ đã được nhập hay chưa
+        if (!newFlashcard.term.trim()) {
+            toast.error('Vui lòng nhập từ để tạo nội dung với AI');
+            return;
+        }
+        
+        setGeneratingWithAI(true);
+        
+        try {
+            const response = await fetch(`${baseUrl}/api/FlashCardSet/GenerateByAI`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'ngrok-skip-browser-warning': 'true',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                },
+                body: JSON.stringify({
+                    term: newFlashcard.term,
+                    learningLanguage: flashcardSet?.learningLanguage || 'en',
+                    nativeLanguage: flashcardSet?.nativeLanguage || 'vi'
+                })
+            });
+            
+            if (!response.ok) {
+                // Nếu không thành công, kiểm tra lỗi
+                const errorText = await response.text();
+                
+                if (errorText.includes('No API key available')) {
+                    // Nếu không có API key, hiển thị form nhập API key
+                    setShowApiKeyForm(true);
+                    throw new Error('Bạn cần nhập API key Gemini để sử dụng tính năng AI');
+                }
+                
+                throw new Error(`Không thể tạo nội dung: ${response.status} ${response.statusText}`);
+            }
+            
+            const result = await response.json();
+            
+            // Cập nhật form với nội dung từ AI
+            setNewFlashcard(prev => ({
+                ...prev,
+                definition: result.definition || prev.definition,
+                example: result.example || prev.example
+            }));
+            
+            toast.success('Đã tạo nội dung thành công!');
+        } catch (error) {
+            console.error('Lỗi khi tạo nội dung với AI:', error);
+            toast.error(error.message || 'Đã xảy ra lỗi khi tạo nội dung với AI');
+        } finally {
+            setGeneratingWithAI(false);
+        }
+    };
+
+    // Opens edit flashcard modal
+    const handleOpenEditModal = (flashcard) => {
+        setEditingFlashcardId(flashcard.flashcardId);
+        setEditFlashcard({
+            term: flashcard.term,
+            definition: flashcard.definition,
+            example: flashcard.example || ''
+        });
+        setEditFlashcardErrors({
+            term: '',
+            definition: '',
+            example: ''
+        });
+        setShowEditFlashcardModal(true);
+    };
+    
+    // Closes the edit flashcard modal
+    const closeEditFlashcardModal = () => {
+        setShowEditFlashcardModal(false);
+        setEditingFlashcardId(null);
+    };
+    
+    // Handle flashcard edit form input changes with validation
+    const handleEditFlashcardChange = (e) => {
+        const { name, value } = e.target;
+        
+        // Update form data
+        setEditFlashcard(prev => ({
+            ...prev,
+            [name]: value
+        }));
+        
+        // Validate on change
+        const errors = { ...editFlashcardErrors };
+        
+        switch (name) {
+            case 'term':
+                if (!value.trim()) {
+                    errors.term = 'Term is required';
+                } else if (value.length > MAX_TERM_LENGTH) {
+                    errors.term = `Term must be less than ${MAX_TERM_LENGTH} characters`;
+                } else {
+                    errors.term = '';
+                }
+                break;
+            case 'definition':
+                if (!value.trim()) {
+                    errors.definition = 'Definition is required';
+                } else if (value.length > MAX_DEFINITION_LENGTH) {
+                    errors.definition = `Definition must be less than ${MAX_DEFINITION_LENGTH} characters`;
+                } else {
+                    errors.definition = '';
+                }
+                break;
+            case 'example':
+                if (value.length > MAX_EXAMPLE_LENGTH) {
+                    errors.example = `Example must be less than ${MAX_EXAMPLE_LENGTH} characters`;
+                } else {
+                    errors.example = '';
+                }
+                break;
+            default:
+                break;
+        }
+        
+        setEditFlashcardErrors(errors);
+    };
+    
+    // Validate edit flashcard form before submission
+    const validateEditFlashcardForm = () => {
+        const errors = {
+            term: '',
+            definition: '',
+            example: ''
+        };
+        let isValid = true;
+        
+        if (!editFlashcard.term.trim()) {
+            errors.term = 'Term is required';
+            isValid = false;
+        } else if (editFlashcard.term.length > MAX_TERM_LENGTH) {
+            errors.term = `Term must be less than ${MAX_TERM_LENGTH} characters`;
+            isValid = false;
+        }
+        
+        if (!editFlashcard.definition.trim()) {
+            errors.definition = 'Definition is required';
+            isValid = false;
+        } else if (editFlashcard.definition.length > MAX_DEFINITION_LENGTH) {
+            errors.definition = `Definition must be less than ${MAX_DEFINITION_LENGTH} characters`;
+            isValid = false;
+        }
+        
+        if (editFlashcard.example.length > MAX_EXAMPLE_LENGTH) {
+            errors.example = `Example must be less than ${MAX_EXAMPLE_LENGTH} characters`;
+            isValid = false;
+        }
+        
+        setEditFlashcardErrors(errors);
+        return isValid;
+    };
+    
+    // Handle edit flashcard form submission
+    const handleUpdateFlashcard = async (e) => {
+        e.preventDefault();
+        
+        // Validate form before submission
+        if (!validateEditFlashcardForm()) {
+            toast.error('Please fix the errors in the form before submitting.');
+            return;
+        }
+        
+        setUpdatingFlashcard(true);
+        
+        try {
+            // Create flashcard data object
+            const flashcardData = {
+                term: editFlashcard.term.trim(),
+                definition: editFlashcard.definition.trim(),
+                example: editFlashcard.example.trim() || ''
+            };
+            
+            console.log('Updating flashcard with data:', flashcardData);
+            
+            // Call the updateFlashcard function from context
+            const result = await updateFlashcard(editingFlashcardId, flashcardData);
+            
+            if (result && result.success) {
+                // Update the flashcard in the state
+                setFlashcards(prev => prev.map(card => 
+                    card.flashcardId === editingFlashcardId 
+                        ? { ...card, ...flashcardData }
+                        : card
+                ));
+                
+                toast.success('Flashcard updated successfully');
+                closeEditFlashcardModal();
+            } else {
+                toast.error(result.error || 'Failed to update flashcard');
+            }
+        } catch (err) {
+            console.error('Error updating flashcard:', err);
+            toast.error(`Failed to update flashcard: ${err.message || 'Unknown error'}`);
+        } finally {
+            setUpdatingFlashcard(false);
+        }
+    };
+
     return (
         <div className="flashcard-details-page">
             {/* Thêm style cho animations */}
@@ -969,6 +1292,14 @@ function FlashcardSetDetailsPage() {
                 draggable
                 pauseOnHover
             />
+            
+            {/* Hiển thị form nhập API key khi cần */}
+            {showApiKeyForm && (
+                <ApiKeyForm 
+                    onSuccess={handleApiKeySuccess} 
+                    onSkip={handleSkipApiKey} 
+                />
+            )}
             
             {/* Modal for adding a new flashcard */}
             <Modal show={showAddModal} onClose={() => setShowAddModal(false)}>
@@ -1011,7 +1342,7 @@ function FlashcardSetDetailsPage() {
                             margin: 0,
                             fontSize: '0.95rem',
                             color: '#495057'
-                        }}><i className="fas fa-info-circle"></i> Create a new flashcard for your set. Term and Definition are required fields.</p>
+                        }}><i className="fas fa-info-circle"></i> Create a new flashcard for your set. Term and Definition are required fields. You can use AI Generate to automatically create definitions and examples.</p>
                     </div>
                     <form onSubmit={handleAddFlashcard}>
                         <div className="form-group" style={{
@@ -1029,24 +1360,54 @@ function FlashcardSetDetailsPage() {
                                     {newFlashcard.term.length}/{MAX_TERM_LENGTH}
                                 </small>
                             </label>
-                            <input
-                                type="text"
-                                id="term"
-                                name="term"
-                                value={newFlashcard.term}
-                                onChange={handleInputChange}
-                                style={{
-                                    width: '100%',
-                                    padding: '0.75rem 1rem',
-                                    border: formErrors.term ? '1px solid #dc3545' : '1px solid #ced4da',
-                                    borderRadius: '6px',
-                                    fontSize: '1rem'
-                                }}
-                                maxLength={MAX_TERM_LENGTH}
-                                placeholder="Enter the word or phrase to learn"
-                                autoFocus
-                                required
-                            />
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <input
+                                    type="text"
+                                    id="term"
+                                    name="term"
+                                    value={newFlashcard.term}
+                                    onChange={handleInputChange}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem 1rem',
+                                        border: formErrors.term ? '1px solid #dc3545' : '1px solid #ced4da',
+                                        borderRadius: '6px',
+                                        fontSize: '1rem'
+                                    }}
+                                    maxLength={MAX_TERM_LENGTH}
+                                    placeholder="Enter the word or phrase to learn"
+                                    autoFocus
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleGenerateWithAI}
+                                    disabled={generatingWithAI || !newFlashcard.term.trim()}
+                                    title="Tạo định nghĩa và ví dụ bằng AI. Yêu cầu API key của Google Gemini."
+                                    style={{
+                                        padding: '0.75rem 1rem',
+                                        backgroundColor: '#4285f4',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        color: 'white',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        opacity: generatingWithAI || !newFlashcard.term.trim() ? 0.7 : 1
+                                    }}
+                                >
+                                    {generatingWithAI ? (
+                                        <>
+                                            <i className="fas fa-spinner fa-spin"></i> Đang tạo...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="fas fa-magic"></i> AI Generate
+                                        </>
+                                    )}
+                                </button>
+                            </div>
                             {formErrors.term && (
                                 <div style={{ color: '#dc3545', fontSize: '0.875em', marginTop: '0.25rem' }}>
                                     {formErrors.term}
@@ -1182,7 +1543,7 @@ function FlashcardSetDetailsPage() {
             </Modal>
             
             {/* Modal for editing the flashcard set */}
-            <Modal show={showEditSetModal} onClose={() => setShowEditSetModal(false)}>
+            <Modal show={showEditSetModal} onClose={closeEditSetModal}>
                 <div className="modal-header" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -1204,7 +1565,7 @@ function FlashcardSetDetailsPage() {
                             cursor: 'pointer',
                             padding: '0.5rem'
                         }}
-                        onClick={() => setShowEditSetModal(false)}
+                        onClick={closeEditSetModal}
                     >
                         <i className="fas fa-times"></i>
                     </button>
@@ -1427,7 +1788,7 @@ function FlashcardSetDetailsPage() {
                                     color: '#212529',
                                     cursor: 'pointer'
                                 }}
-                                onClick={() => setShowEditSetModal(false)}
+                                onClick={closeEditSetModal}
                                 disabled={updatingSet}
                             >
                                 Cancel
@@ -1460,8 +1821,8 @@ function FlashcardSetDetailsPage() {
                 </div>
             </Modal>
             
-            {/* Modal for confirming visibility change */}
-            <Modal show={showVisibilityModal} onClose={() => setShowVisibilityModal(false)}>
+            {/* Modal for changing visibility */}
+            <Modal show={showVisibilityModal} onClose={closeVisibilityModal}>
                 <div className="modal-header" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -1483,7 +1844,7 @@ function FlashcardSetDetailsPage() {
                             cursor: 'pointer',
                             padding: '0.5rem'
                         }}
-                        onClick={() => setShowVisibilityModal(false)}
+                        onClick={closeVisibilityModal}
                     >
                         <i className="fas fa-times"></i>
                     </button>
@@ -1540,7 +1901,7 @@ function FlashcardSetDetailsPage() {
                                 color: '#212529',
                                 cursor: 'pointer'
                             }}
-                            onClick={() => setShowVisibilityModal(false)}
+                            onClick={closeVisibilityModal}
                             disabled={changingVisibility}
                         >
                             Cancel
@@ -1572,6 +1933,296 @@ function FlashcardSetDetailsPage() {
                 </div>
             </Modal>
             
+            {/* Delete Flashcard Confirmation Modal */}
+            <Modal show={showDeleteConfirmation} onClose={closeDeleteConfirmation}>
+                <div className="modal-header" style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '1.5rem',
+                    borderBottom: '1px solid #e0e0e0'
+                }}>
+                    <h3 style={{
+                        margin: 0,
+                        fontSize: '1.25rem',
+                        fontWeight: '600'
+                    }}>Delete Flashcard</h3>
+                    <button 
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '1.25rem',
+                            color: '#6c757d',
+                            cursor: 'pointer',
+                            padding: '0.5rem'
+                        }}
+                        onClick={closeDeleteConfirmation}
+                    >
+                        <i className="fas fa-times"></i>
+                    </button>
+                </div>
+                <div className="modal-body" style={{
+                    padding: '1.5rem'
+                }}>
+                    <p style={{ marginBottom: '1.5rem' }}>Are you sure you want to delete this flashcard? This action cannot be undone.</p>
+                    
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        gap: '1rem'
+                    }}>
+                        <button 
+                            style={{
+                                padding: '0.5rem 1rem',
+                                borderRadius: '6px',
+                                backgroundColor: '#f8f9fa',
+                                border: '1px solid #ced4da',
+                                color: '#212529',
+                                cursor: 'pointer'
+                            }}
+                            onClick={closeDeleteConfirmation}
+                            disabled={deletingFlashcard}
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            style={{
+                                padding: '0.5rem 1rem',
+                                borderRadius: '6px',
+                                backgroundColor: '#dc3545',
+                                border: 'none',
+                                color: 'white',
+                                cursor: 'pointer',
+                                opacity: deletingFlashcard ? 0.7 : 1
+                            }}
+                            onClick={handleDeleteFlashcard}
+                            disabled={deletingFlashcard}
+                        >
+                            {deletingFlashcard ? (
+                                <>
+                                    <i className="fas fa-spinner fa-spin"></i> Deleting...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-trash"></i> Delete
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+            
+            {/* Edit Flashcard Modal */}
+            <Modal show={showEditFlashcardModal} onClose={closeEditFlashcardModal}>
+                <div className="modal-header" style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '1.5rem',
+                    borderBottom: '1px solid #e0e0e0'
+                }}>
+                    <h3 style={{
+                        margin: 0,
+                        fontSize: '1.25rem',
+                        fontWeight: '600'
+                    }}>Edit Flashcard</h3>
+                    <button 
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '1.25rem',
+                            color: '#6c757d',
+                            cursor: 'pointer',
+                            padding: '0.5rem'
+                        }}
+                        onClick={closeEditFlashcardModal}
+                    >
+                        <i className="fas fa-times"></i>
+                    </button>
+                </div>
+                <div className="modal-body" style={{
+                    padding: '1.5rem'
+                }}>
+                    <div className="modal-instructions" style={{
+                        backgroundColor: '#f8f9fa',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        marginBottom: '1.5rem'
+                    }}>
+                        <p style={{
+                            margin: 0,
+                            fontSize: '0.95rem',
+                            color: '#495057'
+                        }}><i className="fas fa-info-circle"></i> Edit your flashcard. Term and Definition are required fields.</p>
+                    </div>
+                    <form onSubmit={handleUpdateFlashcard}>
+                        <div className="form-group" style={{
+                            marginBottom: '1.25rem'
+                        }}>
+                            <label htmlFor="edit-term" style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '0.5rem',
+                                fontWeight: '500'
+                            }}>
+                                Term <span style={{ color: '#dc3545' }}>*</span>
+                                <small style={{ color: '#6c757d', fontSize: '0.8rem' }}>
+                                    {editFlashcard.term.length}/{MAX_TERM_LENGTH}
+                                </small>
+                            </label>
+                            <input
+                                type="text"
+                                id="edit-term"
+                                name="term"
+                                value={editFlashcard.term}
+                                onChange={handleEditFlashcardChange}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem 1rem',
+                                    border: editFlashcardErrors.term ? '1px solid #dc3545' : '1px solid #ced4da',
+                                    borderRadius: '6px',
+                                    fontSize: '1rem'
+                                }}
+                                maxLength={MAX_TERM_LENGTH}
+                                placeholder="Enter the word or phrase to learn"
+                                autoFocus
+                                required
+                            />
+                            {editFlashcardErrors.term && (
+                                <div style={{ color: '#dc3545', fontSize: '0.875em', marginTop: '0.25rem' }}>
+                                    {editFlashcardErrors.term}
+                                </div>
+                            )}
+                        </div>
+                        <div className="form-group" style={{
+                            marginBottom: '1.25rem'
+                        }}>
+                            <label htmlFor="edit-definition" style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '0.5rem',
+                                fontWeight: '500'
+                            }}>
+                                Definition <span style={{ color: '#dc3545' }}>*</span>
+                                <small style={{ color: '#6c757d', fontSize: '0.8rem' }}>
+                                    {editFlashcard.definition.length}/{MAX_DEFINITION_LENGTH}
+                                </small>
+                            </label>
+                            <textarea
+                                id="edit-definition"
+                                name="definition"
+                                value={editFlashcard.definition}
+                                onChange={handleEditFlashcardChange}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem 1rem',
+                                    border: editFlashcardErrors.definition ? '1px solid #dc3545' : '1px solid #ced4da',
+                                    borderRadius: '6px',
+                                    fontSize: '1rem',
+                                    minHeight: '100px',
+                                    resize: 'vertical'
+                                }}
+                                rows="3"
+                                maxLength={MAX_DEFINITION_LENGTH}
+                                placeholder="Enter the meaning or explanation"
+                                required
+                            ></textarea>
+                            {editFlashcardErrors.definition && (
+                                <div style={{ color: '#dc3545', fontSize: '0.875em', marginTop: '0.25rem' }}>
+                                    {editFlashcardErrors.definition}
+                                </div>
+                            )}
+                        </div>
+                        <div className="form-group" style={{
+                            marginBottom: '1.25rem'
+                        }}>
+                            <label htmlFor="edit-example" style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '0.5rem',
+                                fontWeight: '500'
+                            }}>
+                                Example (optional)
+                                <small style={{ color: '#6c757d', fontSize: '0.8rem' }}>
+                                    {editFlashcard.example.length}/{MAX_EXAMPLE_LENGTH}
+                                </small>
+                            </label>
+                            <textarea
+                                id="edit-example"
+                                name="example"
+                                value={editFlashcard.example}
+                                onChange={handleEditFlashcardChange}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem 1rem',
+                                    border: editFlashcardErrors.example ? '1px solid #dc3545' : '1px solid #ced4da',
+                                    borderRadius: '6px',
+                                    fontSize: '1rem',
+                                    minHeight: '100px',
+                                    resize: 'vertical'
+                                }}
+                                rows="3"
+                                maxLength={MAX_EXAMPLE_LENGTH}
+                                placeholder="Add a sample sentence or usage example"
+                            ></textarea>
+                            {editFlashcardErrors.example && (
+                                <div style={{ color: '#dc3545', fontSize: '0.875em', marginTop: '0.25rem' }}>
+                                    {editFlashcardErrors.example}
+                                </div>
+                            )}
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            gap: '1rem',
+                            marginTop: '2rem'
+                        }}>
+                            <button 
+                                type="button" 
+                                style={{
+                                    padding: '0.5rem 1rem',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#f8f9fa',
+                                    border: '1px solid #ced4da',
+                                    color: '#212529',
+                                    cursor: 'pointer'
+                                }}
+                                onClick={closeEditFlashcardModal}
+                                disabled={updatingFlashcard}
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                type="submit" 
+                                style={{
+                                    padding: '0.5rem 1rem',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#16a085',
+                                    border: 'none',
+                                    color: 'white',
+                                    cursor: 'pointer',
+                                    opacity: (updatingFlashcard || !!editFlashcardErrors.term || !!editFlashcardErrors.definition || !!editFlashcardErrors.example) ? 0.7 : 1
+                                }}
+                                disabled={updatingFlashcard || !!editFlashcardErrors.term || !!editFlashcardErrors.definition || !!editFlashcardErrors.example}
+                            >
+                                {updatingFlashcard ? (
+                                    <>
+                                        <i className="fas fa-spinner fa-spin"></i> Updating...
+                                    </>
+                                ) : (
+                                    <>
+                                        <i className="fas fa-save"></i> Save Changes
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
+
             <div className="flashcards-container">
                 <div className="page-header">
                     <div className="header-back">
@@ -1721,10 +2372,44 @@ function FlashcardSetDetailsPage() {
                                             <div className="definition-cell">{card.definition}</div>
                                             <div className="example-cell">{card.example}</div>
                                             <div className="actions-cell">
-                                                <button className="btn-icon" title="Edit">
+                                                <button 
+                                                    style={{
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        padding: '0.5rem 0.75rem',
+                                                        cursor: 'pointer',
+                                                        color: '#16a085',
+                                                        borderRadius: '4px',
+                                                        transition: 'all 0.2s',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        minWidth: '36px',
+                                                        minHeight: '36px'
+                                                    }}
+                                                    title="Edit"
+                                                    onClick={() => handleOpenEditModal(card)}
+                                                >
                                                     <i className="fas fa-edit"></i>
                                                 </button>
-                                                <button className="btn-icon" title="Delete">
+                                                <button 
+                                                    style={{
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        padding: '0.5rem 0.75rem',
+                                                        cursor: 'pointer',
+                                                        color: '#dc3545',
+                                                        borderRadius: '4px',
+                                                        transition: 'all 0.2s',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        minWidth: '36px',
+                                                        minHeight: '36px'
+                                                    }}
+                                                    title="Delete"
+                                                    onClick={() => handleConfirmDeleteFlashcard(card.flashcardId)}
+                                                >
                                                     <i className="fas fa-trash"></i>
                                                 </button>
                                             </div>
