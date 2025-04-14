@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Flashcards.css';
 import ApiKeyForm from './ApiKeyForm';
+import LanguageSelector from './LanguageSelector';
 
 // Add LoadingPopup component
 const LoadingPopup = ({ message }) => (
@@ -46,6 +47,8 @@ function CreateAIFlashcardsPage() {
     const [error, setError] = useState('');
     const [titleError, setTitleError] = useState('');
     const [topicError, setTopicError] = useState('');
+    const [nativeLanguageError, setNativeLanguageError] = useState('');
+    const [learningLanguageError, setLearningLanguageError] = useState('');
     const [apiKey, setApiKey] = useState('');
     const [showApiKeyForm, setShowApiKeyForm] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false); // Thêm state để theo dõi việc đang submit form
@@ -306,29 +309,33 @@ function CreateAIFlashcardsPage() {
         navigate('/flashcards');
     };
     
-    // Language options
-    const nativeLanguageOptions = [
-        { value: 'VIE', label: 'Vietnamese' },
-        { value: 'ENG', label: 'English' },
-        { value: 'JP', label: 'Japanese' },
-        { value: 'KR', label: 'Korean' },
-        { value: 'FR', label: 'French' },
-        { value: 'CN', label: 'Chinese' },
-        { value: 'DE', label: 'German' },
-        { value: 'ES', label: 'Spanish' }
-    ];
+    // Handle language change
+    const handleLanguageChange = (e) => {
+        const { name, value } = e.target;
+        
+        if (name === 'nativeLanguage') {
+            setNativeLanguage(value);
+            setNativeLanguageError('');
+            
+            // Prevent same language for both selections
+            if (value && value === learningLanguage) {
+                setLearningLanguageError('Native and learning languages must be different');
+            } else {
+                setLearningLanguageError('');
+            }
+        } else if (name === 'learningLanguage') {
+            setLearningLanguage(value);
+            setLearningLanguageError('');
+            
+            // Prevent same language for both selections
+            if (value && value === nativeLanguage) {
+                setNativeLanguageError('Native and learning languages must be different');
+            } else {
+                setNativeLanguageError('');
+            }
+        }
+    };
     
-    const learningLanguageOptions = [
-        { value: 'ENG', label: 'English' },
-        { value: 'VIE', label: 'Vietnamese' },
-        { value: 'JP', label: 'Japanese' },
-        { value: 'KR', label: 'Korean' },
-        { value: 'FR', label: 'French' },
-        { value: 'CN', label: 'Chinese' },
-        { value: 'DE', label: 'German' },
-        { value: 'ES', label: 'Spanish' }
-    ];
-
     // Level options
     const levelOptions = [
         { value: 1, label: 'Level 1 - Beginner' },
@@ -338,7 +345,7 @@ function CreateAIFlashcardsPage() {
         { value: 5, label: 'Level 5 - Upper Intermediate' },
         { value: 6, label: 'Level 6 - Advanced' }
     ];
-
+    
     // ApiKeyForm is now imported, so we don't need to define it here
     // Instead we'll use a handler to communicate with the imported component
     const handleApiKeySuccess = () => {
@@ -507,77 +514,25 @@ function CreateAIFlashcardsPage() {
                             gap: '20px',
                             marginBottom: '24px'
                         }}>
-                            <div className="form-group">
-                                <label htmlFor="nativeLanguage" style={{ 
-                                    fontWeight: '600', 
-                                    marginBottom: '8px', 
-                                    display: 'block', 
-                                    color: '#1e293b' 
-                                }}>
-                                    Native Language <span style={{ color: '#e11d48' }}>*</span>
-                                </label>
-                                <select 
-                                    className="form-control" 
-                                    id="nativeLanguage"
-                                    value={nativeLanguage}
-                                    onChange={(e) => setNativeLanguage(e.target.value)}
-                                    required
-                                    style={{ 
-                                        padding: '12px 16px', 
-                                        borderRadius: '8px', 
-                                        border: '1px solid #e2e8f0',
-                                        fontSize: '16px',
-                                        width: '100%',
-                                        appearance: 'none',
-                                        backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23a0aec0\'%3E%3Cpath d=\'M7 10l5 5 5-5z\'/%3E%3C/svg%3E")',
-                                        backgroundRepeat: 'no-repeat',
-                                        backgroundPosition: 'right 12px center',
-                                        backgroundSize: '20px'
-                                    }}
-                                >
-                                    {nativeLanguageOptions.map(option => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                            <LanguageSelector
+                                id="nativeLanguage"
+                                name="nativeLanguage"
+                                value={nativeLanguage}
+                                onChange={handleLanguageChange}
+                                label="Native Language"
+                                required={true}
+                                error={nativeLanguageError}
+                            />
                             
-                            <div className="form-group">
-                                <label htmlFor="learningLanguage" style={{ 
-                                    fontWeight: '600', 
-                                    marginBottom: '8px', 
-                                    display: 'block', 
-                                    color: '#1e293b' 
-                                }}>
-                                    Learning Language <span style={{ color: '#e11d48' }}>*</span>
-                                </label>
-                                <select 
-                                    className="form-control" 
-                                    id="learningLanguage"
-                                    value={learningLanguage}
-                                    onChange={(e) => setLearningLanguage(e.target.value)}
-                                    required
-                                    style={{ 
-                                        padding: '12px 16px', 
-                                        borderRadius: '8px', 
-                                        border: '1px solid #e2e8f0',
-                                        fontSize: '16px',
-                                        width: '100%',
-                                        appearance: 'none',
-                                        backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23a0aec0\'%3E%3Cpath d=\'M7 10l5 5 5-5z\'/%3E%3C/svg%3E")',
-                                        backgroundRepeat: 'no-repeat',
-                                        backgroundPosition: 'right 12px center',
-                                        backgroundSize: '20px'
-                                    }}
-                                >
-                                    {learningLanguageOptions.map(option => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                            <LanguageSelector
+                                id="learningLanguage"
+                                name="learningLanguage"
+                                value={learningLanguage}
+                                onChange={handleLanguageChange}
+                                label="Learning Language"
+                                required={true}
+                                error={learningLanguageError}
+                            />
                         </div>
                         
                         <div className="form-group" style={{ marginBottom: '30px' }}>

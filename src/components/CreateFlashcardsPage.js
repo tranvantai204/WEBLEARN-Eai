@@ -4,6 +4,7 @@ import { useFlashcard } from '../contexts/FlashcardContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Flashcards.css';
+import LanguageSelector from './LanguageSelector';
 
 function CreateFlashcardsPage() {
     const [title, setTitle] = useState('');
@@ -111,29 +112,6 @@ function CreateFlashcardsPage() {
         navigate('/flashcards');
     };
     
-    // Language options
-    const nativeLanguageOptions = [
-        { value: 'VIE', label: 'Vietnamese' },
-        { value: 'ENG', label: 'English' },
-        { value: 'JP', label: 'Japanese' },
-        { value: 'KR', label: 'Korean' },
-        { value: 'FR', label: 'French' },
-        { value: 'CN', label: 'Chinese' },
-        { value: 'DE', label: 'German' },
-        { value: 'ES', label: 'Spanish' }
-    ];
-    
-    const learningLanguageOptions = [
-        { value: 'ENG', label: 'English' },
-        { value: 'VIE', label: 'Vietnamese' },
-        { value: 'JP', label: 'Japanese' },
-        { value: 'KR', label: 'Korean' },
-        { value: 'FR', label: 'French' },
-        { value: 'CN', label: 'Chinese' },
-        { value: 'DE', label: 'German' },
-        { value: 'ES', label: 'Spanish' }
-    ];
-
     // Level options
     const levelOptions = [
         { value: 1, label: 'Level 1 - Beginner' },
@@ -285,36 +263,25 @@ function CreateFlashcardsPage() {
                             
                             <div className="form-row">
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="nativeLanguage">Native Language <span className="text-danger">*</span></label>
-                                    <select 
-                                        className="form-control" 
+                                    <LanguageSelector
                                         id="nativeLanguage"
+                                        name="nativeLanguage"
                                         value={nativeLanguage}
                                         onChange={(e) => setNativeLanguage(e.target.value)}
-                                        required
-                                    >
-                                        {nativeLanguageOptions.map(option => (
-                                            <option key={option.value} value={option.value}>
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        label="Native Language"
+                                        required={true}
+                                    />
                                 </div>
+                                
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="learningLanguage">Learning Language <span className="text-danger">*</span></label>
-                                    <select 
-                                        className="form-control" 
+                                    <LanguageSelector
                                         id="learningLanguage"
+                                        name="learningLanguage"
                                         value={learningLanguage}
                                         onChange={(e) => setLearningLanguage(e.target.value)}
-                                        required
-                                    >
-                                        {learningLanguageOptions.map(option => (
-                                            <option key={option.value} value={option.value}>
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        label="Learning Language"
+                                        required={true}
+                                    />
                                 </div>
                             </div>
                             

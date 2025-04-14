@@ -8,6 +8,7 @@ function ApiKeyForm({ onSuccess, onSkip }) {
   const [showKey, setShowKey] = useState(false);
   const [loading, setLoading] = useState(false);
   const { storeApiKey, isAuthenticated } = useAuth();
+  const { currentUser } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

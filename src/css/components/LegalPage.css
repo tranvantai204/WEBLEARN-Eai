@@ -1,0 +1,147 @@
+.legal-page {
+  padding: 40px 0 80px;
+  color: #333;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 300px);
+}
+
+.legal-page .container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.legal-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.legal-header h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.legal-header p {
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+.legal-content {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+}
+
+.legal-section {
+  margin-bottom: 30px;
+}
+
+.legal-section:last-child {
+  margin-bottom: 0;
+}
+
+.legal-section h2 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.legal-section h3 {
+  color: #2c3e50;
+  font-size: 1.25rem;
+  margin: 20px 0 10px;
+}
+
+.legal-section p {
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.legal-section ul, .legal-section ol {
+  margin-bottom: 15px;
+  padding-left: 20px;
+}
+
+.legal-section li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.legal-section a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.legal-section a:hover {
+  text-decoration: underline;
+}
+
+.contact-details {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 15px;
+}
+
+.contact-details p {
+  margin: 5px 0;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.cookie-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+.cookie-table th, .cookie-table td {
+  border: 1px solid #e1e4e8;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.cookie-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.cookie-table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+  .legal-page {
+    padding: 20px 0 60px;
+  }
+  
+  .legal-header h1 {
+    font-size: 2rem;
+  }
+  
+  .legal-content {
+    padding: 20px;
+  }
+  
+  .legal-section h2 {
+    font-size: 1.3rem;
+  }
+  
+  .legal-section h3 {
+    font-size: 1.1rem;
+  }
+  
+  .cookie-table th, .cookie-table td {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+} 

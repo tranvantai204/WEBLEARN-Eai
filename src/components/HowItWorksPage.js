@@ -1,8 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../css/components/About.css'; // Sử dụng chung CSS với AboutPage
+import '../css/components/HowItWorks.css';
+import { useAuth } from '../contexts/AuthContext';
 
 function HowItWorksPage() {
+    const { isAuthenticated } = useAuth();
+    
     return (
         <div className="about-container">
             <section className="about-hero">
@@ -267,9 +271,11 @@ function HowItWorksPage() {
                             được cá nhân hóa hoàn toàn.
                         </p>
                         <div className="cta-buttons">
-                            <Link to="/register" className="btn btn-primary">
-                                Bắt đầu miễn phí
-                            </Link>
+                            {!isAuthenticated && (
+                                <Link to="/register" className="btn btn-primary">
+                                    Bắt đầu miễn phí
+                                </Link>
+                            )}
                             <Link to="/testimonials" className="btn btn-secondary">
                                 Xem đánh giá từ người học
                             </Link>

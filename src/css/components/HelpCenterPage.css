@@ -1,0 +1,330 @@
+/* Help Center Page Styles */
+.help-center-page {
+    padding: 60px 0;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 60px);
+}
+
+.help-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.help-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e2530;
+    margin-bottom: 15px;
+}
+
+.help-header p {
+    font-size: 1.1rem;
+    color: #6c757d;
+    max-width: 600px;
+    margin: 0 auto 30px;
+}
+
+/* Search bar styling */
+.help-search {
+    display: flex;
+    margin: 0 auto;
+    max-width: 600px;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.help-search input {
+    flex-grow: 1;
+    padding: 14px 20px;
+    border: none;
+    font-size: 1rem;
+}
+
+.help-search input:focus {
+    outline: none;
+}
+
+.help-search button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.help-search button:hover {
+    background-color: #2980b9;
+}
+
+/* Help content layout */
+.help-content {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    margin-top: 50px;
+}
+
+/* Sidebar styling */
+.help-sidebar {
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+}
+
+.help-sidebar h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #1e2530;
+}
+
+.help-categories {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.help-categories li {
+    padding: 15px 20px;
+    color: #495057;
+    border-bottom: 1px solid #f1f1f1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.help-categories li:last-child {
+    border-bottom: none;
+}
+
+.help-categories li i {
+    margin-right: 12px;
+    color: #3498db;
+    width: 18px;
+    text-align: center;
+}
+
+.help-categories li:hover {
+    background-color: #f8f9fa;
+    color: #3498db;
+}
+
+.help-categories li.active {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.help-categories li.active i {
+    color: #fff;
+}
+
+/* Contact card in sidebar */
+.help-contact-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.help-contact-card h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #1e2530;
+}
+
+.help-contact-card p {
+    color: #6c757d;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.contact-support-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.contact-support-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Articles section styling */
+.help-articles {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.help-articles h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #1e2530;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.article-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.article-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    border-left: 3px solid #3498db;
+}
+
+.article-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.article-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #1e2530;
+}
+
+.article-card p {
+    color: #6c757d;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.read-article-btn {
+    background-color: transparent;
+    color: #3498db;
+    border: 1px solid #3498db;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.read-article-btn:hover {
+    background-color: #3498db;
+    color: white;
+}
+
+/* No results styling */
+.no-results {
+    text-align: center;
+    padding: 40px 0;
+    color: #6c757d;
+}
+
+.no-results i {
+    font-size: 3rem;
+    color: #dee2e6;
+    margin-bottom: 15px;
+}
+
+.no-results h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: #1e2530;
+}
+
+.no-results p {
+    font-size: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+    .help-content {
+        grid-template-columns: 1fr;
+    }
+
+    .help-sidebar {
+        position: static;
+        margin-bottom: 30px;
+    }
+
+    .help-categories {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .help-categories li {
+        flex: 1 0 auto;
+        min-width: 150px;
+        text-align: center;
+        display: block;
+        border-bottom: none;
+        border-right: 1px solid #f1f1f1;
+    }
+
+    .help-categories li i {
+        display: block;
+        margin: 0 auto 8px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .help-header h1 {
+        font-size: 2rem;
+    }
+
+    .help-articles {
+        padding: 20px;
+    }
+
+    .article-list {
+        grid-template-columns: 1fr;
+    }
+
+    .help-categories li {
+        flex-basis: 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    .help-categories {
+        flex-direction: column;
+    }
+
+    .help-categories li {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #f1f1f1;
+        display: flex;
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .help-categories li i {
+        display: inline-block;
+        margin-right: 10px;
+        margin-bottom: 0;
+        font-size: 1rem;
+    }
+
+    .contact-support-btn {
+        width: 100%;
+    }
+} 

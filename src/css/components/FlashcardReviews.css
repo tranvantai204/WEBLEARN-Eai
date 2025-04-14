@@ -1,0 +1,371 @@
+.flashcard-reviews {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.reviews-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+    border-bottom: 2px solid #4A6CF7;
+    padding-bottom: 10px;
+}
+
+.review-form-container {
+    background-color: #f7f9fc;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.review-form-container h4 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #4A6CF7;
+}
+
+.rating-input {
+    margin-bottom: 15px;
+}
+
+.rating-input label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 8px;
+}
+
+.rating-stars label {
+    cursor: pointer;
+}
+
+.rating-stars input {
+    display: none;
+}
+
+.rating-stars i {
+    font-size: 24px;
+    color: #ddd;
+    transition: color 0.2s ease;
+}
+
+.rating-stars i.filled,
+.review-rating i.filled {
+    color: #ffc107;
+}
+
+.comment-input {
+    margin-bottom: 15px;
+}
+
+.comment-input label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.comment-input textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.submit-review-btn {
+    background-color: #4A6CF7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-review-btn:hover {
+    background-color: #3a5ad0;
+}
+
+.submit-review-btn:disabled {
+    background-color: #a0b0eb;
+    cursor: not-allowed;
+}
+
+.already-reviewed-message {
+    background-color: #f0f4ff;
+    border: 1px solid #d0d9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    color: #4A6CF7;
+}
+
+.already-reviewed-message i {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.already-reviewed-message p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.reviews-list {
+    margin-top: 20px;
+}
+
+.review-item {
+    border-bottom: 1px solid #eee;
+    padding: 20px 0;
+}
+
+.review-item:first-child {
+    padding-top: 0;
+}
+
+.review-item:last-child {
+    border-bottom: none;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.reviewer-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.review-date {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.review-rating {
+    margin-bottom: 10px;
+}
+
+.review-rating i {
+    color: #ddd;
+    font-size: 18px;
+    margin-right: 3px;
+}
+
+.review-comment {
+    line-height: 1.6;
+    color: #555;
+    word-break: break-word;
+}
+
+.no-reviews {
+    color: #888;
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.edit-form {
+    background-color: #f0f8ff;
+    border-left: 4px solid #4A6CF7;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.cancel-edit-btn {
+    background-color: #f0f0f0;
+    color: #555;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-edit-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.cancel-edit-btn:disabled {
+    background-color: #f0f0f0;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.review-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.edit-review-btn {
+    background-color: transparent;
+    color: #4A6CF7;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.edit-review-btn:hover {
+    background-color: rgba(74, 108, 247, 0.1);
+}
+
+.edit-review-btn i {
+    font-size: 14px;
+}
+
+/* Thêm style cho nút chỉnh sửa nổi bật */
+.visible-edit-btn {
+    border: 1px solid #4A6CF7;
+    background-color: rgba(74, 108, 247, 0.05);
+    font-weight: 500;
+    padding: 8px 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.visible-edit-btn:hover {
+    background-color: rgba(74, 108, 247, 0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Thêm style cho nút xóa */
+.delete-review-btn {
+    background-color: transparent;
+    color: #ff4d4f;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.delete-review-btn:hover {
+    background-color: rgba(255, 77, 79, 0.1);
+}
+
+.delete-review-btn i {
+    font-size: 14px;
+}
+
+/* Thêm styles cho overlay xác nhận xóa */
+.delete-confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.delete-confirmation-dialog {
+    background-color: white;
+    border-radius: 8px;
+    padding: 24px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: dialogFadeIn 0.3s ease;
+}
+
+@keyframes dialogFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.delete-confirmation-dialog h4 {
+    color: #ff4d4f;
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 1.2rem;
+}
+
+.delete-confirmation-dialog p {
+    margin-bottom: 24px;
+    color: #333;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.delete-confirm-btn {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-confirm-btn:hover {
+    background-color: #ff1f1f;
+}
+
+.delete-confirm-btn:disabled {
+    background-color: #ffbaba;
+    cursor: not-allowed;
+}
+
+.delete-cancel-btn {
+    background-color: #f0f0f0;
+    color: #555;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-cancel-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.delete-cancel-btn:disabled {
+    background-color: #f0f0f0;
+    color: #aaa;
+    cursor: not-allowed;
+} 

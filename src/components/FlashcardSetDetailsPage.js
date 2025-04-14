@@ -6,6 +6,8 @@ import ApiKeyForm from './ApiKeyForm';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Flashcards.css';
+import FlashcardReviews from './FlashcardReviews';
+import LanguageSelector from './LanguageSelector';
 
 // Thêm CSS cho animations
 const modalStyles = `
@@ -140,6 +142,9 @@ function FlashcardSetDetailsPage() {
         flashcardSetId: flashcardSetId
     };
 
+    // Add a state to store reviews
+    const [reviews, setReviews] = useState([]);
+
     // Fetch flashcard set details on component mount
     useEffect(() => {
         const fetchFlashcardSetDetails = async () => {
@@ -147,6 +152,11 @@ function FlashcardSetDetailsPage() {
                 // Fetch flashcard set details
                 const data = await getFlashcardSet(flashcardSetId);
                 setFlashcardSet(data);
+                
+                // Store reviews from the response if they exist
+                if (data && data.flashcardReviews) {
+                    setReviews(data.flashcardReviews);
+                }
                 
                 // Fetch flashcards for this set
                 fetchFlashcardsForSet(flashcardSetId);
@@ -660,20 +670,6 @@ function FlashcardSetDetailsPage() {
             setUpdatingSet(false);
         }
     };
-
-    // Language options
-    const languageOptions = [
-        { value: 'ENG', label: 'English' },
-        { value: 'VIE', label: 'Vietnamese' },
-        { value: 'JPN', label: 'Japanese' },
-        { value: 'KOR', label: 'Korean' },
-        { value: 'CHN', label: 'Chinese' },
-        { value: 'FRA', label: 'French' },
-        { value: 'GER', label: 'German' },
-        { value: 'SPA', label: 'Spanish' },
-        { value: 'RUS', label: 'Russian' },
-        { value: 'ITA', label: 'Italian' }
-    ];
 
     // Helper function to determine character count class
     const getCharCountClass = (current, max) => {
@@ -1276,6 +1272,17 @@ function FlashcardSetDetailsPage() {
         }
     };
 
+    // Handler for when a new review is added or updated
+    const handleReviewAdded = (newReview, updatedReviews) => {
+        if (updatedReviews) {
+            // Nếu đây là cập nhật đánh giá, sử dụng danh sách đánh giá đã cập nhật
+            setReviews(updatedReviews);
+        } else {
+            // Nếu đây là thêm đánh giá mới
+            setReviews(prevReviews => [...prevReviews, newReview]);
+        }
+    };
+
     return (
         <div className="flashcard-details-page">
             {/* Thêm style cho animations */}
@@ -1664,78 +1671,25 @@ function FlashcardSetDetailsPage() {
                             )}
                         </div>
                         <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.25rem' }}>
-                            <div className="form-group" style={{ flex: 1 }}>
-                                <label htmlFor="learningLanguage" style={{
-                                    display: 'block',
-                                    marginBottom: '0.5rem',
-                                    fontWeight: '500'
-                                }}>
-                                    Learning Language <span style={{ color: '#dc3545' }}>*</span>
-                                </label>
-                                <select
-                                    id="learningLanguage"
-                                    name="learningLanguage"
-                                    value={editSetData.learningLanguage}
-                                    onChange={handleEditSetInputChange}
-                                    style={{
-                                        width: '100%',
-                                        padding: '0.75rem 1rem',
-                                        border: editSetErrors.learningLanguage ? '1px solid #dc3545' : '1px solid #ced4da',
-                                        borderRadius: '6px',
-                                        fontSize: '1rem',
-                                        backgroundColor: 'white'
-                                    }}
-                                    required
-                                >
-                                    <option value="">Select language</option>
-                                    {languageOptions.map(lang => (
-                                        <option key={`learn-${lang.value}`} value={lang.value}>
-                                            {lang.label}
-                                        </option>
-                                    ))}
-                                </select>
-                                {editSetErrors.learningLanguage && (
-                                    <div style={{ color: '#dc3545', fontSize: '0.875em', marginTop: '0.25rem' }}>
-                                        {editSetErrors.learningLanguage}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="form-group" style={{ flex: 1 }}>
-                                <label htmlFor="nativeLanguage" style={{
-                                    display: 'block',
-                                    marginBottom: '0.5rem',
-                                    fontWeight: '500'
-                                }}>
-                                    Native Language <span style={{ color: '#dc3545' }}>*</span>
-                                </label>
-                                <select
-                                    id="nativeLanguage"
-                                    name="nativeLanguage"
-                                    value={editSetData.nativeLanguage}
-                                    onChange={handleEditSetInputChange}
-                                    style={{
-                                        width: '100%',
-                                        padding: '0.75rem 1rem',
-                                        border: editSetErrors.nativeLanguage ? '1px solid #dc3545' : '1px solid #ced4da',
-                                        borderRadius: '6px',
-                                        fontSize: '1rem',
-                                        backgroundColor: 'white'
-                                    }}
-                                    required
-                                >
-                                    <option value="">Select language</option>
-                                    {languageOptions.map(lang => (
-                                        <option key={`native-${lang.value}`} value={lang.value}>
-                                            {lang.label}
-                                        </option>
-                                    ))}
-                                </select>
-                                {editSetErrors.nativeLanguage && (
-                                    <div style={{ color: '#dc3545', fontSize: '0.875em', marginTop: '0.25rem' }}>
-                                        {editSetErrors.nativeLanguage}
-                                    </div>
-                                )}
-                            </div>
+                            <LanguageSelector
+                                id="learningLanguage"
+                                name="learningLanguage"
+                                value={editSetData.learningLanguage}
+                                onChange={handleEditSetInputChange}
+                                label="Learning Language"
+                                required={true}
+                                error={editSetErrors.learningLanguage}
+                            />
+                            
+                            <LanguageSelector
+                                id="nativeLanguage"
+                                name="nativeLanguage"
+                                value={editSetData.nativeLanguage}
+                                onChange={handleEditSetInputChange}
+                                label="Native Language"
+                                required={true}
+                                error={editSetErrors.nativeLanguage}
+                            />
                         </div>
                         <div className="form-group" style={{
                             marginBottom: '1.25rem'
@@ -2459,6 +2413,15 @@ function FlashcardSetDetailsPage() {
                     )}
                 </div>
             </div>
+            
+            {/* After the flashcards list section */}
+            {flashcardSet && (
+                <FlashcardReviews 
+                    reviews={reviews} 
+                    flashcardSetId={flashcardSetId}
+                    onReviewAdded={handleReviewAdded}
+                />
+            )}
         </div>
     );
 }

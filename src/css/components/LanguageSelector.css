@@ -1,0 +1,233 @@
+.language-selector {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.language-selector__label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+  color: #1e293b;
+}
+
+.language-selector__required {
+  color: #e11d48;
+}
+
+/* Style for the custom select */
+.language-selector__select-wrapper {
+  position: relative;
+  cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.language-selector__select-wrapper:hover {
+  border-color: #cbd5e1;
+}
+
+.language-selector--open .language-selector__select-wrapper {
+  border-color: #4285f4;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+}
+
+.language-selector__current-selection {
+  width: 100%;
+  padding: 12px 16px;
+  padding-left: 45px; /* Space for flag */
+  padding-right: 30px; /* Space for dropdown arrow */
+  font-size: 16px;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Hide the native select */
+.language-selector__hidden-select {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Custom dropdown arrow */
+.language-selector__select-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #a0aec0;
+  border-bottom: 2px solid #a0aec0;
+  transform: translateY(-50%) rotate(45deg);
+  pointer-events: none;
+  transition: transform 0.2s;
+}
+
+.language-selector--open .language-selector__select-wrapper::after {
+  transform: translateY(-50%) rotate(-135deg);
+}
+
+/* Selected flag in the select */
+.language-selector__flag-wrapper {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.language-selector__flag {
+  width: 24px;
+  height: 18px;
+  object-fit: cover;
+  border-radius: 2px;
+  vertical-align: middle;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.language-selector__error {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+/* Enhanced dropdown with flags */
+.language-selector__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 100;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  margin-top: 4px;
+}
+
+.language-selector__search {
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  z-index: 1;
+}
+
+.language-selector__search-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.language-selector__search-input:focus {
+  outline: none;
+  border-color: #4285f4;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+}
+
+.language-selector__options {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.language-selector__option {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.language-selector__option:hover {
+  background-color: #f8fafc;
+}
+
+.language-selector__option--selected {
+  background-color: #e6f0ff;
+}
+
+.language-selector__option-label {
+  flex: 1;
+}
+
+.language-selector__no-results {
+  padding: 16px;
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Loading state */
+.language-selector--loading .language-selector__select-wrapper {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .language-selector__dropdown {
+    max-height: 260px;
+  }
+  
+  .language-selector__option {
+    padding: 12px 16px;
+  }
+  
+  .language-selector__label {
+    font-size: 14px;
+  }
+  
+  .language-selector__current-selection {
+    font-size: 14px;
+    padding: 10px 14px;
+    padding-left: 40px;
+  }
+  
+  .language-selector__flag-wrapper {
+    left: 12px;
+  }
+  
+  .language-selector__flag {
+    width: 20px;
+    height: 15px;
+  }
+  
+  .language-selector__search-input {
+    padding: 8px;
+    font-size: 13px;
+  }
+  
+  .language-selector__option-label {
+    font-size: 14px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .language-selector__dropdown {
+    max-height: 220px;
+  }
+  
+  .language-selector__options {
+    max-height: 180px;
+  }
+  
+  .language-selector__option {
+    padding: 10px 12px;
+  }
+} 

@@ -12,11 +12,12 @@
 .header-container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    overflow: visible;
 }
 
 /* Logo */
@@ -44,11 +45,15 @@
     align-items: center;
     justify-content: space-between;
     flex: 1;
-    margin-left: 2rem;
+    margin-left: 1rem;
+    min-width: 0;
+    overflow: visible;
 }
 
 .main-nav {
     margin-left: auto;
+    margin-right: 0.5rem;
+    overflow: visible;
 }
 
 .nav-list {
@@ -56,23 +61,27 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 0.5rem;
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+    overflow: visible;
 }
 
 .nav-item {
     margin: 0;
+    white-space: nowrap;
 }
 
 .nav-link {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 0.5rem;
     color: var(--gray-700);
     text-decoration: none;
     font-weight: 700;
     border-radius: 8px;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -94,14 +103,14 @@
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 .header-login {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 0.75rem;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     font-weight: 600;
@@ -109,7 +118,7 @@
     text-decoration: none;
     transition: all 0.2s ease;
     background: white;
-    min-width: 100px;
+    min-width: auto;
     white-space: nowrap;
 }
 
@@ -122,18 +131,18 @@ button.header-signup {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 8px;
     font-weight: 600;
     color: white;
     text-decoration: none;
     transition: all 0.2s ease;
     background: #07a50f;
-    min-width: 100px;
+    min-width: auto;
     white-space: nowrap;
     border: none;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 button.header-signup:hover {
@@ -235,10 +244,27 @@ button.header-signup:hover {
     justify-content: space-between;
     width: 100%;
     padding: 1rem;
-    background: none;
+    background: #f8f9fa;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 1.2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.mobile-lang-selector .language-options {
+    margin-top: 8px;
+    width: 100%;
+    border: 1px solid #eee;
+    z-index: 2000;
+}
+
+/* Fix mobile language options positioning */
+.mobile-lang-selector .language-options.active {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    display: block;
 }
 
 .language-options {
@@ -318,6 +344,10 @@ button.header-signup:hover {
 
 .lang-name {
     font-size: 1.2rem;
+    max-width: 65px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .check-icon {
@@ -390,7 +420,7 @@ button.header-signup:hover {
 
 .header-actions {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: center;
 }
 
@@ -412,5 +442,192 @@ button.header-signup:hover {
     
     .mobile-menu-btn {
         display: block;
+    }
+}
+
+/* Language Nav Item */
+.language-nav-item {
+    position: relative;
+}
+
+.desktop-lang-selector {
+    position: relative;
+}
+
+.desktop-lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.desktop-lang-btn:hover {
+    background-color: var(--primary-50);
+}
+
+.current-lang {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.current-lang-icon {
+    width: 20px;
+    height: 15px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.desktop-lang-btn .nav-icon {
+    margin-right: 0.2rem;
+    color: var(--primary-500);
+    font-size: 1.1rem;
+}
+
+.desktop-lang-btn .lang-name {
+    font-size: 1rem;
+    max-width: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lang-flag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 18px;
+}
+
+.lang-flag svg {
+    width: 24px;
+    height: 18px;
+    border-radius: 2px;
+    object-fit: cover;
+}
+
+.check-icon {
+    color: var(--primary-600);
+    margin-left: auto;
+}
+
+.lang-arrow {
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+    transition: transform 0.2s;
+}
+
+.language-nav-item:hover .lang-arrow {
+    transform: rotate(180deg);
+}
+
+.desktop-language-options {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+    min-width: 200px;
+    z-index: 1001;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 0;
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.desktop-language-options.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: left;
+}
+
+.language-option:last-child {
+    border-bottom: none;
+}
+
+.language-option:hover {
+    background-color: #f8fafc;
+}
+
+.language-option.active {
+    background-color: #e6f0ff;
+    font-weight: 600;
+}
+
+.language-option .lang-flag {
+    display: flex;
+    margin-right: 10px;
+}
+
+.desktop-lang-btn {
+    font-weight: 600;
+}
+
+/* Ensure dropdown stays open when clicking inside it */
+.desktop-language-options:hover {
+    display: block;
+    opacity: 1;
+}
+
+/* Scrollbar styling */
+.desktop-language-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.desktop-language-options::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.desktop-language-options::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.desktop-language-options::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+@media (max-width: 1000px) and (min-width: 901px) {
+    .nav-link span {
+        font-size: 0.9rem;
+    }
+    
+    .desktop-lang-btn .lang-name {
+        max-width: 50px;
+    }
+    
+    .current-lang-icon {
+        width: 16px;
+        height: 12px;
+    }
+
+    .header-login, button.header-signup {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
     }
 } 

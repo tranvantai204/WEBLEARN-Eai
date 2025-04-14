@@ -32,9 +32,11 @@ function Header() {
   const { currentLanguage, changeLanguage, translateText } = useLanguage();
   const { isAuthenticated, logout } = useAuth();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showLanguageOptions, setShowLanguageOptions] = useState(false);
+  const [showMobileLanguageOptions, setShowMobileLanguageOptions] = useState(false);
+  const [showDesktopLanguageOptions, setShowDesktopLanguageOptions] = useState(false);
   const mobileMenuRef = useRef(null);
-  const langOptionsRef = useRef(null);
+  const mobileLangOptionsRef = useRef(null);
+  const desktopLangOptionsRef = useRef(null);
   const navigate = useNavigate();
   
   const languages = [
@@ -62,6 +64,7 @@ function Header() {
     flashcards: 'Flashcards',
     readings: 'Readings',
     writing: 'Writing',
+    writingExercises: 'Writing Exercises',
     discover: 'Discover',
     signIn: 'Sign In',
     getStarted: 'Get Started',
@@ -77,11 +80,18 @@ function Header() {
         setShowMobileMenu(false);
       }
       
-      if (showLanguageOptions && 
-          langOptionsRef.current && 
-          !langOptionsRef.current.contains(event.target) && 
+      if (showMobileLanguageOptions && 
+          mobileLangOptionsRef.current && 
+          !mobileLangOptionsRef.current.contains(event.target) && 
           !event.target.closest('.mobile-lang-btn')) {
-        setShowLanguageOptions(false);
+        setShowMobileLanguageOptions(false);
+      }
+
+      if (showDesktopLanguageOptions && 
+          desktopLangOptionsRef.current && 
+          !desktopLangOptionsRef.current.contains(event.target) && 
+          !event.target.closest('.desktop-lang-btn')) {
+        setShowDesktopLanguageOptions(false);
       }
     }
 
@@ -89,7 +99,7 @@ function Header() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showLanguageOptions]);
+  }, [showMobileLanguageOptions, showDesktopLanguageOptions]);
 
   // Update translations when language changes
   useEffect(() => {
@@ -99,6 +109,7 @@ function Header() {
           flashcards: await translateText('Flashcards'),
           readings: await translateText('Readings'),
           writing: await translateText('Writing'),
+          writingExercises: await translateText('Writing Exercises'),
           discover: await translateText('Discover'),
           signIn: await translateText('Sign In'),
           getStarted: await translateText('Get Started'),
@@ -118,6 +129,7 @@ function Header() {
         flashcards: 'Flashcards',
         readings: 'Readings',
         writing: 'Writing',
+        writingExercises: 'Writing Exercises',
         discover: 'Discover',
         signIn: 'Sign In',
         getStarted: 'Get Started',
@@ -129,7 +141,8 @@ function Header() {
 
   const handleLanguageChange = (langCode) => {
     changeLanguage(langCode);
-    setShowLanguageOptions(false);
+    setShowMobileLanguageOptions(false);
+    setShowDesktopLanguageOptions(false);
   };
 
   const handleLogout = async () => {
@@ -190,7 +203,7 @@ function Header() {
                 className="mobile-lang-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setShowLanguageOptions(!showLanguageOptions);
+                  setShowMobileLanguageOptions(!showMobileLanguageOptions);
                 }}
               >
                 <div className="lang-content">
@@ -204,8 +217,8 @@ function Header() {
               </button>
               
               <div 
-                className={`language-options ${showLanguageOptions ? 'active' : ''}`} 
-                ref={langOptionsRef}
+                className={`language-options ${showMobileLanguageOptions ? 'active' : ''}`} 
+                ref={mobileLangOptionsRef}
               >
                 {languages.map((lang) => (
                   <button
@@ -274,6 +287,43 @@ function Header() {
                   <i className="fas fa-compass"></i>
                   <span>{translations.discover}</span>
                 </Link>
+              </li>
+              <li className="nav-item language-nav-item">
+                <div className="desktop-lang-selector">
+                  <button 
+                    className="desktop-lang-btn nav-link"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowDesktopLanguageOptions(!showDesktopLanguageOptions);
+                    }}
+                  >
+                    <FaGlobeAmericas className="nav-icon" />
+                    <span className="current-lang">
+                      <currentLang.icon className="current-lang-icon" />
+                      <span className="lang-name">{currentLang.name}</span>
+                    </span>
+                    <FaChevronDown className="lang-arrow" />
+                  </button>
+                  
+                  <div 
+                    className={`language-options desktop-language-options ${showDesktopLanguageOptions ? 'active' : ''}`} 
+                    ref={desktopLangOptionsRef}
+                  >
+                    {languages.map((lang) => (
+                      <button
+                        key={lang.code}
+                        className={`language-option ${currentLanguage === lang.code ? 'active' : ''}`}
+                        onClick={() => handleLanguageChange(lang.code)}
+                      >
+                        <span className="lang-flag">
+                          <lang.icon />
+                        </span>
+                        <span className="lang-name">{lang.name}</span>
+                        {currentLanguage === lang.code && <FaCheck className="check-icon" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </li>
             </ul>
           </nav>
