@@ -1,41 +1,65 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast, Bounce } from 'react-toastify';
-import axios from 'axios';
+import { toast } from 'react-toastify';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useMultipleChoiceTest } from '../contexts/MultipleChoiceTestContext';
 import { useFlashcard } from '../contexts/FlashcardContext';
-import ApiKeyForm from './ApiKeyForm';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Reading.css';
+import ApiKeyForm from './ApiKeyForm';
+import { makeAuthenticatedRequest } from '../utils/apiUtils';
+const bookIcon = '/images/book-icon.svg';
 
 function ReadingsPage() {
     const navigate = useNavigate();
     const [isGenerating, setIsGenerating] = useState(false);
-    const [showAIOptions, setShowAIOptions] = useState(false);
-    const [topic, setTopic] = useState('');
     const [showApiKeyForm, setShowApiKeyForm] = useState(false);
+    const [aiParams, setAiParams] = useState({
+        title: '',
+        learningLanguage: 'ENG',
+        nativeLanguage: 'VIE',
+        level: 3
+    });
     const { translateText, currentLanguage } = useLanguage();
     const { getUserApiKey } = useFlashcard();
+    const { 
+        multipleChoiceTests, 
+        loading, 
+        error,
+        getAllMultipleChoiceTests,
+        generateMultipleChoiceTestWithAI,
+        totalPages,
+        currentPage
+    } = useMultipleChoiceTest();
+    const [selectedLanguage, setSelectedLanguage] = useState('all');
     
     // State for translated content
     const [translations, setTranslations] = useState({
-        pageTitle: 'Readings',
-        generateButton: 'AI Generate',
+        pageTitle: 'Reading Tests',
+        createButton: 'Create New Test',
+        generateButton: 'Generate with AI',
+        filterByLanguage: 'Filter by Language:',
+        allLanguages: 'All languages',
+        noTestsFound: 'No reading tests found.',
+        createFirstTest: 'Create your first test',
         generatingText: 'Generating...',
-        newReading: 'New Reading',
-        category1: 'Current events and news articles',
-        category2: 'Engaging fiction and non-fiction stories',
-        category3: 'Professional and business-related content',
-        read: 'Read',
-        edit: 'Edit',
-        totalReadings: 'Total Readings',
-        wordsRead: 'Words Read',
-        timeSpent: 'Time Spent',
-        comprehension: 'Comprehension',
-        topicPlaceholder: 'Enter topic for AI generation...',
+        topicPlaceholder: 'Enter a topic (optional) or leave blank for AI to choose a topic...',
         errorEmptyTopic: 'Please enter a topic for AI generation!',
-        generatingMsg: '🤖 AI is generating your reading content...',
-        successMsg: '✨ Reading content generated successfully!'
+        generatingMsg: '🤖 AI is generating your test content...',
+        successMsg: '✨ Test content generated successfully!',
+        takeTest: 'Take Test',
+        edit: 'Edit',
+        generateTestsWithAI: 'Generate Tests with AI',
+        beginner: 'Beginner',
+        intermediate: 'Intermediate',
+        advanced: 'Advanced',
+        lessons: 'Lessons',
+        students: 'Students',
+        aiDescription: 'Enter a topic (optional) or leave blank for AI to choose one. Select options below to customize your reading test. AI will automatically generate a reading passage and multiple-choice questions. Example topics: "Climate Change", "Space Exploration", "Vietnamese Culture"...',
+        aiHelperText: 'AI test generation requires a Google Gemini API key. If you don\'t have one yet, the system will guide you to add it.',
+        learningLanguage: 'Learning Language',
+        nativeLanguage: 'Native Language',
+        levelDifficulty: 'Difficulty Level'
     });
 
     // Translate error/success messages up front to avoid async issues in callbacks
@@ -44,6 +68,49 @@ function ReadingsPage() {
         generatingMsg: translations.generatingMsg,
         successMsg: translations.successMsg
     });
+
+    // Fetch tests when component mounts using context
+    useEffect(() => {
+        console.log('ReadingsPage: Fetching tests from context');
+        const fetchTests = async () => {
+            try {
+                // Get userId from localStorage
+                let userId = null;
+                try {
+                    // First try to get directly from userId key
+                    const directUserId = localStorage.getItem('userId');
+                    if (directUserId) {
+                        userId = directUserId;
+                        console.log('Using userId directly from localStorage:', userId);
+                    }
+                    // If not found, try from userData object
+                    else {
+                        const userDataString = localStorage.getItem('userData');
+                        if (userDataString) {
+                            const userData = JSON.parse(userDataString);
+                            userId = userData.userId;
+                            console.log('Using userId from userData in localStorage:', userId);
+                        }
+                    }
+                } catch (parseError) {
+                    console.error('Error accessing/parsing userData from localStorage:', parseError);
+                }
+                
+                if (!userId) {
+                    console.warn('No userId available in localStorage, cannot fetch multiple choice tests');
+                    return;
+                }
+
+                // Use context function to get tests, with pagination
+                await getAllMultipleChoiceTests(userId, 1, 10);
+                console.log('Tests fetched successfully via context:', multipleChoiceTests?.length || 0);
+            } catch (err) {
+                console.error('Error fetching tests:', err);
+            }
+        };
+
+        fetchTests();
+    }, [getAllMultipleChoiceTests]);
 
     // Update translations when language changes
     useEffect(() => {
@@ -56,7 +123,6 @@ function ReadingsPage() {
                 }
                 setTranslations(newTranslations);
 
-                // Update the translated messages separately
                 setTranslatedMessages({
                     errorEmptyTopic: await translateText(translations.errorEmptyTopic),
                     generatingMsg: await translateText(translations.generatingMsg),
@@ -72,68 +138,66 @@ function ReadingsPage() {
         }
     }, [currentLanguage, translateText]);
 
-    // Handle API key form success
     const handleApiKeySuccess = () => {
         setShowApiKeyForm(false);
         toast.success('API key saved successfully!');
         
-        // Continue with AI generation if that was the original action
-        if (topic.trim()) {
-            generateWithAI();
-        }
+        // Luôn gọi generateWithAI vì title là tùy chọn
+        generateWithAI();
     };
     
-    // Skip API key for now
     const handleSkipApiKey = () => {
         setShowApiKeyForm(false);
-        toast.info('You can add your API key later in settings. AI features will not work without an API key.');
+        toast.info('You can add your API key later in settings.');
     };
     
-    // Actual AI generation function - called after API key check
-    const generateWithAI = () => {
+    const generateWithAI = async () => {
         setIsGenerating(true);
         toast.info(translatedMessages.generatingMsg);
 
-        // Simulate AI generation
-        setTimeout(() => {
+        try {
+            // Use the MultipleChoiceTestContext function
+            const result = await generateMultipleChoiceTestWithAI(aiParams);
+            
+            if (result) {
+                toast.success(translatedMessages.successMsg);
+                // Navigate to the new test
+                navigate(`/readings/multiple-choice/edit/${result.multipleChoiceTestId}`);
+            }
+        } catch (error) {
+            console.error('Error generating test with AI:', error);
+            toast.error(error.message || 'Failed to generate test content');
+        } finally {
             setIsGenerating(false);
-            setShowAIOptions(false);
-            setTopic('');
-            toast.success(translatedMessages.successMsg);
-            navigate('/readings/generated');
-        }, 2000);
+            setAiParams({
+                title: '',
+                learningLanguage: 'ENG',
+                nativeLanguage: 'VIE',
+                level: 3
+            });
+        }
     };
 
     const handleAIGenerate = async () => {
-        if (!topic.trim()) {
-            toast.error(translatedMessages.errorEmptyTopic);
-            return;
-        }
+        // Title là tùy chọn, không cần kiểm tra
 
-        // Kiểm tra API key trong localStorage trước
         const localApiKey = localStorage.getItem('gemini_api_key');
         const timestamp = localStorage.getItem('gemini_api_key_timestamp');
         
         if (localApiKey && timestamp) {
-            // Kiểm tra xem API key có còn hiệu lực không (2 giờ)
             const now = Date.now();
             const saved = parseInt(timestamp, 10);
             const twoHoursMs = 2 * 60 * 60 * 1000;
             
             if (now - saved <= twoHoursMs) {
-                console.log('Sử dụng API key từ localStorage');
-                // Bỏ qua hiển thị form API key
                 generateWithAI();
                 return;
             } else {
-                // API key đã hết hạn, xóa khỏi localStorage
-                console.log('API key trong localStorage đã hết hạn');
                 localStorage.removeItem('gemini_api_key');
                 localStorage.removeItem('gemini_api_key_timestamp');
             }
         }
 
-        // Check if API key is set
         try {
             const key = await getUserApiKey();
             if (!key) {
@@ -142,135 +206,234 @@ function ReadingsPage() {
                 return;
             }
             
-            // If we have an API key, proceed with generation
             generateWithAI();
         } catch (error) {
             console.error('Error checking API key:', error);
-            // In case of error checking API key, try to generate anyway
             generateWithAI();
         }
     };
 
+    const formatDate = (dateString) => {
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString();
+        } catch (error) {
+            return 'Invalid date';
+        }
+    };
+
+    // Helper to get random counts for demo purposes
+    const getRandomCount = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    // Get level badge class based on test level
+    const getLevelBadgeClass = (level) => {
+        if (!level) return '';
+        if (typeof level !== 'string') return '';
+        level = level.toLowerCase();
+        if (level.includes('inter')) return 'intermediate-badge';
+        if (level.includes('adv')) return 'advanced-badge';
+        return ''; // beginner is default
+    };
+
+    // Filter tests by language if a language is selected
+    const filteredTests = selectedLanguage === 'all' 
+        ? multipleChoiceTests 
+        : multipleChoiceTests?.filter(test => test.learningLanguage === selectedLanguage);
+    
+    // Get unique languages for the dropdown
+    const languages = [...new Set((multipleChoiceTests || []).map(test => test.learningLanguage))].filter(Boolean);
+
+    if (loading) {
+        return (
+            <div className="main-content">
+                <div className="readings-wrapper">
+                    <div className="loader"></div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="main-content">
-            <div className="readings-container">
-                <div className="readings-header">
-                    <h1 className="readings-title">{translations.pageTitle}</h1>
-                    <div className="readings-actions">
-                        <div className="ai-options-container">
-                            {!showAIOptions ? (
-                                <button 
-                                    className="ai-generate-btn"
-                                    onClick={() => setShowAIOptions(true)}
+            <div className="readings-wrapper">
+                <div className="ai-section">
+                    <h2 className="ai-section-title">{translations.generateTestsWithAI}</h2>
+                    <p className="ai-description">
+                        {translations.aiDescription}
+                    </p>
+                    <div className="ai-input-container">
+                        <input
+                            type="text"
+                            placeholder={translations.topicPlaceholder}
+                            value={aiParams.title}
+                            onChange={(e) => setAiParams({ ...aiParams, title: e.target.value })}
+                            className="ai-input"
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter') handleAIGenerate();
+                            }}
+                        />
+                        <button 
+                            className={`ai-btn ${isGenerating ? 'generating' : ''}`}
+                            onClick={handleAIGenerate}
+                            disabled={isGenerating}
+                        >
+                            <i className={`fas ${isGenerating ? 'fa-spinner fa-spin' : 'fa-robot'}`}></i>
+                            {isGenerating ? translations.generatingText : translations.generateButton}
+                        </button>
+                    </div>
+                    
+                    <div className="ai-options-container">
+                        <div className="ai-option-row">
+                            <div className="ai-option-group">
+                                <label htmlFor="learningLanguage">{translations.learningLanguage || 'Learning Language'}:</label>
+                                <select
+                                    id="learningLanguage"
+                                    value={aiParams.learningLanguage}
+                                    onChange={(e) => setAiParams({ ...aiParams, learningLanguage: e.target.value })}
+                                    className="ai-select"
                                 >
-                                    <i className="fas fa-robot"></i>
-                                    {translations.generateButton}
-                                </button>
-                            ) : (
-                                <div className="ai-options">
-                                    <input
-                                        type="text"
-                                        placeholder={translations.topicPlaceholder}
-                                        value={topic}
-                                        onChange={(e) => setTopic(e.target.value)}
-                                        className="ai-topic-input"
-                                    />
-                                    <button 
-                                        className={`ai-generate-btn ${isGenerating ? 'generating' : ''}`}
-                                        onClick={handleAIGenerate}
-                                        disabled={isGenerating}
-                                    >
-                                        <i className={`fas ${isGenerating ? 'fa-spinner fa-spin' : 'fa-magic'}`}></i>
-                                        {isGenerating ? translations.generatingText : translations.generateButton}
-                                    </button>
-                                    <button 
-                                        className="ai-cancel-btn"
-                                        onClick={() => {
-                                            setShowAIOptions(false);
-                                            setTopic('');
-                                        }}
-                                    >
-                                        <i className="fas fa-times"></i>
-                                    </button>
+                                    <option value="ENG">English</option>
+                                    <option value="ESP">Spanish</option>
+                                    <option value="FRA">French</option>
+                                    <option value="DEU">German</option>
+                                    <option value="JPN">Japanese</option>
+                                    <option value="KOR">Korean</option>
+                                    <option value="CHN">Chinese</option>
+                                    <option value="VIE">Vietnamese</option>
+                                </select>
+                            </div>
+                            
+                            <div className="ai-option-group">
+                                <label htmlFor="nativeLanguage">{translations.nativeLanguage || 'Native Language'}:</label>
+                                <select
+                                    id="nativeLanguage"
+                                    value={aiParams.nativeLanguage}
+                                    onChange={(e) => setAiParams({ ...aiParams, nativeLanguage: e.target.value })}
+                                    className="ai-select"
+                                >
+                                    <option value="VIE">Vietnamese</option>
+                                    <option value="ENG">English</option>
+                                    <option value="ESP">Spanish</option>
+                                    <option value="FRA">French</option>
+                                    <option value="DEU">German</option>
+                                    <option value="JPN">Japanese</option>
+                                    <option value="KOR">Korean</option>
+                                    <option value="CHN">Chinese</option>
+                                </select>
+                            </div>
+                            
+                            <div className="ai-option-group">
+                                <label htmlFor="level">{translations.levelDifficulty || 'Difficulty Level'}:</label>
+                                <select
+                                    id="level"
+                                    value={aiParams.level}
+                                    onChange={(e) => setAiParams({ ...aiParams, level: parseInt(e.target.value) })}
+                                    className="ai-select"
+                                >
+                                    <option value={1}>Level 1 - Beginner</option>
+                                    <option value={2}>Level 2 - Elementary</option>
+                                    <option value={3}>Level 3 - Intermediate</option>
+                                    <option value={4}>Level 4 - Upper Intermediate</option>
+                                    <option value={5}>Level 5 - Advanced</option>
+                                    <option value={6}>Level 6 - Proficient</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="ai-helper-text">
+                        <i className="fas fa-info-circle"></i> {translations.aiHelperText}
+                    </div>
+                </div>
+
+                <div className="tests-section">
+                    <div className="tests-header">
+                        <h1 className="tests-title">{translations.pageTitle}</h1>
+                        <div className="tests-actions">
+                            <Link to="/readings/multiple-choice/tests" className="view-tests-btn">
+                                <i className="fas fa-list"></i> My Multiple Choice Tests
+                            </Link>
+                            <Link to="/readings/multiple-choice/create" className="create-new-test-btn">
+                                <i className="fas fa-plus"></i> {translations.createButton}
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="language-filter">
+                        <span>{translations.filterByLanguage}</span>
+                        <select 
+                            value={selectedLanguage} 
+                            onChange={(e) => setSelectedLanguage(e.target.value)}
+                            className="language-select"
+                        >
+                            <option value="all">{translations.allLanguages}</option>
+                            {languages.map(lang => (
+                                <option key={lang} value={lang}>{lang}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {error && <div className="api-error-message">{error}</div>}
+
+                    {!error && filteredTests && filteredTests.length > 0 ? (
+                        <div className="tests-grid">
+                            {filteredTests.map(test => (
+                                <div key={test.multipleChoiceTestId} className="test-item">
+                                    <div className="test-image">
+                                        <img src={bookIcon} alt="Reading test" />
+                                    </div>
+                                    <div className="test-item-content">
+                                        <h3 className="test-item-title">{test.title}</h3>
+                                        <p className="test-item-description">
+                                            {test.description || `Practice your ${test.learningLanguage || 'language'} skills with this multiple choice test.`}
+                                        </p>
+                                        
+                                        <div className="test-info">
+                                            <span className={`level-badge ${getLevelBadgeClass(test.level)}`}>
+                                                {test.level || translations.beginner}
+                                            </span>
+                                            
+                                            <div className="lessons-count">
+                                                <i className="fas fa-book"></i> {getRandomCount(5, 15)} {translations.lessons}
+                                            </div>
+                                            
+                                            <div className="students-count">
+                                                <i className="fas fa-user-graduate"></i> {getRandomCount(50, 1000)} {translations.students}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="test-item-actions">
+                                        <Link 
+                                            to={`/readings/test/${test.multipleChoiceTestId}`}
+                                            className="test-action-btn take-btn"
+                                        >
+                                            <i className="fas fa-book-open"></i> {translations.takeTest}
+                                        </Link>
+                                        <Link 
+                                            to={`/readings/multiple-choice/edit/${test.multipleChoiceTestId}`}
+                                            className="test-action-btn edit-btn"
+                                        >
+                                            {translations.edit}
+                                        </Link>
+                                    </div>
                                 </div>
-                            )}
+                            ))}
                         </div>
-                        <Link to="/readings/create" className="readings-create-btn">
-                            <i className="fas fa-plus"></i> {translations.newReading}
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="readings-categories">
-                    <div className="reading-category-card">
-                        <h3 className="reading-category-title">{translations.category1}</h3>
-                        <div className="reading-category-actions">
-                            <Link to="/readings/category/news" className="reading-action-btn">
-                                <i className="fas fa-book-open"></i>
-                                <span>{translations.read}</span>
-                            </Link>
-                            <Link to="/readings/category/news/edit" className="reading-action-btn">
-                                <i className="fas fa-edit"></i>
-                                <span>{translations.edit}</span>
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div className="reading-category-card">
-                        <h3 className="reading-category-title">{translations.category2}</h3>
-                        <div className="reading-category-actions">
-                            <Link to="/readings/category/fiction" className="reading-action-btn">
-                                <i className="fas fa-book-open"></i>
-                                <span>{translations.read}</span>
-                            </Link>
-                            <Link to="/readings/category/fiction/edit" className="reading-action-btn">
-                                <i className="fas fa-edit"></i>
-                                <span>{translations.edit}</span>
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div className="reading-category-card">
-                        <h3 className="reading-category-title">{translations.category3}</h3>
-                        <div className="reading-category-actions">
-                            <Link to="/readings/category/business" className="reading-action-btn">
-                                <i className="fas fa-book-open"></i>
-                                <span>{translations.read}</span>
-                            </Link>
-                            <Link to="/readings/category/business/edit" className="reading-action-btn">
-                                <i className="fas fa-edit"></i>
-                                <span>{translations.edit}</span>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="readings-stats-container">
-                    <div className="readings-stats">
-                        <div className="reading-stat">
-                            <div className="reading-stat-value">25</div>
-                            <div className="reading-stat-label">{translations.totalReadings}</div>
-                        </div>
-
-                        <div className="reading-stat">
-                            <div className="reading-stat-value">15,000</div>
-                            <div className="reading-stat-label">{translations.wordsRead}</div>
-                        </div>
-
-                        <div className="reading-stat">
-                            <div className="reading-stat-value">5 hours</div>
-                            <div className="reading-stat-label">{translations.timeSpent}</div>
-                        </div>
-
-                        <div className="reading-stat">
-                            <div className="reading-stat-value">85%</div>
-                            <div className="reading-stat-label">{translations.comprehension}</div>
-                        </div>
-                    </div>
+                    ) : (
+                        !error && (
+                            <div className="empty-tests-container">
+                                <p className="empty-tests-message">{translations.noTestsFound}</p>
+                                <Link to="/readings/multiple-choice/create" className="create-first-test-btn">
+                                    {translations.createFirstTest}
+                                </Link>
+                            </div>
+                        )
+                    )}
                 </div>
             </div>
             
-            {/* Show API Key form as a popup overlay when needed */}
             {showApiKeyForm && (
                 <ApiKeyForm onSuccess={handleApiKeySuccess} onSkip={handleSkipApiKey} />
             )}

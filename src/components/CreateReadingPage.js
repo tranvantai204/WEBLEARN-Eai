@@ -130,7 +130,14 @@ function CreateReadingPage() {
             theme: "light",
             transition: Bounce,
         });
-        navigate('/readings');
+        
+        navigate('/readings/multiple-choice/create', { 
+            state: { 
+                readingTitle: formData.title,
+                readingContent: formData.content,
+                readingLanguage: formData.language
+            } 
+        });
     };
 
     return (

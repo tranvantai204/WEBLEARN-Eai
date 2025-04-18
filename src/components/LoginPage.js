@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,6 +16,7 @@ function LoginPage() {
 
     const { login, updateStreak } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     
     // Lấy API URL từ biến môi trường
     const API_URL = process.env.REACT_APP_API_URL || 'https://da20-115-76-51-131.ngrok-free.app/api';
@@ -32,14 +33,32 @@ function LoginPage() {
     // Handle login completion
     const handleLoginComplete = () => {
         setRedirecting(true);
-        navigate('/progress');
+        
+        // Check if there's a redirect path stored in localStorage
+        const redirectPath = localStorage.getItem('redirectAfterLogin');
+        if (redirectPath) {
+            // Clear the stored redirect path
+            localStorage.removeItem('redirectAfterLogin');
+            
+            // Navigate to the stored path
+            navigate(redirectPath);
+        } else {
+            // Default navigation to progress page
+            navigate('/progress');
+        }
     };
 
     // Remove the page transition effect
     useEffect(() => {
         if (redirecting) {
-            // Navigate immediately without delay
-            navigate('/progress');
+            // Get redirect path if any
+            const redirectPath = localStorage.getItem('redirectAfterLogin');
+            // Navigate to the stored path or default to progress
+            navigate(redirectPath || '/progress');
+            // Clear the stored redirect path
+            if (redirectPath) {
+                localStorage.removeItem('redirectAfterLogin');
+            }
         }
     }, [redirecting, navigate]);
 
@@ -130,7 +149,7 @@ function LoginPage() {
                         console.error('Failed to fetch progress data:', progressError);
                     }
                     
-                    // Navigate directly to the progress page
+                    // Navigate to the appropriate page
                     handleLoginComplete();
                 }
             } catch (loginError) {

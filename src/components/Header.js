@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'react-toastify';
 import { 
     FaGlobeAmericas,
     FaChevronDown,
@@ -30,7 +31,7 @@ import {
 
 function Header() {
   const { currentLanguage, changeLanguage, translateText } = useLanguage();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, checkTokenExpiration } = useAuth();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMobileLanguageOptions, setShowMobileLanguageOptions] = useState(false);
   const [showDesktopLanguageOptions, setShowDesktopLanguageOptions] = useState(false);
@@ -71,6 +72,17 @@ function Header() {
     profile: 'Progress',
     logout: 'Logout'
   });
+
+  // Check token expiration on component mount and when isAuthenticated changes
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Check token validity
+      checkTokenExpiration().catch(err => {
+        console.error('Token validation error:', err);
+        // Token is invalid, will be handled by AuthContext
+      });
+    }
+  }, [isAuthenticated, checkTokenExpiration]);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -146,9 +158,23 @@ function Header() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    setShowMobileMenu(false);
-    navigate('/');
+    try {
+      const success = await logout();
+      if (success) {
+        setShowMobileMenu(false);
+        toast.info('Đã đăng xuất thành công.', {
+          position: "top-right",
+          autoClose: 3000
+        });
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Có lỗi xảy ra khi đăng xuất. Vui lòng thử lại sau.', {
+        position: "top-right",
+        autoClose: 5000
+      });
+    }
   };
 
   return (

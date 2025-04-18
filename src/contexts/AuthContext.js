@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { toast } from 'react-toastify';
 
 // Tạo Context
@@ -37,8 +37,73 @@ export const AuthProvider = ({ children }) => {
     return true;
   };
 
+  // Hàm xử lý lỗi xác thực
+  const handleAuthError = useCallback(async (status) => {
+    console.log('Handling auth error with status:', status);
+    
+    // Nếu status là 401 (Unauthorized), thử làm mới token
+    if (status === 401) {
+      console.log('Token expired, attempting to refresh...');
+      const newToken = await refreshAccessToken();
+      
+      // Nếu làm mới thành công, trả về token mới
+      if (newToken) {
+        console.log('Token refreshed successfully');
+        return newToken;
+      } else {
+        // Nếu làm mới thất bại, đăng xuất người dùng
+        console.log('Token refresh failed, logging out user');
+        await logout();
+        // Thông báo cho người dùng
+        toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        return null;
+      }
+    }
+    
+    // Các lỗi xác thực khác, đăng xuất
+    if (status === 403) {
+      console.log('User not authorized for this resource');
+      toast.error('Bạn không có quyền truy cập vào tài nguyên này.');
+    }
+    
+    return null;
+  }, [refreshToken]);
+
+  // Check token expiration before making API calls
+  const checkTokenExpiration = useCallback(async () => {
+    if (!accessToken) {
+      console.log('No access token available');
+      return false;
+    }
+    
+    // Get token payload
+    try {
+      const payload = JSON.parse(atob(accessToken.split('.')[1]));
+      const expiry = payload.exp * 1000; // Convert to milliseconds
+      const currentTime = Date.now();
+      
+      // If token is expired or close to expiry (within 5 minutes)
+      if (expiry - currentTime < 300000) {
+        console.log('Token expired or about to expire, refreshing...');
+        const newToken = await refreshAccessToken();
+        return !!newToken;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to parse token:', error);
+      return false;
+    }
+  }, [accessToken, refreshToken]);
 
   const updateStreak = async () => {
+    // Check token before making API call
+    const isTokenValid = await checkTokenExpiration();
+    if (!isTokenValid) {
+      console.warn('No valid token available for updateStreak');
+      return false;
+    }
+    
     // Make sure to use the correct URL format
     const url = `${API_URL}/UserLearningStats/UpdateStreak`; 
     console.log('Calling updateStreak at URL:', url);
@@ -68,6 +133,12 @@ export const AuthProvider = ({ children }) => {
         });
 
         console.log('UpdateStreak response status:', response.status);
+        
+        // Handle auth errors
+        if (response.status === 401 || response.status === 403) {
+          await handleAuthError(response.status);
+          return false;
+        }
         
         // Check if the request was successful
         if (response.ok) {
@@ -112,6 +183,13 @@ export const AuthProvider = ({ children }) => {
         });
         
         console.log('Alternative updateStreak response status:', response.status);
+        
+        // Handle auth errors
+        if (response.status === 401 || response.status === 403) {
+          await handleAuthError(response.status);
+          return false;
+        }
+        
         return response.ok;
     } catch (error) {
         console.error('Alternative updateStreak also failed:', error);
@@ -133,7 +211,9 @@ export const AuthProvider = ({ children }) => {
 
   // Hàm lưu API key Gemini
   const storeApiKey = async (apiKey) => {
-    if (!accessToken) {
+    // Check token before making API call
+    const isTokenValid = await checkTokenExpiration();
+    if (!isTokenValid) {
       console.error('Không có token xác thực, không thể lưu API key');
       return { 
         success: false, 
@@ -167,6 +247,18 @@ export const AuthProvider = ({ children }) => {
       });
 
       console.log('Phản hồi từ server:', response.status, response.statusText);
+      
+      // Handle auth errors
+      if (response.status === 401 || response.status === 403) {
+        await handleAuthError(response.status);
+        return { 
+          success: false, 
+          status: response.status,
+          statusText: response.statusText,
+          message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+          data: null
+        };
+      }
       
       // Read response body
       let data = null;
@@ -265,11 +357,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Kiểm tra token khi component mount
+  // Kiểm tra token khi component mount và định kỳ
   useEffect(() => {
     const checkAuth = async () => {
       if (accessToken) {
-        // Có thể thêm logic kiểm tra tính hợp lệ của token ở đây
+        // Kiểm tra tính hợp lệ của token
+        const isValid = await checkTokenExpiration();
+        if (!isValid) {
+          console.log('Token invalid or expired');
+          await logout();
+        }
         setLoading(false);
       } else {
         setLoading(false);
@@ -277,7 +374,16 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkAuth();
-  }, [accessToken]);
+    
+    // Kiểm tra token theo định kỳ (mỗi 15 phút)
+    const tokenCheckInterval = setInterval(() => {
+      if (accessToken) {
+        checkTokenExpiration().catch(console.error);
+      }
+    }, 15 * 60 * 1000); // 15 minutes
+    
+    return () => clearInterval(tokenCheckInterval);
+  }, [accessToken, checkTokenExpiration]);
 
   // Kiểm tra xem đã có API key trong localStorage chưa
   const checkLocalApiKey = () => {
@@ -313,6 +419,8 @@ export const AuthProvider = ({ children }) => {
     updateStreak,
     storeApiKey,
     checkLocalApiKey,
+    handleAuthError,
+    checkTokenExpiration,
     isAuthenticated: !!accessToken,
     loading,
   };

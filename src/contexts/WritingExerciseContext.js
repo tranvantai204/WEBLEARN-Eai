@@ -17,7 +17,7 @@ export const WritingExerciseProvider = ({ children }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
-  const { accessToken, refreshAccessToken, isAuthenticated } = useAuth();
+  const { accessToken, refreshAccessToken, isAuthenticated, checkTokenExpiration, handleAuthError } = useAuth();
   
   // Log when the provider mounts
   useEffect(() => {
@@ -50,6 +50,13 @@ export const WritingExerciseProvider = ({ children }) => {
       options.headers['ngrok-skip-browser-warning'] = 'true';
       options.headers['Accept'] = 'application/json';
       
+      // Check token validity before making request
+      const isTokenValid = await checkTokenExpiration();
+      if (!isTokenValid) {
+        console.log('Token invalid or expired before API request');
+        throw new Error('Authentication required');
+      }
+      
       // Try to use current token from localStorage
       const currentToken = localStorage.getItem('accessToken');
       if (currentToken) {
@@ -68,6 +75,14 @@ export const WritingExerciseProvider = ({ children }) => {
       
       // Make the request
       let response = await fetch(url, options);
+      
+      // Handle auth errors
+      if (response.status === 401 || response.status === 403) {
+        console.log(`Auth error ${response.status} from ${url}`);
+        // Try to refresh the token
+        await handleAuthError(response.status);
+        throw new Error('Authentication error');
+      }
       
       // Check for non-JSON responses
       const contentType = response.headers.get('content-type');

@@ -17,12 +17,12 @@ export const FlashcardProvider = ({ children }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { accessToken, refreshAccessToken, isAuthenticated } = useAuth();
+  const { accessToken, refreshAccessToken, isAuthenticated, checkTokenExpiration, handleAuthError } = useAuth();
   
   // Get API URL from environment variables or use ngrok URL from Postman request
   const baseUrl = process.env.REACT_APP_API_URL || 'https://6d2c-115-76-51-131.ngrok-free.app';
-  // Remove trailing /api if it exists
-  const API_URL = baseUrl.endsWith('/api') ? baseUrl.slice(0, -4) : baseUrl;
+  // Remove trailing /api if it exists to avoid duplicate /api in endpoints
+  const API_URL = baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`;
   
   // Log the cleaned URL
   console.log('Using API base URL:', API_URL, '(original:', baseUrl, ')');
@@ -47,8 +47,13 @@ export const FlashcardProvider = ({ children }) => {
       options.headers['ngrok-skip-browser-warning'] = 'true';
       options.headers['Accept'] = 'application/json';
       
-      // For Postman compatibility - use exact token from Postman request when in test mode
-      // In production we would use the token from auth context
+      // Check token validity before making request
+      const isTokenValid = await checkTokenExpiration();
+      if (!isTokenValid) {
+        console.log('Token invalid or expired before API request');
+        throw new Error('Authentication required');
+      }
+      
       // Try to use current token from localStorage
       const currentToken = localStorage.getItem('accessToken');
       if (currentToken) {
@@ -71,6 +76,14 @@ export const FlashcardProvider = ({ children }) => {
       
       // Make the request
       let response = await fetch(url, options);
+      
+      // Handle auth errors
+      if (response.status === 401 || response.status === 403) {
+        console.log(`Auth error ${response.status} from ${url}`);
+        // Try to refresh the token
+        await handleAuthError(response.status);
+        throw new Error('Authentication error');
+      }
       
       // Check for non-JSON responses
       const contentType = response.headers.get('content-type');
@@ -134,7 +147,7 @@ export const FlashcardProvider = ({ children }) => {
   // CREATE a new flashcard set
   const createFlashcardSet = useCallback(async (flashcardSetData) => {
     try {
-      const result = await apiRequest(`${API_URL}/api/FlashCardSet/create`, {
+      const result = await apiRequest(`${API_URL}/FlashCardSet/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -154,7 +167,7 @@ export const FlashcardProvider = ({ children }) => {
   // GET a specific flashcard set by ID
   const getFlashcardSet = useCallback(async (flashcardSetId) => {
     try {
-      const result = await apiRequest(`${API_URL}/api/FlashCardSet/${flashcardSetId}`);
+      const result = await apiRequest(`${API_URL}/FlashCardSet/${flashcardSetId}`);
       setCurrentSet(result);
       return result;
     } catch (err) {
@@ -166,7 +179,7 @@ export const FlashcardProvider = ({ children }) => {
   // DELETE a flashcard set
   const deleteFlashcardSet = useCallback(async (flashcardSetId) => {
     try {
-      await apiRequest(`${API_URL}/api/FlashCardSet/Delete/${flashcardSetId}`, {
+      await apiRequest(`${API_URL}/FlashCardSet/Delete/${flashcardSetId}`, {
         method: 'DELETE'
       });
       
@@ -185,7 +198,7 @@ export const FlashcardProvider = ({ children }) => {
   // UPDATE a flashcard set
   const updateFlashcardSet = useCallback(async (flashcardSetId, updateData) => {
     try {
-      const result = await apiRequest(`${API_URL}/api/FlashCardSet/Update/${flashcardSetId}`, {
+      const result = await apiRequest(`${API_URL}/FlashCardSet/Update/${flashcardSetId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -213,8 +226,8 @@ export const FlashcardProvider = ({ children }) => {
   const togglePublicStatus = useCallback(async (flashcardSetId, isCurrentlyPublic) => {
     try {
       const endpoint = isCurrentlyPublic 
-        ? `${API_URL}/api/FlashCardSet/Toprivate/${flashcardSetId}`
-        : `${API_URL}/api/FlashCardSet/Topublic/${flashcardSetId}`;
+        ? `${API_URL}/FlashCardSet/Toprivate/${flashcardSetId}`
+        : `${API_URL}/FlashCardSet/Topublic/${flashcardSetId}`;
         
       console.log(`Toggling visibility with endpoint: ${endpoint}`);
       
@@ -243,7 +256,7 @@ export const FlashcardProvider = ({ children }) => {
     queryParams.append('itemPerPage', itemPerPage);
     
     try {
-      const result = await apiRequest(`${API_URL}/api/FlashCardSet/Explore?${queryParams.toString()}`);
+      const result = await apiRequest(`${API_URL}/FlashCardSet/Explore?${queryParams.toString()}`);
       
       // Update state
       setFlashcardSets(result.flashcardSets || []);
@@ -277,9 +290,8 @@ export const FlashcardProvider = ({ children }) => {
     queryParams.append('page', page);
     queryParams.append('itemPerPage', itemPerPage);
     
-    // Use hardcoded URL to avoid any potential environment variable issues
-    
-    const requestUrl = `${API_URL}/api/FlashCardSet/GetAll/${userId}?${queryParams.toString()}`;
+    // Use API_URL variable for consistent URL structure
+    const requestUrl = `${API_URL}/FlashCardSet/GetAll/${userId}?${queryParams.toString()}`;
     
     console.log('Request URL:', requestUrl);
     
@@ -341,12 +353,12 @@ export const FlashcardProvider = ({ children }) => {
       // Return empty result instead of throwing to prevent app from crashing
       return { flashcardSets: [], totalCount: 0, page: 1, itemPerPage, totalPages: 1 };
     }
-  }, [accessToken, isAuthenticated]);
+  }, [accessToken, isAuthenticated, API_URL]);
 
   // Generate flashcard set with AI
   const generateFlashcardSetWithAI = useCallback(async (generationData) => {
     try {
-      const result = await apiRequest(`${API_URL}/api/FlashCardSet/GenerateByAI`, {
+      const result = await apiRequest(`${API_URL}/FlashCardSet/GenerateByAI`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -371,7 +383,7 @@ export const FlashcardProvider = ({ children }) => {
   const createFlashcard = useCallback(async (flashcardData) => {
     try {
       // Use the correct endpoint structure
-      const endpointUrl = `${API_URL}/api/FlashCard/Create`;
+      const endpointUrl = `${API_URL}/FlashCard/Create`;
       console.log('Sending create flashcard request to:', endpointUrl);
       console.log('Flashcard data:', JSON.stringify(flashcardData, null, 2));
       
@@ -399,7 +411,7 @@ export const FlashcardProvider = ({ children }) => {
       console.error('Failed to create flashcard:', err);
       
       // Debug URL and error details
-      console.error(`Request URL: ${API_URL}/api/FlashCard/Create`);
+      console.error(`Request URL: ${API_URL}/FlashCard/Create`);
       console.error('Error details:', JSON.stringify(err, null, 2));
       
       // Handle specific API error responses
@@ -441,7 +453,7 @@ export const FlashcardProvider = ({ children }) => {
       queryParams.append('page', page);
       queryParams.append('itemsPerPage', itemsPerPage);
       
-      const url = `${API_URL}/api/FlashCardSet/${flashcardSetId}?${queryParams.toString()}`;
+      const url = `${API_URL}/FlashCardSet/${flashcardSetId}?${queryParams.toString()}`;
       console.log('Fetching flashcards for set:', flashcardSetId, 'URL:', url);
       
       const result = await apiRequest(url);
@@ -493,8 +505,8 @@ export const FlashcardProvider = ({ children }) => {
       // 3. Postman token as fallback
       const tokenToUse = accessToken || currentToken || postmanToken;
       
-      // Use hardcoded URL to avoid any path issues
-      const apiUrl = "https://6d2c-115-76-51-131.ngrok-free.app/api/FlashCard/Create";
+      // Use constructed API URL
+      const apiUrl = `${API_URL}/FlashCard/Create`;
       console.log('Direct API call to:', apiUrl);
       console.log('Request data:', JSON.stringify(flashcardData, null, 2));
       
@@ -590,11 +602,8 @@ export const FlashcardProvider = ({ children }) => {
         throw new Error('User not authenticated, cannot update API key');
       }
       
-      // Đảm bảo URL có /api/ prefix
-      let storeKeyUrl = `${API_URL}/Auth/store-key`;
-      if (!storeKeyUrl.includes('/api/')) {
-        storeKeyUrl = `${API_URL}/api/Auth/store-key`;
-      }
+      // Use the correct API URL format
+      const storeKeyUrl = `${API_URL}/Auth/store-key`;
       
       console.log('Gửi API key đến server:', storeKeyUrl);
       
@@ -632,7 +641,7 @@ export const FlashcardProvider = ({ children }) => {
       }
       
       // Construct the API URL
-      const apiUrl = `${API_URL}/api/FlashCard/Delete/${flashcardId}`;
+      const apiUrl = `${API_URL}/FlashCard/Delete/${flashcardId}`;
       console.log(`Deleting flashcard with ID ${flashcardId} from: ${apiUrl}`);
       
       // Send DELETE request
@@ -707,7 +716,7 @@ export const FlashcardProvider = ({ children }) => {
       }
       
       // Construct API URL
-      const apiUrl = `${API_URL}/api/FlashCard/Update/${flashcardId}`;
+      const apiUrl = `${API_URL}/FlashCard/Update/${flashcardId}`;
       console.log(`Updating flashcard at: ${apiUrl}`);
       
       // Send request to update the flashcard

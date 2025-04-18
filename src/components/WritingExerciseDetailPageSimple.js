@@ -119,7 +119,8 @@ const WritingExerciseDetailPageSimple = () => {
   }, [loading, exercise, isAuthenticated, exerciseId, saving, autoSaving, submitting, lastSaved, aiFeedback]);
   
   // Đảm bảo URL API giống nhau ở mọi nơi
-  const API_BASE_URL = 'https://4ec1-118-71-220-242.ngrok-free.app';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://6d2c-115-76-51-131.ngrok-free.app';
+
   
   // Load initial data
   useEffect(() => {

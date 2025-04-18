@@ -4,6 +4,11 @@ import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { FlashcardProvider } from './contexts/FlashcardContext';
 import { WritingExerciseProvider } from './contexts/WritingExerciseContext';
+import { MultipleChoiceTestProvider } from './contexts/MultipleChoiceTestContext';
+
+// Import route protection components
+import ProtectedRoute from './components/ProtectedRoute';
+import UnprotectedRoute from './components/UnprotectedRoute';
 
 // Import components
 import Header from './components/Header.js';
@@ -21,6 +26,10 @@ import StudyFlashcardsPage from './components/StudyFlashcardsPage.js';
 import FlashcardLearningPage from './components/FlashcardLearningPage.js';
 import ReadingsPage from './components/ReadingsPage.js';
 import CreateReadingPage from './components/CreateReadingPage.js';
+import CreateMultipleChoiceTestPage from './components/CreateMultipleChoiceTestPage.js';
+import EditMultipleChoiceTestPage from './components/EditMultipleChoiceTestPage.js';
+import MultipleChoiceTestsPage from './components/MultipleChoiceTestsPage.js';
+import MultipleChoiceTestDetailPage from './components/MultipleChoiceTestDetailPage.js';
 import WritingPage from './components/WritingPage.js';
 import WritingExerciseDetailPage from './components/WritingExerciseDetailPage.js';
 import WritingExerciseDetailPageSimple from './components/WritingExerciseDetailPageSimple.js';
@@ -53,24 +62,134 @@ const AppLayout = () => {
             {!isAuthPage && <Header />}
             <main className={`main-content ${isAuthPage ? 'auth-page' : ''}`}>
                 <Routes>
+                    {/* Public routes */}
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                    <Route path="/flashcards" element={<FlashcardsPage />} />
-                    <Route path="/flashcards/create" element={<CreateFlashcardsPage />} />
-                    <Route path="/flashcards/create-ai" element={<CreateAIFlashcardsPage />} />
-                    <Route path="/flashcard-set/:flashcardSetId" element={<FlashcardSetDetailsPage />} />
-                    <Route path="/flashcards/study" element={<StudyFlashcardsPage />} />
-                    <Route path="/learn-flashcards/:flashcardSetId" element={<FlashcardLearningPage />} />
-                    <Route path="/readings" element={<ReadingsPage />} />
-                    <Route path="/readings/create" element={<CreateReadingPage />} />
-                    <Route path="/writing" element={<WritingPage />} />
-                    <Route path="/writing/exercise/:exerciseId" element={<WritingExerciseDetailPage />} />
-                    <Route path="/writing/exercise-simple/:exerciseId" element={<WritingExerciseDetailPageSimple />} />
-                    <Route path="/discover" element={<DiscoverPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/progress" element={<UserProgressPage />} />
+                    
+                    {/* Unprotected routes (only accessible when not logged in) */}
+                    <Route path="/login" element={
+                        <UnprotectedRoute>
+                            <LoginPage />
+                        </UnprotectedRoute>
+                    } />
+                    <Route path="/register" element={
+                        <UnprotectedRoute>
+                            <RegisterPage />
+                        </UnprotectedRoute>
+                    } />
+                    
+                    {/* Protected routes (require authentication) */}
+                    <Route path="/dashboard" element={
+                        <ProtectedRoute>
+                            <DashboardPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/flashcards" element={
+                        <ProtectedRoute>
+                            <FlashcardsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/flashcards/create" element={
+                        <ProtectedRoute>
+                            <CreateFlashcardsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/flashcards/create-ai" element={
+                        <ProtectedRoute>
+                            <CreateAIFlashcardsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/flashcard-set/:flashcardSetId" element={
+                        <ProtectedRoute>
+                            <FlashcardSetDetailsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/flashcards/study" element={
+                        <ProtectedRoute>
+                            <StudyFlashcardsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/learn-flashcards/:flashcardSetId" element={
+                        <ProtectedRoute>
+                            <FlashcardLearningPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/readings" element={
+                        <ProtectedRoute>
+                            <ReadingsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/readings/create" element={
+                        <ProtectedRoute>
+                            <CreateReadingPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/readings/multiple-choice/create" element={
+                        <ProtectedRoute>
+                            <CreateMultipleChoiceTestPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/readings/multiple-choice/edit/:id" element={
+                        <ProtectedRoute>
+                            <EditMultipleChoiceTestPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/readings/multiple-choice/tests" element={
+                        <ProtectedRoute>
+                            <MultipleChoiceTestsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/readings/test/:id" element={
+                        <ProtectedRoute>
+                            <MultipleChoiceTestDetailPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/readings/tests" element={
+                        <ProtectedRoute>
+                            <ReadingsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/readings/practice" element={
+                        <ProtectedRoute>
+                            <ReadingsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/readings/custom" element={
+                        <ProtectedRoute>
+                            <ReadingsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/writing" element={
+                        <ProtectedRoute>
+                            <WritingPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/writing/exercise/:exerciseId" element={
+                        <ProtectedRoute>
+                            <WritingExerciseDetailPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/writing/exercise-simple/:exerciseId" element={
+                        <ProtectedRoute>
+                            <WritingExerciseDetailPageSimple />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/discover" element={
+                        <ProtectedRoute>
+                            <DiscoverPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/profile" element={
+                        <ProtectedRoute>
+                            <ProfilePage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/progress" element={
+                        <ProtectedRoute>
+                            <UserProgressPage />
+                        </ProtectedRoute>
+                    } />
+                    
+                    {/* Public info pages */}
                     <Route path="/resources" element={<ResourcesPage />} />
                     <Route path="/our-story" element={<OurStoryPage />} />
                     <Route path="/how-it-works" element={<HowItWorksPage />} />
@@ -96,10 +215,12 @@ function App() {
             <AuthProvider>
                 <FlashcardProvider>
                     <WritingExerciseProvider>
-                        <Router>
-                            <ScrollToTop />
-                            <AppLayout />
-                        </Router>
+                        <MultipleChoiceTestProvider>
+                            <Router>
+                                <ScrollToTop />
+                                <AppLayout />
+                            </Router>
+                        </MultipleChoiceTestProvider>
                     </WritingExerciseProvider>
                 </FlashcardProvider>
             </AuthProvider>
