@@ -24,6 +24,11 @@ const modalStyles = `
 
 const baseUrl = process.env.REACT_APP_API_URL;
 
+function copyToClipboard(link) {
+    navigator.clipboard.writeText(link)
+    toast.success("Link đã được copy!");   
+}
+
 // Tạo một component Modal riêng biệt
 function Modal({ show, onClose, children }) {
     if (!show) return null;
@@ -2200,6 +2205,7 @@ function FlashcardSetDetailsPage() {
                     ) : flashcardSet ? (
                         <>
                             <div className="flashcard-set-header">
+                                <ToastContainer/>
                                 <h1 className="set-title">{flashcardSet.title}</h1>
                                 <div className="set-meta">
                                     <div className="meta-item">
@@ -2231,6 +2237,13 @@ function FlashcardSetDetailsPage() {
                                 {flashcardSet.description && (
                                     <p className="set-description">{flashcardSet.description}</p>
                                 )}
+                                <div className='share'>
+                                {
+                                    flashcardSet.isPublic ? 
+                                    <button className='btn' onClick={() => copyToClipboard(window.location.href)}>Share to your friend</button>:
+                                    <></>
+                                }
+                                </div>
                             </div>
                             
                             <div className="flashcard-details-actions">

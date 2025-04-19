@@ -62,6 +62,20 @@ function ReadingsPage() {
         levelDifficulty: 'Difficulty Level'
     });
 
+    const levelOptions = [
+        { value: 1, label: 'Level 1 - Beginner' },
+        { value: 2, label: 'Level 2 - Elementary' },
+        { value: 3, label: 'Level 3 - Pre-Intermediate' },
+        { value: 4, label: 'Level 4 - Intermediate' },
+        { value: 5, label: 'Level 5 - Upper Intermediate' },
+        { value: 6, label: 'Level 6 - Advanced' }
+    ];
+
+    const getLevelLabel = (levelValue) => {
+        const option = levelOptions.find(opt => opt.value === levelValue);
+        return option ? option.label : null; // Trả về null hoặc một giá trị mặc định nếu không tìm thấy
+    };
+
     // Translate error/success messages up front to avoid async issues in callbacks
     const [translatedMessages, setTranslatedMessages] = useState({
         errorEmptyTopic: translations.errorEmptyTopic,
@@ -392,16 +406,16 @@ function ReadingsPage() {
                                         
                                         <div className="test-info">
                                             <span className={`level-badge ${getLevelBadgeClass(test.level)}`}>
-                                                {test.level || translations.beginner}
+                                            {getLevelLabel(test.level) || test.level || translations.beginner}
                                             </span>
+                                            <div className="students-count">
+                                                <i className="fas fa-user-graduate"></i> {test.learnerCount} {translations.students}
+                                            </div>
                                             
                                             <div className="lessons-count">
                                                 <i className="fas fa-book"></i> {getRandomCount(5, 15)} {translations.lessons}
                                             </div>
                                             
-                                            <div className="students-count">
-                                                <i className="fas fa-user-graduate"></i> {getRandomCount(50, 1000)} {translations.students}
-                                            </div>
                                         </div>
                                     </div>
                                     <div className="test-item-actions">

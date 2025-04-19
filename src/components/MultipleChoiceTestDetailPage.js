@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { useAuthenticatedRequest } from '../utils/apiUtils';
 import '../css/components/MultipleChoiceTest.css';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -70,6 +70,11 @@ function MultipleChoiceTestDetailPage() {
             setLoading(false);
         }
     };
+
+    function copyToClipboard(link) {
+        navigator.clipboard.writeText(link)
+        toast.success("Link đã được copy!");   
+    }
 
     const handleAnswerSelect = (questionId, answerIndex) => {
         setUserAnswers(prev => ({
@@ -171,6 +176,7 @@ function MultipleChoiceTestDetailPage() {
 
     return (
         <div className="test-detail-container">
+            <ToastContainer/>
             <div className="test-detail-header">
                 <h1 className="test-detail-title">{testData.title}</h1>
                 <div className="test-meta">
@@ -192,6 +198,13 @@ function MultipleChoiceTestDetailPage() {
                          testData.learningLanguage === 'DEU' ? 'German' :
                          testData.learningLanguage === 'ESP' ? 'Spanish' : testData.learningLanguage}
                     </span>
+                    <div className='share'>
+                        {
+                            testData.isPublic ? 
+                            <button className='btn' onClick={() => copyToClipboard(window.location.href)}>Share to your friend</button>:
+                            <></>
+                        }
+                    </div>
                 </div>
             </div>
 

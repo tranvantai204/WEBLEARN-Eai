@@ -287,10 +287,13 @@
     gap: 1rem;
 }
 
+.vocabulary-item{
+    grid-template-columns: 1fr 1fr auto;
+}
+
 .vocabulary-item,
 .question-item {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
     gap: 1rem;
     align-items: start;
     background: #f9fafb;
