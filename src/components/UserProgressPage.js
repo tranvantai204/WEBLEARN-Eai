@@ -99,17 +99,13 @@ function UserProgressPage() {
         updateUserStreak();
     }, [API_URL, accessToken, isAuthenticated]);
 
-    // Format thời gian học thành giờ:phút
+    // Format thời gian học thành phút
     const formatLearningTime = (minutes) => {
         if (!minutes) return '0 phút';
         
-        const hours = Math.floor(minutes / 60);
-        const mins = Math.round((minutes - hours * 60) * 100) / 100;
-        
-        if (hours > 0) {
-            return `${hours}h ${mins}m`;
-        }
-        return `${mins} phút`;
+        // Làm tròn số phút đến 2 chữ số thập phân
+        const roundedMinutes = Math.round(minutes * 100) / 100;
+        return `${roundedMinutes} phút`;
     };
 
     // Format ngày học cuối cùng
@@ -336,14 +332,14 @@ function UserProgressPage() {
                                 onClick={() => navigate('/flashcards')}
                             >
                                 <i className="fas fa-layer-group"></i>
-                                Học Thẻ Ghi Nhớ
+                                <span>Học Thẻ Ghi Nhớ</span>
                             </button>
                             <button 
                                 className="action-button secondary-button"
                                 onClick={() => navigate('/readings')}
                             >
                                 <i className="fas fa-book"></i>
-                                Đọc Bài Mới
+                                <span>Đọc Bài Mới</span>
                             </button>
                         </div>
 
@@ -397,7 +393,8 @@ function UserProgressPage() {
                             className="action-button primary-button"
                             onClick={() => navigate('/flashcards')}
                         >
-                            Bắt đầu học ngay
+                            <i className="fas fa-play"></i>
+                            <span>Bắt đầu học ngay</span>
                         </button>
                     </div>
                 )}

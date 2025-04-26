@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useWritingExercise } from '../contexts/WritingExerciseContext';
 import ApiKeyForm from './ApiKeyForm';
 import Spinner from './common/Spinner';
+import { ExploreSection } from './common';
 import AIWritingTopicForm from './AIWritingTopicForm';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Writing.css';
@@ -511,6 +512,9 @@ function WritingPage() {
                         {translations.createTopicWithAI}
                     </button>
                 </div>
+                
+                {/* Thêm section khám phá */}
+                <ExploreSection type="writing" />
                 
                 {/* AI Writing Topic Form */}
                 {showAITopicForm && (

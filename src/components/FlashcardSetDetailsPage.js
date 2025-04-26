@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useFlashcard } from '../contexts/FlashcardContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import ApiKeyForm from './ApiKeyForm';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -74,6 +75,7 @@ function FlashcardSetDetailsPage() {
     const navigate = useNavigate();
     const { getFlashcardSet, createFlashcard, directCreateFlashcard, getFlashcardsForSet, deleteFlashcardSet, updateFlashcardSet, togglePublicStatus, loading, error, getUserApiKey, deleteFlashcard, updateFlashcard } = useFlashcard();
     const { isAuthenticated } = useAuth();
+    const { translateText } = useLanguage();
     
     const [searchTerm, setSearchTerm] = useState("");
     const [sortBy, setSortBy] = useState("alphabetical");
@@ -163,11 +165,22 @@ function FlashcardSetDetailsPage() {
                     setReviews(data.flashcardReviews);
                 }
                 
+                // Set editSetData from fetched data
+                if (data) {
+                    setEditSetData({
+                        title: data.title || '',
+                        description: data.description || '',
+                        learningLanguage: data.learningLanguage || '',
+                        nativeLanguage: data.nativeLanguage || '',
+                        level: data.level || 1
+                    });
+                }
+                
                 // Fetch flashcards for this set
                 fetchFlashcardsForSet(flashcardSetId);
             } catch (err) {
                 console.error('Error fetching flashcard set details:', err);
-                toast.error(err.message || 'Failed to load flashcard set details');
+                toast.error('Failed to load flashcard set details');
             }
         };
 
@@ -1288,6 +1301,26 @@ function FlashcardSetDetailsPage() {
         }
     };
 
+    // Determine if user owns this set
+    const isOwner = isAuthenticated && flashcardSet && flashcardSet.userId === localStorage.getItem('userId');
+    
+    // Determine if set is public or user is owner
+    const canView = flashcardSet?.isPublic || isOwner;
+
+    // Handle study button click
+    const handleStudySet = (set) => {
+      if (set && set.flashcardSetId) {
+        // If authenticated, use the protected route
+        // Otherwise use the public route for public sets
+        const studyRoute = isAuthenticated 
+          ? `/learn-flashcards/${set.flashcardSetId}`
+          : `/public-learn/${set.flashcardSetId}`;
+        navigate(studyRoute);
+      } else {
+        toast.error('Cannot study this set at the moment.');
+      }
+    };
+
     return (
         <div className="flashcard-details-page">
             {/* Thêm style cho animations */}
@@ -2206,7 +2239,17 @@ function FlashcardSetDetailsPage() {
                         <>
                             <div className="flashcard-set-header">
                                 <ToastContainer/>
-                                <h1 className="set-title">{flashcardSet.title}</h1>
+                                <div className="set-header-top">
+                                    <h1 className="set-title">{flashcardSet.title}</h1>
+                                    {(flashcardSet?.isPublic || isAuthenticated) && (
+                                        <button 
+                                            className="primary-study-btn" 
+                                            onClick={() => handleStudySet(flashcardSet)}
+                                        >
+                                            <i className="fas fa-graduation-cap"></i> {translateText('Study This Set')}
+                                        </button>
+                                    )}
+                                </div>
                                 <div className="set-meta">
                                     <div className="meta-item">
                                         <i className="fas fa-globe"></i>
@@ -2247,59 +2290,43 @@ function FlashcardSetDetailsPage() {
                             </div>
                             
                             <div className="flashcard-details-actions">
-                                <button 
-                                    className="btn btn-primary"
-                                    onClick={() => navigate(`/learn-flashcards/${flashcardSetId}`)}
-                                >
-                                    <i className="fas fa-play"></i>
-                                    Study Set
-                                </button>
-                                <button 
-                                    className="btn btn-primary"
-                                    id="addCardButton"
-                                    onClick={() => setShowAddModal(true)}
-                                    style={{ 
-                                        position: 'relative', 
-                                        overflow: 'hidden',
-                                        backgroundColor: '#16a085',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '10px 20px',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: '500',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                                    }}
-                                >
-                                    <i className="fas fa-plus"></i>
-                                    Add Card
-                                </button>
-                                <button 
-                                    className="btn btn-outline-secondary"
-                                    onClick={() => openEditSetModal()}
-                                >
-                                    <i className="fas fa-edit"></i>
-                                    Edit Set
-                                </button>
-                                <button 
-                                    className="btn btn-outline-secondary"
-                                    onClick={() => openVisibilityModal()}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px'
-                                    }}
-                                >
-                                    <i className={`fas fa-${flashcardSet?.isPublic ? 'lock' : 'eye'}`}></i>
-                                    Make {flashcardSet?.isPublic ? 'Private' : 'Public'}
-                                </button>
-                                <button className="btn btn-outline-danger" onClick={() => {handleDeleteFlashCardSet(flashcardSet.flashcardSetId)}}>
-                                    <i className="fas fa-trash"></i>
-                                    Delete
-                                </button>
+                                {isAuthenticated && isOwner && (
+                                    <>
+                                        <button 
+                                            className="btn btn-secondary" 
+                                            onClick={openEditSetModal}
+                                        >
+                                            <i className="fas fa-edit"></i> {translateText('Edit Set')}
+                                        </button>
+                                        <button 
+                                            className="btn btn-primary" 
+                                            onClick={openAddModal}
+                                        >
+                                            <i className="fas fa-plus"></i> {translateText('Add Card')}
+                                        </button>
+                                        <button 
+                                            className="btn btn-info" 
+                                            onClick={openVisibilityModal}
+                                        >
+                                            <i className={`fas fa-${flashcardSet?.isPublic ? 'globe' : 'lock'}`}></i> 
+                                            {flashcardSet?.isPublic ? translateText('Public') : translateText('Private')}
+                                        </button>
+                                        <button 
+                                            className="btn btn-danger" 
+                                            onClick={() => setShowDeleteConfirmation(true)}
+                                        >
+                                            <i className="fas fa-trash"></i> {translateText('Delete')}
+                                        </button>
+                                    </>
+                                )}
+                                {isAuthenticated && !isOwner && (
+                                    <button 
+                                        className="btn btn-success" 
+                                        onClick={() => handleStudySet(flashcardSet)}
+                                    >
+                                        <i className="fas fa-graduation-cap"></i> {translateText('Study Set')}
+                                    </button>
+                                )}
                             </div>
                             
                             <div className="flashcards-list-header">
@@ -2434,6 +2461,30 @@ function FlashcardSetDetailsPage() {
                     flashcardSetId={flashcardSetId}
                     onReviewAdded={handleReviewAdded}
                 />
+            )}
+
+            {!isAuthenticated && (
+                <div className="login-prompt">
+                    <p>{translateText('Sign in to create your own flashcard sets')}</p>
+                    {flashcardSet?.isPublic && (
+                        <div className="guest-study-container">
+                            <button 
+                                className="btn btn-success mb-3"
+                                onClick={() => handleStudySet(flashcardSet)}
+                                style={{ marginRight: '10px' }}
+                            >
+                                <i className="fas fa-graduation-cap"></i> {translateText('Study This Set')}
+                            </button>
+                            <div className="guest-study-info">
+                                <i className="fas fa-info-circle"></i>
+                                <span>{translateText('You can study as a guest, but your progress will not be saved.')}</span>
+                            </div>
+                        </div>
+                    )}
+                    <Link to="/login" className="btn btn-primary">
+                        <i className="fas fa-sign-in-alt"></i> {translateText('Sign In')}
+                    </Link>
+                </div>
             )}
         </div>
     );

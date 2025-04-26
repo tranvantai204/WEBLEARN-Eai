@@ -251,14 +251,16 @@
 .register-form-title {
     font-size: 1.8rem;
     font-weight: 800;
-    color: #40c057;
+    color: #1e7e34;
     margin-bottom: 0.5rem;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.8);
 }
 
 .register-form-subtitle {
     font-size: 1rem;
-    color: #495057;
+    color: #333333;
     margin-bottom: 1.5rem;
+    font-weight: 500;
 }
 
 .register-progress {
@@ -284,24 +286,23 @@
 .register-progress-step {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
-    background-color: white;
-    border: 2px solid #000;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: white;
+    border: 2px solid #ced4da;
+    border-radius: 50%;
     font-weight: 700;
-    font-size: 0.9rem;
-    color: #000;
+    color: #333333;
     position: relative;
     z-index: 2;
-    transition: all 0.3s ease;
 }
 
 .register-progress-step.active {
     background-color: #40c057;
-    border-color: #000;
+    border-color: #40c057;
     color: white;
+    box-shadow: 0 0 0 3px rgba(64, 192, 87, 0.25);
 }
 
 .register-form-body {
@@ -334,38 +335,37 @@
 
 .form-label {
     display: block;
-    font-weight: 700;
     margin-bottom: 0.5rem;
-    color: #000;
-    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333333;
+    font-size: 1rem;
 }
 
 .form-label i {
     margin-right: 0.5rem;
-    color: var(--primary-500);
+    color: #40c057;
 }
 
 .form-control {
-    display: block;
     width: 100%;
-    padding: 0.8rem 1rem;
+    padding: 1rem;
+    border: 2px solid #ced4da;
+    border-radius: var(--border-radius-large);
     font-size: 1rem;
-    line-height: 1.5;
-    color: #000;
-    background-color: white;
-    border: 2px solid #000;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    background-color: #fff;
+    color: #212529;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .form-control:focus {
-    outline: none;
     border-color: #40c057;
-    box-shadow: 0 0 0 3px rgba(64, 192, 87, 0.2);
+    box-shadow: 0 0 0 3px rgba(64, 192, 87, 0.25);
+    outline: none;
 }
 
 .form-control::placeholder {
-    color: var(--gray-500);
+    color: #adb5bd;
 }
 
 .password-field {
@@ -588,13 +588,15 @@
 }
 
 .btn-primary {
-    background-color: #ff6b2c;
+    background-color: #40c057;
     color: white;
-    border: 2px solid #000;
+    border: none;
+    font-weight: 700;
 }
 
 .btn-primary:hover {
-    background-color: #ff8f5e;
+    background-color: #2b9641;
+    transform: translateY(-2px);
 }
 
 .btn-outline {
@@ -612,11 +614,9 @@
 }
 
 .register-next-btn {
-    margin-left: auto;
-}
-
-.register-next-btn i {
-    margin-left: 0.5rem;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 .register-submit-btn {
@@ -629,18 +629,21 @@
 }
 
 .register-form-footer {
-    padding: 1.5rem;
+    padding: 1rem;
     text-align: center;
-    border-top: 2px solid #000;
+    font-weight: 500;
+    color: #333333;
 }
 
 .register-login-link {
     color: #40c057;
-    font-weight: 700;
     text-decoration: none;
+    font-weight: 700;
+    transition: all 0.2s ease;
 }
 
 .register-login-link:hover {
+    color: #2b9641;
     text-decoration: underline;
 }
 
@@ -857,27 +860,28 @@
 
 .gender-label {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 0.5rem;
     padding: 1rem;
-    background-color: white;
-    border: 2px solid #000;
-    border-radius: 8px;
+    border: 2px solid #ced4da;
+    border-radius: var(--border-radius-large);
+    font-weight: 600;
+    color: #333333;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    background-color: white;
 }
 
 .gender-label i {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+    color: #40c057;
+    font-size: 1.1rem;
 }
 
 .gender-option input[type="radio"]:checked + .gender-label {
     background-color: #e6f7e6;
     border-color: #40c057;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: #1e7e34;
+    box-shadow: 0 0 0 3px rgba(64, 192, 87, 0.25);
 }
 
 .gender-option:hover .gender-label {

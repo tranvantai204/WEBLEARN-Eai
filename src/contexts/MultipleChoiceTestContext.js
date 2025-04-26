@@ -227,7 +227,14 @@ export const MultipleChoiceTestProvider = ({ children }) => {
     try {
       console.log(`Attempting to get multiple choice test with ID: ${testId}`);
       
-      const result = await apiRequest(`${API_URL}/MultipleChoiceTest/${testId}`);
+      // Đảm bảo ID có định dạng chuẩn, chuyển đổi sang chữ hoa nếu cần
+      const formattedId = testId.toUpperCase();
+      
+      // Sử dụng chính xác endpoint API theo tài liệu
+      const apiEndpoint = `${API_URL}/MultipleChoiceTest/GetById/${formattedId}`;
+      console.log('Calling API endpoint:', apiEndpoint);
+      
+      const result = await apiRequest(apiEndpoint);
       console.log('Multiple choice test detail retrieved:', result);
       
       // Set as current test
@@ -240,6 +247,77 @@ export const MultipleChoiceTestProvider = ({ children }) => {
       throw err;
     }
   }, [API_URL, apiRequest]);
+
+  // EXPLORE public multiple choice tests (with optional filters)
+  const exploreMultipleChoiceTests = useCallback(async (filters = {}) => {
+    const { learningLanguage, nativeLanguage, page = 1, itemPerPage = 20 } = filters;
+    
+    // Build query string
+    let queryParams = new URLSearchParams();
+    if (learningLanguage) queryParams.append('learningLanguage', learningLanguage);
+    if (nativeLanguage) queryParams.append('nativeLanguage', nativeLanguage);
+    queryParams.append('page', page);
+    queryParams.append('itemPerPage', itemPerPage);
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // This endpoint doesn't require authentication, so make a direct fetch request
+      const requestUrl = `${API_URL}/MultipleChoiceTest/Explore?${queryParams.toString()}`;
+      console.log('Exploring public multiple choice tests:', requestUrl);
+      
+      // Set up headers (no auth token needed)
+      const headers = new Headers();
+      headers.append('Accept', 'application/json');
+      headers.append('ngrok-skip-browser-warning', 'true');
+      
+      const response = await fetch(requestUrl, {
+        method: 'GET',
+        headers,
+        credentials: 'omit',
+        mode: 'cors',
+        cache: 'no-cache',
+      });
+      
+      console.log('Explore response status:', response.status);
+      
+      // Check for errors
+      if (!response.ok) {
+        if (response.status === 404) {
+          // Not found is expected when no tests match filters
+          setMultipleChoiceTests([]);
+          setTotalPages(1);
+          setCurrentPage(1);
+          setLoading(false);
+          return { multipleChoiceTestSummaries: [], totalPage: 1, curentPage: 1, itemPerPage };
+        }
+        
+        throw new Error(`Request failed with status: ${response.status}`);
+      }
+      
+      // Parse the JSON response
+      const result = await response.json();
+      console.log('Explore results:', result);
+      
+      // Update state with tests
+      if (result) {
+        setMultipleChoiceTests(result.multipleChoiceTestSummaries || []);
+        setTotalPages(result.totalPage || 1);
+        setCurrentPage(result.curentPage || 1);
+      }
+      
+      setLoading(false);
+      return result;
+    } catch (err) {
+      console.error('Failed to explore multiple choice tests:', err);
+      setError('Failed to load public tests. Please try again later.');
+      setLoading(false);
+      
+      // Return empty result instead of throwing to prevent app from crashing
+      return { multipleChoiceTestSummaries: [], totalPage: 1, curentPage: 1 };
+    }
+  }, [API_URL]);
 
   // Create a new multiple choice test
   const createMultipleChoiceTest = useCallback(async (testData) => {
@@ -423,6 +501,7 @@ export const MultipleChoiceTestProvider = ({ children }) => {
     itemsPerPage,
     getAllMultipleChoiceTests,
     getMultipleChoiceTestById,
+    exploreMultipleChoiceTests,
     createMultipleChoiceTest,
     updateMultipleChoiceTest,
     deleteMultipleChoiceTest,

@@ -1,15 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { useAuthenticatedRequest } from '../utils/apiUtils';
 import '../css/components/MultipleChoiceTest.css';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
+import { FaArrowLeft, FaShare, FaRedo } from 'react-icons/fa';
 
 function MultipleChoiceTestDetailPage() {
-    const { id } = useParams();
+    const { testId } = useParams();
     const navigate = useNavigate();
     const makeRequest = useAuthenticatedRequest();
-    const { currentLanguage } = useLanguage();
+    const { currentLanguage, translateText } = useLanguage();
+    const { isAuthenticated } = useAuth();
+    
+    console.log("MultipleChoiceTestDetailPage - URL ID Parameter:", testId);
+    
+    // Check if this is accessed via public route
+    const isPublicRoute = window.location.pathname.includes('/public-test/');
     
     const [testData, setTestData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -18,47 +26,136 @@ function MultipleChoiceTestDetailPage() {
     const [userAnswers, setUserAnswers] = useState({});
     const [showResults, setShowResults] = useState(false);
     const [score, setScore] = useState(0);
+    
+    // Get base URL from environment or use default
+    const baseUrl = process.env.REACT_APP_API_URL || 'https://6d2c-115-76-51-131.ngrok-free.app';
+    const API_URL = baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`;
+    
+    console.log("MultipleChoiceTestDetailPage - API_URL:", API_URL);
+    
+    // Timer reference to track session duration
+    const learnStartTimeRef = useRef(null);
 
     useEffect(() => {
-        fetchTestData();
-    }, [id]);
+        // Fetch test data first
+        if (testId) {
+            fetchTestData();
+        } else {
+            console.error("ID is missing in URL parameters");
+            setError("No test ID provided");
+            setLoading(false);
+        }
+        
+        // End learning session when component unmounts
+        return () => {
+            endLearningSession();
+        };
+    }, [testId]);
+    
+    // Function to start learning session
+    const startLearningSession = async () => {
+        learnStartTimeRef.current = new Date();
+        
+        // Only track for authenticated users
+        if (isAuthenticated) {
+            try {
+                console.log('Starting learning session...');
+                // Call API to start learning session
+                const response = await fetch(`${API_URL}/UserLearningStats/StartLearn`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to start learning session: ${response.status}`);
+                }
+                
+                console.log('Reading test learning session started successfully');
+            } catch (err) {
+                console.error('Failed to start learning session:', err);
+                // Don't show error to user, let them continue anyway
+            }
+        }
+    };
+    
+    // Function to end learning session
+    const endLearningSession = async () => {
+        // Only track for authenticated users
+        if (isAuthenticated && learnStartTimeRef.current) {
+            try {
+                console.log('Ending learning session...');
+                // Call API to end learning session
+                const response = await fetch(`${API_URL}/UserLearningStats/EndLearn`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to end learning session: ${response.status}`);
+                }
+                
+                console.log('Reading test learning session ended successfully');
+            } catch (err) {
+                console.error('Failed to end learning session:', err);
+                // Don't show error to user
+            }
+        }
+    };
 
     const fetchTestData = async () => {
-        if (!id) {
+        if (!testId) {
+            console.error('Missing test ID in URL parameters');
             setError('No test ID provided');
             setLoading(false);
             return;
         }
 
         try {
-            console.log(`Fetching test details for ID: ${id}`);
+            // Đảm bảo ID có định dạng chuẩn, chuyển đổi sang chữ hoa nếu cần
+            const formattedId = testId.toUpperCase();
+            console.log(`Fetching test details for ID: ${formattedId}`);
             
-            // Get base URL from environment or use default
-            const baseUrl = process.env.REACT_APP_API_URL || 'https://6d2c-115-76-51-131.ngrok-free.app';
-            const apiUrl = baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`;
+            // Sử dụng chính xác endpoint API theo tài liệu
+            const apiEndpoint = `${API_URL}/MultipleChoiceTest/GetById/${formattedId}`;
+            console.log('Calling API endpoint:', apiEndpoint);
             
-            // First try GetById endpoint
-            let response = await makeRequest(`${apiUrl}/MultipleChoiceTest/GetById/${id}`, {
-                method: 'GET'
-            }, false); // The false parameter indicates authentication is optional
-
-            // If that fails, try the Get endpoint
-            if (!response.success) {
-                console.log('Initial endpoint failed, trying alternative endpoint');
-                response = await makeRequest(`${apiUrl}/MultipleChoiceTest/Get/${id}`, {
-                    method: 'GET'
-                }, false);
-            }
+            // Gọi API để lấy chi tiết bài kiểm tra
+            let response = await makeRequest(apiEndpoint, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'ngrok-skip-browser-warning': 'true'
+                }
+            }, false); // false parameter indicates authentication is optional
 
             if (response.success) {
                 console.log('Test data fetched successfully:', response.data);
                 setTestData(response.data);
+                
                 // Initialize userAnswers object with empty values for each question
                 const initialAnswers = {};
-                response.data.questions.forEach((q, index) => {
-                    initialAnswers[q.questionId] = null;
-                });
-                setUserAnswers(initialAnswers);
+                if (response.data.questions && Array.isArray(response.data.questions)) {
+                    response.data.questions.forEach((q) => {
+                        initialAnswers[q.questionId] = null;
+                    });
+                    setUserAnswers(initialAnswers);
+                    
+                    // Start learning session only after successfully loading test data
+                    startLearningSession();
+                } else {
+                    console.error('No questions found in the test data or invalid format');
+                    setError('Invalid test data format: questions missing or not in array format');
+                }
             } else {
                 console.error('Failed to fetch test:', response);
                 setError(response.data?.message || 'Failed to fetch test data');
@@ -119,6 +216,10 @@ function MultipleChoiceTestDetailPage() {
         const finalScore = Math.round((correctAnswers / testData.questions.length) * 100);
         setScore(finalScore);
         setShowResults(true);
+        
+        // Không cần gọi RecordCompletion vì API này không tồn tại
+        // Chỉ giữ lại logs để theo dõi
+        console.log('Test completed with score:', finalScore);
     };
 
     const resetTest = () => {
@@ -130,6 +231,19 @@ function MultipleChoiceTestDetailPage() {
         setUserAnswers(initialAnswers);
         setSelectedQuestion(0);
         setShowResults(false);
+        
+        // Record the reset action in learning stats if authenticated
+        if (isAuthenticated) {
+            try {
+                // End the current learning session
+                endLearningSession();
+                
+                // Start a new learning session
+                startLearningSession();
+            } catch (err) {
+                console.error('Error resetting learning session:', err);
+            }
+        }
     };
 
     if (loading) {
@@ -177,6 +291,27 @@ function MultipleChoiceTestDetailPage() {
     return (
         <div className="test-detail-container">
             <ToastContainer/>
+            
+            {!isAuthenticated && isPublicRoute && (
+                <div className="guest-user-banner">
+                    <div className="banner-content">
+                        <i className="fas fa-info-circle"></i>
+                        <div>
+                            <p className="banner-title">{translateText('Taking Test as Guest')}</p>
+                            <p>{translateText('You can take this test without an account, but your scores and progress will not be saved.')}</p>
+                            <Link to="/login" className="login-link">
+                                {translateText('Sign in')}
+                            </Link>
+                            {translateText(' or ')}
+                            <Link to="/register" className="login-link">
+                                {translateText('create an account')}
+                            </Link>
+                            {translateText(' to track your progress.')}
+                        </div>
+                    </div>
+                </div>
+            )}
+            
             <div className="test-detail-header">
                 <h1 className="test-detail-title">{testData.title}</h1>
                 <div className="test-meta">
@@ -198,10 +333,20 @@ function MultipleChoiceTestDetailPage() {
                          testData.learningLanguage === 'DEU' ? 'German' :
                          testData.learningLanguage === 'ESP' ? 'Spanish' : testData.learningLanguage}
                     </span>
-                    <div className='share'>
+                    <div className='header-actions'>
+                        {isPublicRoute && (
+                            <button 
+                                className="back-button"
+                                onClick={() => navigate('/readings/tests/explore')}
+                            >
+                                <FaArrowLeft /> {translateText('Back to Explore')}
+                            </button>
+                        )}
                         {
                             testData.isPublic ? 
-                            <button className='btn' onClick={() => copyToClipboard(window.location.href)}>Share to your friend</button>:
+                            <button className='share-button' onClick={() => copyToClipboard(window.location.href)}>
+                                <FaShare /> {translateText('Share with friends')}
+                            </button>:
                             <></>
                         }
                     </div>
@@ -272,13 +417,13 @@ function MultipleChoiceTestDetailPage() {
                                 className="reset-test-btn"
                                 onClick={resetTest}
                             >
-                                <i className="fas fa-redo"></i> Try Again
+                                <FaRedo /> {translateText('Try Again')}
                             </button>
                             <Link 
-                                to="/readings"
+                                to={isPublicRoute ? "/readings/tests/explore" : "/readings"}
                                 className="back-to-readings-btn"
                             >
-                                <i className="fas fa-arrow-left"></i> Back to Reading Tests
+                                <FaArrowLeft /> {isPublicRoute ? translateText('Back to Explore') : translateText('Back to Reading Tests')}
                             </Link>
                         </div>
                     </div>

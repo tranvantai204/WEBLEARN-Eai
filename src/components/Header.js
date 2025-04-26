@@ -62,15 +62,24 @@ function Header() {
   const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
   
   const [translations, setTranslations] = useState({
+    home: 'Home',
     flashcards: 'Flashcards',
+    yourFlashcards: 'Your Flashcards',
+    exploreFlashcards: 'Explore Flashcards',
     readings: 'Readings',
+    yourReadings: 'Your Readings',
+    exploreTests: 'Explore Tests',
     writing: 'Writing',
+    yourWriting: 'Your Writing',
+    exploreWriting: 'Explore Writing',
     writingExercises: 'Writing Exercises',
     discover: 'Discover',
     signIn: 'Sign In',
     getStarted: 'Get Started',
     profile: 'Progress',
-    logout: 'Logout'
+    logout: 'Logout',
+    explore: 'Explore',
+    multipleChoice: 'Multiple Choice Tests',
   });
 
   // Check token expiration on component mount and when isAuthenticated changes
@@ -118,15 +127,24 @@ function Header() {
     const updateTranslations = async () => {
       try {
         const newTranslations = {
+          home: await translateText('Home'),
           flashcards: await translateText('Flashcards'),
+          yourFlashcards: await translateText('Your Flashcards'),
+          exploreFlashcards: await translateText('Explore Flashcards'),
           readings: await translateText('Readings'),
+          yourReadings: await translateText('Your Readings'),
+          exploreTests: await translateText('Explore Tests'),
           writing: await translateText('Writing'),
+          yourWriting: await translateText('Your Writing'),
+          exploreWriting: await translateText('Explore Writing'),
           writingExercises: await translateText('Writing Exercises'),
           discover: await translateText('Discover'),
           signIn: await translateText('Sign In'),
           getStarted: await translateText('Get Started'),
           profile: await translateText('Progress'),
-          logout: await translateText('Logout')
+          logout: await translateText('Logout'),
+          explore: await translateText('Explore'),
+          multipleChoice: await translateText('Multiple Choice Tests'),
         };
         setTranslations(newTranslations);
       } catch (error) {
@@ -138,15 +156,24 @@ function Header() {
       updateTranslations();
     } else {
       setTranslations({
+        home: 'Home',
         flashcards: 'Flashcards',
+        yourFlashcards: 'Your Flashcards',
+        exploreFlashcards: 'Explore Flashcards',
         readings: 'Readings',
+        yourReadings: 'Your Readings',
+        exploreTests: 'Explore Tests',
         writing: 'Writing',
+        yourWriting: 'Your Writing',
+        exploreWriting: 'Explore Writing',
         writingExercises: 'Writing Exercises',
         discover: 'Discover',
         signIn: 'Sign In',
         getStarted: 'Get Started',
         profile: 'Progress',
-        logout: 'Logout'
+        logout: 'Logout',
+        explore: 'Explore',
+        multipleChoice: 'Multiple Choice Tests',
       });
     }
   }, [currentLanguage, translateText]);
@@ -177,6 +204,16 @@ function Header() {
     }
   };
 
+  // Get the appropriate routes based on authentication status
+  const getFlashcardsRoute = () => isAuthenticated ? "/flashcards" : "/flashcards/explore";
+  const getReadingsRoute = () => isAuthenticated ? "/readings" : "/readings/tests/explore";
+  const getWritingRoute = () => isAuthenticated ? "/writing" : "/writing/explore";
+
+  // Get the appropriate menu labels based on authentication status
+  const getFlashcardsLabel = () => translations.flashcards;
+  const getReadingsLabel = () => translations.readings;
+  const getWritingLabel = () => translations.writing;
+
   return (
     <header className="main-header">
       <div className="header-container">
@@ -197,27 +234,27 @@ function Header() {
         <div className={`mobile-menu ${showMobileMenu ? 'active' : ''}`} ref={mobileMenuRef}>
           <ul className="mobile-nav-list">
             <li className="mobile-nav-item">
-              <Link to="/flashcards" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
+              <Link to="/" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
+                <i className="fas fa-home"></i>
+                <span>{translations.home}</span>
+              </Link>
+            </li>
+            <li className="mobile-nav-item">
+              <Link to={getFlashcardsRoute()} className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
                 <i className="fas fa-layer-group"></i>
-                <span>{translations.flashcards}</span>
+                <span>{getFlashcardsLabel()}</span>
               </Link>
             </li>
             <li className="mobile-nav-item">
-              <Link to="/readings" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
+              <Link to={getReadingsRoute()} className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
                 <i className="fas fa-book"></i>
-                <span>{translations.readings}</span>
+                <span>{getReadingsLabel()}</span>
               </Link>
             </li>
             <li className="mobile-nav-item">
-              <Link to="/writing" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
+              <Link to={getWritingRoute()} className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
                 <i className="fas fa-pen"></i>
-                <span>{translations.writing}</span>
-              </Link>
-            </li>
-            <li className="mobile-nav-item">
-              <Link to="/discover" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
-                <i className="fas fa-compass"></i>
-                <span>{translations.discover}</span>
+                <span>{getWritingLabel()}</span>
               </Link>
             </li>
           </ul>
@@ -291,27 +328,27 @@ function Header() {
           <nav className="main-nav">
             <ul className="nav-list">
               <li className="nav-item">
-                <Link to="/flashcards" className="nav-link">
+                <Link to="/" className="nav-link">
+                  <i className="fas fa-home"></i>
+                  <span>{translations.home}</span>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to={getFlashcardsRoute()} className="nav-link">
                   <i className="fas fa-layer-group"></i>
-                  <span>{translations.flashcards}</span>
+                  <span>{getFlashcardsLabel()}</span>
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/readings" className="nav-link">
+                <Link to={getReadingsRoute()} className="nav-link">
                   <i className="fas fa-book"></i>
-                  <span>{translations.readings}</span>
+                  <span>{getReadingsLabel()}</span>
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/writing" className="nav-link">
+                <Link to={getWritingRoute()} className="nav-link">
                   <i className="fas fa-pen"></i>
-                  <span>{translations.writing}</span>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/discover" className="nav-link">
-                  <i className="fas fa-compass"></i>
-                  <span>{translations.discover}</span>
+                  <span>{getWritingLabel()}</span>
                 </Link>
               </li>
               <li className="nav-item language-nav-item">

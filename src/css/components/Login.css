@@ -620,24 +620,22 @@
     }
 }
 
-/* Hiệu ứng chuyển trang - đã vô hiệu hóa */
+/* Hiệu ứng chuyển trang - vô hiệu hóa hoàn toàn */
 body.page-transition {
-    position: relative;
-    overflow: hidden;
-    /* Không có hiệu ứng chuyển trang */
+    position: static;
+    overflow: visible;
 }
 
 body.page-transition::after {
-    /* Vô hiệu hóa hiệu ứng chuyển trang */
     display: none !important;
     content: '';
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #ffffff;
-    z-index: 9999;
+    width: 0;
+    height: 0;
+    background-color: transparent;
+    z-index: -1;
     opacity: 0;
     pointer-events: none;
     animation: none;

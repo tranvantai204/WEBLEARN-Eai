@@ -59,7 +59,7 @@ const ContactPage = () => {
                                 <i className="fas fa-phone-alt"></i>
                             </div>
                             <h3>Phone</h3>
-                            <p>General: +1 (555) 123-4567<br />Support: +1 (555) 987-6543</p>
+                            <p>General: +84 0585761955 <br />Support: +84 0585761955</p>
                         </div>
 
                         <div className="info-card">

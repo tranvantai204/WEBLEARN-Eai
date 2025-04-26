@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFlashcard } from '../contexts/FlashcardContext';
+import { ExploreSection } from './common';
 import '../css/components/Flashcards.css';
 import { jwtDecode } from 'jwt-decode';
 
@@ -111,7 +112,7 @@ function FlashcardsPage() {
             <div className="flashcards-container">
                 <div className="sets-grid">
                     <div className="flashcards-header">
-                        <h1 className="page-title">{translateText('Flashcards')}</h1>
+                        <h1 className="page-title">{translateText('My Flashcards')}</h1>
                         <div className="flashcards-actions">
                             <button 
                                 className="create-set-btn" 
@@ -137,6 +138,8 @@ function FlashcardsPage() {
                         </div>
                     </div>
                     
+                    <ExploreSection type="flashcards" />
+                    
                     {loading ? (
                         <div className="loading-spinner">
                             <i className="fas fa-spinner fa-spin"></i> Loading...
@@ -156,12 +159,12 @@ function FlashcardsPage() {
                                     <h3 className="set-title">{set.title}</h3>
                                     <p className="set-description">{set.description}</p>
                                     <div className="set-stats">
-                                        <span>{set.totalVocabulary || '0'} cards</span>
-                                        <span className="set-language">{set.learningLanguage} → {set.nativeLanguage}</span>
+                                        <span><i className="fas fa-layer-group"></i> {set.totalVocabulary || '0'} {translateText('cards')}</span>
+                                        <span className="set-language"><i className="fas fa-globe"></i> {set.learningLanguage} → {set.nativeLanguage}</span>
                                         {/* Hiển thị thông tin level */}
-                                        <span className="set-level">Level: {set.level || 'N/A'}</span>
+                                        <span className="set-level"><i className="fas fa-layer-group"></i> {translateText('Level')}: {set.level || 'N/A'}</span>
                                         {/* Hiển thị thông tin learnerCount */}
-                                        <span className="set-learner-count">Learners: {set.learnerCount || '0'}</span>
+                                        <span className="set-learner-count"><i className="fas fa-users"></i> {translateText('Learners')}: {set.learnerCount || '0'}</span>
                                     </div>
                                 </div>
                             ))}

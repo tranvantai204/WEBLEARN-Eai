@@ -17,8 +17,13 @@ import ScrollToTop from './components/ScrollToTop.js';
 import HomePage from './components/HomePage.js';
 import LoginPage from './components/LoginPage.js';
 import RegisterPage from './components/RegisterPage.js';
+import ForgotPasswordPage from './components/ForgotPasswordPage.js';
+import ResetPasswordPage from './components/ResetPasswordPage.js';
 import DashboardPage from './components/DashboardPage.js';
 import FlashcardsPage from './components/FlashcardsPage.js';
+import ExploreFlashcardsPage from './components/ExploreFlashcardsPage.js';
+import ExploreMultipleChoiceTestsPage from './components/ExploreMultipleChoiceTestsPage.js';
+import ExploreWritingPage from './components/ExploreWritingPage.js';
 import CreateFlashcardsPage from './components/CreateFlashcardsPage.js';
 import CreateAIFlashcardsPage from './components/CreateAIFlashcardsPage.js';
 import FlashcardSetDetailsPage from './components/FlashcardSetDetailsPage.js';
@@ -55,7 +60,10 @@ const AppLayout = () => {
     const location = useLocation();
     
     // Don't show header and footer on auth pages
-    const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+    const isAuthPage = location.pathname === '/login' || 
+                      location.pathname === '/register' || 
+                      location.pathname === '/forgot-password' || 
+                      location.pathname.startsWith('/reset-password');
     
     return (
         <div className="app">
@@ -64,6 +72,13 @@ const AppLayout = () => {
                 <Routes>
                     {/* Public routes */}
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/flashcards/explore" element={<ExploreFlashcardsPage />} />
+                    <Route path="/readings/tests/explore" element={<ExploreMultipleChoiceTestsPage />} />
+                    <Route path="/writing/explore" element={<ExploreWritingPage />} />
+                    <Route path="/flashcard-set/:flashcardSetId" element={<FlashcardSetDetailsPage />} />
+                    <Route path="/public-learn/:flashcardSetId" element={<FlashcardLearningPage />} />
+                    <Route path="/public-test/:testId" element={<MultipleChoiceTestDetailPage />} />
+                    <Route path="/public-writing/:exerciseId" element={<WritingExerciseDetailPageSimple />} />
                     
                     {/* Unprotected routes (only accessible when not logged in) */}
                     <Route path="/login" element={
@@ -74,6 +89,16 @@ const AppLayout = () => {
                     <Route path="/register" element={
                         <UnprotectedRoute>
                             <RegisterPage />
+                        </UnprotectedRoute>
+                    } />
+                    <Route path="/forgot-password" element={
+                        <UnprotectedRoute>
+                            <ForgotPasswordPage />
+                        </UnprotectedRoute>
+                    } />
+                    <Route path="/reset-password" element={
+                        <UnprotectedRoute>
+                            <ResetPasswordPage />
                         </UnprotectedRoute>
                     } />
                     
@@ -96,11 +121,6 @@ const AppLayout = () => {
                     <Route path="/flashcards/create-ai" element={
                         <ProtectedRoute>
                             <CreateAIFlashcardsPage />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/flashcard-set/:flashcardSetId" element={
-                        <ProtectedRoute>
-                            <FlashcardSetDetailsPage />
                         </ProtectedRoute>
                     } />
                     <Route path="/flashcards/study" element={

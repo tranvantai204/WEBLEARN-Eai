@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useFlashcard } from '../contexts/FlashcardContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import '../css/components/FlashcardLearning.css';
 
 function FlashcardLearningPage() {
@@ -11,6 +12,7 @@ function FlashcardLearningPage() {
     const navigate = useNavigate();
     const { getFlashcardSet, getFlashcardsForSet, loading } = useFlashcard();
     const { isAuthenticated } = useAuth();
+    const { translateText } = useLanguage();
     
     // State for flashcard set and cards
     const [flashcardSet, setFlashcardSet] = useState(null);
@@ -20,6 +22,9 @@ function FlashcardLearningPage() {
     const [learningMode, setLearningMode] = useState('sequential'); // 'sequential' or 'shuffle'
     const [studyStarted, setStudyStarted] = useState(false);
     const [learnedCards, setLearnedCards] = useState([]);
+    
+    // Check if this is accessed via public route
+    const isPublicRoute = window.location.pathname.includes('/public-learn/');
     
     // State for statistics
     const [stats, setStats] = useState({
@@ -39,75 +44,76 @@ function FlashcardLearningPage() {
     
     // Function to start learning session
     const startLearning = async () => {
-        try {
-            // Call API to start learning session
-            const response = await fetch(`${API_URL}/api/UserLearningStats/StartLearn`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'ngrok-skip-browser-warning': 'true',
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        // Update local state regardless of authentication
+        setStudyStarted(true);
+        setStats(prev => ({
+            ...prev,
+            timeStarted: new Date()
+        }));
+        
+        // Start timer
+        startTimer();
+        
+        // Only call the API if authenticated
+        if (isAuthenticated) {
+            try {
+                // Call API to start learning session
+                const response = await fetch(`${API_URL}/api/UserLearningStats/StartLearn`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to start learning session: ${response.status}`);
                 }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to start learning session: ${response.status}`);
+                
+                console.log('Learning session started successfully');
+            } catch (err) {
+                console.error('Failed to start learning session:', err);
+                toast.error('Failed to start learning session. You can still continue learning.');
             }
-            
-            // Update state
-            setStudyStarted(true);
-            setStats(prev => ({
-                ...prev,
-                timeStarted: new Date()
-            }));
-            
-            // Start timer
-            startTimer();
-            
-            console.log('Learning session started successfully');
-        } catch (err) {
-            console.error('Failed to start learning session:', err);
-            toast.error('Failed to start learning session. You can still continue learning.');
-            
-            // Still set the study started true so user can use the feature
-            setStudyStarted(true);
-            setStats(prev => ({
-                ...prev,
-                timeStarted: new Date()
-            }));
-            startTimer();
+        } else if (!isPublicRoute) {
+            // If not authenticated and not on the public route, show login prompt
+            toast.info('Sign in to track your learning progress');
         }
     };
     
     // Function to end learning session
     const endLearning = async () => {
-        try {
-            // Call API to end learning session
-            const response = await fetch(`${API_URL}/api/UserLearningStats/EndLearn`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'ngrok-skip-browser-warning': 'true', 
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        // Clear timer regardless of authentication
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+        
+        // Only call the API if authenticated
+        if (isAuthenticated) {
+            try {
+                // Call API to end learning session
+                const response = await fetch(`${API_URL}/api/UserLearningStats/EndLearn`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'ngrok-skip-browser-warning': 'true', 
+                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to end learning session: ${response.status}`);
                 }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to end learning session: ${response.status}`);
+                
+                console.log('Learning session ended successfully');
+            } catch (err) {
+                console.error('Failed to end learning session:', err);
+                toast.error('Failed to record your learning time. Your progress may not be saved.');
             }
-            
-            // Clear timer
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-                timerRef.current = null;
-            }
-            
-            console.log('Learning session ended successfully');
-        } catch (err) {
-            console.error('Failed to end learning session:', err);
-            toast.error('Failed to record your learning time. Your progress may not be saved.');
         }
     };
     
@@ -125,11 +131,10 @@ function FlashcardLearningPage() {
         }, 1000);
     };
     
-    // Format seconds to MM:SS
+    // Format seconds to minutes
     const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        const minutes = (seconds / 60).toFixed(1);
+        return `${minutes} phút`;
     };
     
     // Fetch flashcard set and cards
@@ -139,6 +144,14 @@ function FlashcardLearningPage() {
                 // Fetch flashcard set
                 const setData = await getFlashcardSet(flashcardSetId);
                 setFlashcardSet(setData);
+                
+                // Check if this is a public route and the set is private
+                if (isPublicRoute && setData && !setData.isPublic && !isAuthenticated) {
+                    // Redirect to explore page with error message
+                    toast.error('This flashcard set is private. Please log in to access it.');
+                    navigate('/flashcards/explore');
+                    return;
+                }
                 
                 // Fetch flashcards
                 const cardsData = await getFlashcardsForSet(flashcardSetId);
@@ -152,6 +165,11 @@ function FlashcardLearningPage() {
             } catch (err) {
                 console.error('Error fetching flashcard data:', err);
                 toast.error('Failed to load flashcards. Please try again.');
+                
+                // If there's an error due to private set, redirect to explore
+                if (err.message?.includes('private')) {
+                    navigate('/flashcards/explore');
+                }
             }
         };
         
@@ -169,7 +187,7 @@ function FlashcardLearningPage() {
                 timerRef.current = null;
             }
         };
-    }, [flashcardSetId, getFlashcardSet, getFlashcardsForSet]);
+    }, [flashcardSetId, getFlashcardSet, getFlashcardsForSet, isPublicRoute, isAuthenticated, navigate]);
     
     // Shuffle cards when mode changes to shuffle
     useEffect(() => {
@@ -311,7 +329,27 @@ function FlashcardLearningPage() {
     };
 
     return (
-        <div className="flashcard-learning-page">
+        <div className="learning-page">
+            {!isAuthenticated && isPublicRoute && (
+                <div className="guest-user-banner">
+                    <div className="banner-content">
+                        <i className="fas fa-info-circle"></i>
+                        <div>
+                            <p className="banner-title">{translateText('Learning as Guest')}</p>
+                            <p>{translateText('You can study this flashcard set without an account, but your learning time, progress, and streaks will not be saved.')}</p>
+                            <Link to="/login" className="login-link">
+                                {translateText('Sign in')}
+                            </Link>
+                            {translateText(' or ')}
+                            <Link to="/register" className="login-link">
+                                {translateText('create an account')}
+                            </Link>
+                            {translateText(' to track your progress.')}
+                        </div>
+                    </div>
+                </div>
+            )}
+            
             <ToastContainer position="top-right" autoClose={3000} />
             
             <div className="learning-header">
@@ -477,6 +515,7 @@ function FlashcardLearningPage() {
                                     <div className="stat-content">
                                         <span className="stat-label">Study Time</span>
                                         <span className="stat-value">{formatTime(stats.timeSpent)}</span>
+                                        {!isAuthenticated && <span className="stat-note">Not saved</span>}
                                     </div>
                                 </div>
                                 <div className="stat-item">
@@ -484,6 +523,7 @@ function FlashcardLearningPage() {
                                     <div className="stat-content">
                                         <span className="stat-label">Known Cards</span>
                                         <span className="stat-value">{stats.correctCount}</span>
+                                        {!isAuthenticated && <span className="stat-note">Not saved</span>}
                                     </div>
                                 </div>
                                 <div className="stat-item">
@@ -491,6 +531,7 @@ function FlashcardLearningPage() {
                                     <div className="stat-content">
                                         <span className="stat-label">Cards Viewed</span>
                                         <span className="stat-value">{stats.totalViewed}</span>
+                                        {!isAuthenticated && <span className="stat-note">Not saved</span>}
                                     </div>
                                 </div>
                                 <div className="stat-item">
@@ -500,6 +541,7 @@ function FlashcardLearningPage() {
                                         <span className="stat-value">
                                             {stats.totalViewed === 0 ? '0%' : `${Math.min(100, Math.round((stats.correctCount / stats.totalViewed) * 100))}%`}
                                         </span>
+                                        {!isAuthenticated && <span className="stat-note">Not saved</span>}
                                     </div>
                                 </div>
                             </div>

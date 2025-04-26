@@ -143,6 +143,86 @@ export const WritingExerciseProvider = ({ children }) => {
     }
   }, []);
 
+  // Helper function to handle public API requests (no authentication required)
+  const publicApiRequest = useCallback(async (url, options = {}) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Initialize headers if not present
+      if (!options.headers) {
+        options.headers = {};
+      }
+      
+      // Add ngrok header to bypass warning page
+      options.headers['ngrok-skip-browser-warning'] = 'true';
+      options.headers['Accept'] = 'application/json';
+      
+      console.log(`Making public request to: ${url}`);
+      console.log('Request options:', JSON.stringify(options, null, 2));
+      
+      // Make the request
+      let response = await fetch(url, options);
+      
+      // Check for non-JSON responses
+      const contentType = response.headers.get('content-type');
+      console.log(`Response content type: ${contentType}`);
+      console.log(`Response status: ${response.status}`);
+      
+      if (!response.ok) {
+        let errorMessage = '';
+        
+        try {
+          if (contentType && contentType.includes('application/json')) {
+            const errorData = await response.json();
+            errorMessage = errorData.message || errorData.title || 'An error occurred';
+            console.error('Error response:', errorData);
+          } else {
+            // For non-JSON errors
+            errorMessage = `Request failed with status: ${response.status}`;
+            const text = await response.text();
+            console.error('Non-JSON error response:', text.substring(0, 200));
+          }
+        } catch (parseError) {
+          console.error('Error parsing error response:', parseError);
+          errorMessage = `Request failed with status: ${response.status}`;
+        }
+        
+        // Create custom error with response details
+        const error = new Error(errorMessage);
+        error.response = {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url
+        };
+        
+        throw error;
+      }
+      
+      // For successful response, handle no-content and parse JSON
+      if (response.status === 204) {
+        return null;
+      }
+      
+      try {
+        const jsonResult = await response.json();
+        console.log('JSON response:', jsonResult);
+        return jsonResult;
+      } catch (jsonError) {
+        console.error('Error parsing JSON from response:', jsonError);
+        const rawText = await response.text();
+        console.error(`Response content (first 200 chars): ${rawText.substring(0, 200)}`);
+        throw new Error('Failed to parse JSON response from server');
+      }
+    } catch (err) {
+      console.error('Public API Request Error:', err);
+      setError(err.message || 'An error occurred');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   // Get all writing exercises for a user
   const getAllWritingExercises = useCallback(async (userId = null, page = 1, itemPerPage = 5) => {
     try {
@@ -199,27 +279,83 @@ export const WritingExerciseProvider = ({ children }) => {
         console.log('Writing exercises loaded:', {
           count: result.writingExcercises?.length || 0, // Match API response spelling
           currentPage: result.curentPage,
-          totalPages: result.totalPage,
-          itemsPerPage: result.itemPerPage
+          totalPages: result.totalPage
         });
+        
+        return result;
       }
       
-      return result;
+      return null;
     } catch (err) {
-      if (err.response?.status === 404 && err.message === 'No writing exercise found.') {
-        // Handle case where user has no writing exercises
-        console.log('No writing exercises found for user');
-        setWritingExercises([]);
-        setTotalPages(1);
-        setCurrentPage(1);
-        return { writingExcercises: [], totalPage: 1, curentPage: 1, itemPerPage }; // Match API response spelling
-      }
-      
-      console.error('Failed to fetch writing exercises:', err);
-      toast.error(`Error loading writing exercises: ${err.message}`);
+      console.error('Error getting writing exercises:', err);
+      setError('Failed to load writing exercises. Please try again later.');
       throw err;
     }
   }, [API_URL, apiRequest]);
+
+  // Get public writing exercises for exploration (no auth required)
+  const explorePublicWritingExercises = useCallback(async ({
+    learningLanguage = '',
+    nativeLanguage = '',
+    page = 1,
+    itemPerPage = 20
+  }) => {
+    try {
+      console.log("explorePublicWritingExercises called with:", { 
+        learningLanguage, nativeLanguage, page, itemPerPage 
+      });
+      
+      setLoading(true);
+      
+      // Build query parameters
+      const queryParams = new URLSearchParams();
+      queryParams.append('page', page);
+      queryParams.append('itemPerPage', itemPerPage);
+      
+      if (learningLanguage) {
+        queryParams.append('learningLanguage', learningLanguage);
+      }
+      
+      if (nativeLanguage) {
+        queryParams.append('nativeLanguage', nativeLanguage);
+      }
+      
+      const requestUrl = `${API_URL}/api/WritingExercise/Explore?${queryParams.toString()}`;
+      console.log(`Exploring public writing exercises: ${requestUrl}`);
+      
+      // Use publicApiRequest since this doesn't require authentication
+      const result = await publicApiRequest(requestUrl);
+      console.log('Explore API returned result:', result);
+      
+      if (result) {
+        // Return the result directly
+        return {
+          exercises: result.exercises || [],
+          currentPage: result.currentPage || 1,
+          totalPages: result.totalPages || 1,
+          itemPerPage: result.itemPerPage || itemPerPage
+        };
+      }
+      
+      return {
+        exercises: [],
+        currentPage: 1,
+        totalPages: 1,
+        itemPerPage
+      };
+    } catch (err) {
+      console.error('Error exploring public writing exercises:', err);
+      setError('Failed to load public writing exercises. Please try again later.');
+      return {
+        exercises: [],
+        currentPage: 1,
+        totalPages: 1,
+        itemPerPage
+      };
+    } finally {
+      setLoading(false);
+    }
+  }, [API_URL, publicApiRequest]);
 
   // Get a specific writing exercise by ID
   const getWritingExerciseById = useCallback(async (exerciseId) => {
@@ -264,7 +400,8 @@ export const WritingExerciseProvider = ({ children }) => {
     currentPage,
     itemsPerPage,
     getAllWritingExercises,
-    getWritingExerciseById
+    getWritingExerciseById,
+    explorePublicWritingExercises
   };
 
   // Auto generate writing exercise topic with AI

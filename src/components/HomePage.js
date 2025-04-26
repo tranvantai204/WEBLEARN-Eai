@@ -171,16 +171,36 @@ function HomePage() {
                         </p>
                     </div>
 
-                    <div className="features-grid">
-                        {translations.features.map((feature, index) => (
-                            <div className="feature-card" key={index}>
+                    <div className="feature-cards-container">
+                        <div className="feature-card">
+                            <div className="feature-icon-wrapper">
                                 <div className="feature-icon">
-                                    <i className={`fas ${index === 0 ? 'fa-brain' : index === 1 ? 'fa-chart-line' : 'fa-sync'}`}></i>
+                                    <i className="fas fa-brain"></i>
                                 </div>
-                                <h3 className="feature-title">{feature.title}</h3>
-                                <p className="feature-description">{feature.description}</p>
                             </div>
-                        ))}
+                            <h3 className="feature-title">{translations.features[0].title}</h3>
+                            <p className="feature-description">{translations.features[0].description}</p>
+                        </div>
+                        
+                        <div className="feature-card">
+                            <div className="feature-icon-wrapper">
+                                <div className="feature-icon">
+                                    <i className="fas fa-chart-line"></i>
+                                </div>
+                            </div>
+                            <h3 className="feature-title">{translations.features[1].title}</h3>
+                            <p className="feature-description">{translations.features[1].description}</p>
+                        </div>
+                        
+                        <div className="feature-card">
+                            <div className="feature-icon-wrapper">
+                                <div className="feature-icon">
+                                    <i className="fas fa-sync"></i>
+                                </div>
+                            </div>
+                            <h3 className="feature-title">{translations.features[2].title}</h3>
+                            <p className="feature-description">{translations.features[2].description}</p>
+                        </div>
                     </div>
                 </section>
 
@@ -242,16 +262,36 @@ function HomePage() {
                         </p>
                     </div>
 
-                    <div className="features-grid">
-                        {translations.features.map((feature, index) => (
-                            <div className="feature-card" key={index}>
+                    <div className="feature-cards-container">
+                        <div className="feature-card">
+                            <div className="feature-icon-wrapper">
                                 <div className="feature-icon">
-                                    <i className={`fas ${index === 0 ? 'fa-brain' : index === 1 ? 'fa-chart-line' : 'fa-sync'}`}></i>
+                                    <i className="fas fa-brain"></i>
                                 </div>
-                                <h3 className="feature-title">{feature.title}</h3>
-                                <p className="feature-description">{feature.description}</p>
                             </div>
-                        ))}
+                            <h3 className="feature-title">{translations.features[0].title}</h3>
+                            <p className="feature-description">{translations.features[0].description}</p>
+                        </div>
+                        
+                        <div className="feature-card">
+                            <div className="feature-icon-wrapper">
+                                <div className="feature-icon">
+                                    <i className="fas fa-chart-line"></i>
+                                </div>
+                            </div>
+                            <h3 className="feature-title">{translations.features[1].title}</h3>
+                            <p className="feature-description">{translations.features[1].description}</p>
+                        </div>
+                        
+                        <div className="feature-card">
+                            <div className="feature-icon-wrapper">
+                                <div className="feature-icon">
+                                    <i className="fas fa-sync"></i>
+                                </div>
+                            </div>
+                            <h3 className="feature-title">{translations.features[2].title}</h3>
+                            <p className="feature-description">{translations.features[2].description}</p>
+                        </div>
                     </div>
                 </section>
 

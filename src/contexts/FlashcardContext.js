@@ -167,14 +167,58 @@ export const FlashcardProvider = ({ children }) => {
   // GET a specific flashcard set by ID
   const getFlashcardSet = useCallback(async (flashcardSetId) => {
     try {
-      const result = await apiRequest(`${API_URL}/FlashCardSet/${flashcardSetId}`);
+      setLoading(true);
+      setError(null);
+      
+      // This endpoint should work with or without authentication
+      const requestUrl = `${API_URL}/FlashCardSet/${flashcardSetId}`;
+      console.log('Getting flashcard set details:', requestUrl);
+      
+      // Set up headers
+      const headers = new Headers();
+      headers.append('Accept', 'application/json');
+      headers.append('ngrok-skip-browser-warning', 'true');
+      
+      // Add authorization if authenticated
+      if (isAuthenticated && accessToken) {
+        headers.append('Authorization', `Bearer ${accessToken}`);
+      }
+      
+      const response = await fetch(requestUrl, {
+        method: 'GET',
+        headers,
+        credentials: 'omit',
+        mode: 'cors',
+        cache: 'no-cache',
+      });
+      
+      console.log('Response status:', response.status);
+      
+      // Check for errors
+      if (!response.ok) {
+        if (response.status === 403) {
+          throw new Error('This flashcard set is private. You do not have permission to view it.');
+        } else if (response.status === 404) {
+          throw new Error('Flashcard set not found.');
+        } else {
+          throw new Error(`Request failed with status: ${response.status}`);
+        }
+      }
+      
+      // Parse the JSON response
+      const result = await response.json();
+      console.log('Flashcard set details:', result);
+      
       setCurrentSet(result);
+      setLoading(false);
       return result;
     } catch (err) {
       console.error('Failed to fetch flashcard set:', err);
+      setError(err.message || 'Failed to fetch flashcard set');
+      setLoading(false);
       throw err;
     }
-  }, [API_URL, apiRequest]);
+  }, [API_URL, accessToken, isAuthenticated]);
 
   // DELETE a flashcard set
   const deleteFlashcardSet = useCallback(async (flashcardSetId) => {
@@ -256,26 +300,62 @@ export const FlashcardProvider = ({ children }) => {
     queryParams.append('itemPerPage', itemPerPage);
     
     try {
-      const result = await apiRequest(`${API_URL}/FlashCardSet/Explore?${queryParams.toString()}`);
+      setLoading(true);
+      setError(null);
+      
+      // This endpoint doesn't require authentication, so make a direct fetch request
+      const requestUrl = `${API_URL}/FlashCardSet/Explore?${queryParams.toString()}`;
+      console.log('Exploring public flashcard sets:', requestUrl);
+      
+      // Set up headers (no auth token needed)
+      const headers = new Headers();
+      headers.append('Accept', 'application/json');
+      headers.append('ngrok-skip-browser-warning', 'true');
+      
+      const response = await fetch(requestUrl, {
+        method: 'GET',
+        headers,
+        credentials: 'omit',
+        mode: 'cors',
+        cache: 'no-cache',
+      });
+      
+      console.log('Explore response status:', response.status);
+      
+      // Check for errors
+      if (!response.ok) {
+        if (response.status === 404) {
+          // Not found is expected when no sets match filters
+          setFlashcardSets([]);
+          setTotalPages(1);
+          setCurrentPage(1);
+          setLoading(false);
+          return { flashcardSets: [], totalCount: 0, page: 1, itemPerPage, totalPage: 1 };
+        }
+        
+        throw new Error(`Request failed with status: ${response.status}`);
+      }
+      
+      // Parse the JSON response
+      const result = await response.json();
+      console.log('Explore results:', result);
       
       // Update state
       setFlashcardSets(result.flashcardSets || []);
-      setTotalPages(result.totalPages || 1);
-      setCurrentPage(result.page || 1);
+      setTotalPages(result.totalPage || 1);
+      setCurrentPage(result.curentPage || 1);
+      setLoading(false);
       
       return result;
     } catch (err) {
       console.error('Failed to explore flashcard sets:', err);
-      // If 404 with "No data found", return empty result instead of throwing
-      if (err.message === 'No data found.') {
-        setFlashcardSets([]);
-        setTotalPages(1);
-        setCurrentPage(1);
-        return { flashcardSets: [], totalCount: 0, page: 1, itemPerPage, totalPages: 1 };
-      }
-      throw err;
+      setError('Failed to load public flashcard sets. Please try again later.');
+      setLoading(false);
+      
+      // Return empty result instead of throwing to prevent app from crashing
+      return { flashcardSets: [], totalPage: 1, curentPage: 1 };
     }
-  }, [API_URL, apiRequest]);
+  }, [API_URL]);
 
   // Get all flashcard sets for a user
   const getUserFlashcardSets = useCallback(async (userId, page = 1, itemPerPage = 5) => {
@@ -448,41 +528,65 @@ export const FlashcardProvider = ({ children }) => {
   // GET all flashcards for a specific set
   const getFlashcardsForSet = useCallback(async (flashcardSetId, page = 1, itemsPerPage = 50) => {
     try {
+      setLoading(true);
+      setError(null);
+      
       // Build query parameters
       const queryParams = new URLSearchParams();
       queryParams.append('page', page);
       queryParams.append('itemsPerPage', itemsPerPage);
       
-      const url = `${API_URL}/FlashCardSet/${flashcardSetId}?${queryParams.toString()}`;
-      console.log('Fetching flashcards for set:', flashcardSetId, 'URL:', url);
+      // This endpoint should work with or without authentication
+      const requestUrl = `${API_URL}/FlashCardSet/${flashcardSetId}?${queryParams.toString()}`;
+      console.log('Fetching flashcards for set:', flashcardSetId, 'URL:', requestUrl);
       
-      const result = await apiRequest(url);
+      // Set up headers
+      const headers = new Headers();
+      headers.append('Accept', 'application/json');
+      headers.append('ngrok-skip-browser-warning', 'true');
       
+      // Add authorization if authenticated
+      if (isAuthenticated && accessToken) {
+        headers.append('Authorization', `Bearer ${accessToken}`);
+      }
+      
+      const response = await fetch(requestUrl, {
+        method: 'GET',
+        headers,
+        credentials: 'omit',
+        mode: 'cors',
+        cache: 'no-cache',
+      });
+      
+      console.log('Response status:', response.status);
+      
+      // Check for errors
+      if (!response.ok) {
+        if (response.status === 403) {
+          throw new Error('This flashcard set is private. You do not have permission to view it.');
+        } else if (response.status === 404) {
+          // If no flashcards found, return empty array
+          return { flashcards: [], totalCount: 0, page: 1, totalPages: 1 };
+        } else {
+          throw new Error(`Request failed with status: ${response.status}`);
+        }
+      }
+      
+      // Parse the JSON response
+      const result = await response.json();
       console.log('Flashcards fetched successfully:', result);
+      
+      setLoading(false);
       return result;
     } catch (err) {
       console.error('Failed to fetch flashcards for set:', err);
+      setError('Failed to load flashcards. Please try again later.');
+      setLoading(false);
       
-      // Check for specific error signatures indicating HTML response
-      if (err.message && (
-          err.message.includes('non-JSON response') || 
-          err.message.includes('Failed to parse JSON') ||
-          err.message.includes('<!DOCTYPE')
-      )) {
-        console.error('Server returned HTML instead of JSON. The API URL may be invalid or the server is down.');
-        toast.error('API connection error. Please check your internet connection or contact support.');
-      }
-      
-      // Handle specific error cases
-      if (err.response && err.response.status === 404) {
-        // If no flashcards found, return empty array instead of throwing
-        return { flashcards: [], totalCount: 0, page: 1, totalPages: 1 };
-      }
-      
-      // Return empty result for any error to prevent app crashing
+      // Return empty result to prevent app from crashing
       return { flashcards: [], totalCount: 0, page: 1, totalPages: 1 };
     }
-  }, [API_URL, apiRequest]);
+  }, [API_URL, accessToken, isAuthenticated]);
 
   // Clear current set
   const clearCurrentSet = useCallback(() => {

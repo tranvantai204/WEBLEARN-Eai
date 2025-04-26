@@ -47,7 +47,7 @@ const Footer = () => {
                 <div className="footer-section contact">
                     <h3>Contact Us</h3>
                     <p>Email: info@wordwise.com</p>
-                    <p>Phone: +1 (234) 567-8901</p>
+                    <p>Phone: +84 0585761955</p>
                     <p>Address: 123 Learning Lane, Education City, 12345</p>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useMultipleChoiceTest } from '../contexts/MultipleChoiceTestContext';
 import { useFlashcard } from '../contexts/FlashcardContext';
+import { ExploreSection } from './common';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Reading.css';
 import ApiKeyForm from './ApiKeyForm';
@@ -35,7 +36,7 @@ function ReadingsPage() {
     
     // State for translated content
     const [translations, setTranslations] = useState({
-        pageTitle: 'Reading Tests',
+        pageTitle: 'My Reading Tests',
         createButton: 'Create New Test',
         generateButton: 'Generate with AI',
         filterByLanguage: 'Filter by Language:',
@@ -446,6 +447,8 @@ function ReadingsPage() {
                         )
                     )}
                 </div>
+
+                <ExploreSection type="readings" />
             </div>
             
             {showApiKeyForm && (

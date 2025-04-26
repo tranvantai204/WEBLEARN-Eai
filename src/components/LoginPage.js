@@ -36,16 +36,23 @@ function LoginPage() {
         
         // Check if there's a redirect path stored in localStorage
         const redirectPath = localStorage.getItem('redirectAfterLogin');
-        if (redirectPath) {
-            // Clear the stored redirect path
-            localStorage.removeItem('redirectAfterLogin');
+        
+        // Thay đổi cách xử lý chuyển trang để tránh chặn tương tác
+        setTimeout(() => {
+            if (redirectPath) {
+                // Clear the stored redirect path
+                localStorage.removeItem('redirectAfterLogin');
+                
+                // Navigate to the stored path
+                navigate(redirectPath);
+            } else {
+                // Default navigation to progress page
+                navigate('/progress');
+            }
             
-            // Navigate to the stored path
-            navigate(redirectPath);
-        } else {
-            // Default navigation to progress page
-            navigate('/progress');
-        }
+            // Đảm bảo không có hiệu ứng page-transition trên body
+            document.body.classList.remove('page-transition');
+        }, 300); // Giảm thời gian chuyển trang xuống 300ms
     };
 
     // Remove the page transition effect
@@ -53,12 +60,20 @@ function LoginPage() {
         if (redirecting) {
             // Get redirect path if any
             const redirectPath = localStorage.getItem('redirectAfterLogin');
-            // Navigate to the stored path or default to progress
-            navigate(redirectPath || '/progress');
-            // Clear the stored redirect path
-            if (redirectPath) {
-                localStorage.removeItem('redirectAfterLogin');
-            }
+            
+            // Đảm bảo không có hiệu ứng page-transition 
+            document.body.classList.remove('page-transition');
+            
+            // Sử dụng setTimeout để tránh hiệu ứng chặn
+            setTimeout(() => {
+                // Navigate to the stored path or default to progress
+                navigate(redirectPath || '/progress');
+                
+                // Clear the stored redirect path
+                if (redirectPath) {
+                    localStorage.removeItem('redirectAfterLogin');
+                }
+            }, 300);
         }
     }, [redirecting, navigate]);
 
@@ -317,7 +332,7 @@ function LoginPage() {
                                     </label>
                                 </div>
                                 
-                                <Link to="/reset-password" className="login-forgot-link">
+                                <Link to="/forgot-password" className="login-forgot-link">
                                     Forgot password?
                                 </Link>
                             </div>
