@@ -591,4 +591,30 @@
     width: 100%;
     margin-bottom: 0.5rem;
   }
-} 
+}
+
+.flag-icon {
+  display: inline-block;
+  margin-right: 5px;
+  font-size: 1.2em;
+  vertical-align: middle;
+}
+
+.exercise-card .language-badge {
+  padding: 0.4rem 0.75rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(0, 123, 255, 0.15);
+  color: #0056b3;
+}
+
+/* Cũ, giữ lại để khả năng tương thích */
+.exercise-card .language-badge img {
+  margin-right: 5px;
+  width: 16px;
+  height: 16px;
+}

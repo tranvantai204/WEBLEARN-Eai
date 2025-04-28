@@ -18,6 +18,37 @@ function ExploreMultipleChoiceTestsPage() {
     
     const [itemPerPage, setItemPerPage] = useState(20);
     
+    const getFlagIcon = (langCode) => {
+        switch(langCode) {
+            case 'ENG':
+                return <span className="flag-icon">🇬🇧</span>;
+            case 'VIE':
+                return <span className="flag-icon">🇻🇳</span>;
+            case 'FRA':
+                return <span className="flag-icon">🇫🇷</span>;
+            case 'DEU':
+                return <span className="flag-icon">🇩🇪</span>;
+            case 'ESP':
+                return <span className="flag-icon">🇪🇸</span>;
+            case 'JPN':
+                return <span className="flag-icon">🇯🇵</span>;
+            case 'KOR':
+                return <span className="flag-icon">🇰🇷</span>;
+            case 'CHN':
+                return <span className="flag-icon">🇨🇳</span>;
+            case 'AR':
+                return <span className="flag-icon">🇸🇦</span>;
+            case 'RUS':
+                return <span className="flag-icon">🇷🇺</span>;
+            case 'POR':
+                return <span className="flag-icon">🇵🇹</span>;
+            case 'THA':
+                return <span className="flag-icon">🇹🇭</span>;
+            default:
+                return <span className="flag-icon">🌐</span>;
+        }
+    };
+    
     const languageOptions = [
         { value: '', label: translateText('All Languages') },
         { value: 'ENG', label: 'English' },
@@ -154,7 +185,9 @@ function ExploreMultipleChoiceTestsPage() {
                                         </div>
                                         <h3 className="set-title">{test.title}</h3>
                                         <div className="set-stats">
-                                            <span className="test-language"><i className="fas fa-globe"></i> {test.learningLanguage} → {test.nativeLanguage}</span>
+                                            <span className="test-language">
+                                                {getFlagIcon(test.learningLanguage)} {test.learningLanguage} → {getFlagIcon(test.nativeLanguage)} {test.nativeLanguage}
+                                            </span>
                                             <span className="test-level"><i className="fas fa-layer-group"></i> {translateText('Level')}: {
                                                 test.level === 0 ? 'Beginner' : 
                                                 test.level === 1 ? 'Elementary' :

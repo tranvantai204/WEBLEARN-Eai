@@ -345,7 +345,7 @@ export const WritingExerciseProvider = ({ children }) => {
       };
     } catch (err) {
       console.error('Error exploring public writing exercises:', err);
-      setError('Failed to load public writing exercises. Please try again later.');
+      setError('No discussion posts are made public');
       return {
         exercises: [],
         currentPage: 1,

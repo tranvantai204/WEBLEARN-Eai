@@ -165,7 +165,8 @@ body {
     font-weight: var(--font-normal);
     line-height: 1.5;
     color: var(--gray-900);
-    background-color: #FFF9C4;
+    background: linear-gradient(135deg, #e0f7fa, #bbdefb, #c5cae9);
+    background-attachment: fixed;
 }
 
 /* Typography */
@@ -390,16 +391,18 @@ li {
 
 /* Cards */
 .card {
-    background-color: white;
-    border-radius: var(--radius-xl);
-    border: 2px solid #000000;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .card:hover {
+    box-shadow: var(--shadow-lg);
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {

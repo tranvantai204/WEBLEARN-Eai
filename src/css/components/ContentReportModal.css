@@ -1,0 +1,254 @@
+/* Content Report Modal */
+.report-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.report-modal-container {
+  width: 90%;
+  max-width: 550px;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+  animation: slideIn 0.3s ease;
+}
+
+.report-modal-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.report-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: #000;
+}
+
+.report-modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.report-modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+}
+
+.report-modal-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.report-modal-body {
+  padding: 20px;
+}
+
+.report-content-info {
+  background-color: rgba(52, 152, 219, 0.1);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-left: 3px solid rgba(52, 152, 219, 0.7);
+}
+
+.report-content-name, 
+.report-content-type {
+  margin: 5px 0;
+  color: #000;
+  font-size: 14px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #000;
+}
+
+.required {
+  color: #e74c3c;
+  margin-left: 3px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: rgba(52, 152, 219, 0.7);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.form-control:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.is-invalid {
+  border-color: #e74c3c !important;
+}
+
+.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2) !important;
+}
+
+.invalid-feedback {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.char-count {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  font-size: 12px;
+  color: #888;
+}
+
+.report-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btn-cancel, 
+.btn-submit {
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-cancel {
+  background-color: rgba(255, 255, 255, 0.7);
+  color: #2980b9;
+  border: 2px solid rgba(52, 152, 219, 0.3);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.btn-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(41, 128, 185, 0.4);
+}
+
+.btn-submit:disabled,
+.btn-cancel:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .report-modal-container {
+    width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-modal-footer {
+    flex-direction: column-reverse;
+  }
+  
+  .btn-cancel, 
+  .btn-submit {
+    width: 100%;
+    padding: 12px 20px;
+  }
+} 

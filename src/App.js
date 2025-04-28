@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { FlashcardProvider } from './contexts/FlashcardContext';
 import { WritingExerciseProvider } from './contexts/WritingExerciseContext';
 import { MultipleChoiceTestProvider } from './contexts/MultipleChoiceTestContext';
+
+// Import language utilities
+import './scripts/forceEnglishLanguage';
+import { forceEnglishLanguage } from './utils/forceEnglishLanguage';
 
 // Import route protection components
 import ProtectedRoute from './components/ProtectedRoute';
@@ -230,6 +234,12 @@ const AppLayout = () => {
 };
 
 function App() {
+    // Force English language when the app mounts
+    useEffect(() => {
+        // Set English in localStorage without reload
+        forceEnglishLanguage(null, false);
+    }, []);
+
     return (
         <LanguageProvider>
             <AuthProvider>

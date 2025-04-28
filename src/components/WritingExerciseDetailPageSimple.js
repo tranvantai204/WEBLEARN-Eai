@@ -246,16 +246,16 @@ const WritingExerciseDetailPageSimple = () => {
   // Get language flag from code
   const getLanguageFlag = (code) => {
     switch (code) {
-      case 'ENG': return 'https://flagsapi.com/GB/flat/64.png';
-      case 'VIE': return 'https://flagsapi.com/VN/flat/64.png';
-      case 'KOR': return 'https://flagsapi.com/KR/flat/64.png';
-      case 'JPN': return 'https://flagsapi.com/JP/flat/64.png';
-      case 'CN': return 'https://flagsapi.com/CN/flat/64.png';
-      case 'CHN': return 'https://flagsapi.com/CN/flat/64.png';
-      case 'FRA': return 'https://flagsapi.com/FR/flat/64.png';
-      case 'GER': return 'https://flagsapi.com/DE/flat/64.png';
-      case 'SPA': return 'https://flagsapi.com/ES/flat/64.png';
-      default: return null;
+      case 'ENG': return <span className="flag-icon">🇬🇧</span>;
+      case 'VIE': return <span className="flag-icon">🇻🇳</span>;
+      case 'KOR': return <span className="flag-icon">🇰🇷</span>;
+      case 'JPN': return <span className="flag-icon">🇯🇵</span>;
+      case 'CN': return <span className="flag-icon">🇨🇳</span>;
+      case 'CHN': return <span className="flag-icon">🇨🇳</span>;
+      case 'FRA': return <span className="flag-icon">🇫🇷</span>;
+      case 'GER': return <span className="flag-icon">🇩🇪</span>;
+      case 'SPA': return <span className="flag-icon">🇪🇸</span>;
+      default: return <span className="flag-icon">🌐</span>;
     }
   };
   
@@ -1120,12 +1120,7 @@ const WritingExerciseDetailPageSimple = () => {
           </div>
           <div className="d-flex align-items-center">
             <div className="language-badge me-3">
-              <img 
-                src={getLanguageFlag(exercise.learningLanguage)} 
-                alt={getLanguageName(exercise.learningLanguage)} 
-                width="16" 
-                height="16"
-              />
+              {getLanguageFlag(exercise.learningLanguage)}
               {getLanguageName(exercise.learningLanguage)}
             </div>
             <button 

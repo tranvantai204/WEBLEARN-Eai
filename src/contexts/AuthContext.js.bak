@@ -37,80 +37,6 @@ export const AuthProvider = ({ children }) => {
     return true;
   };
 
-  // Hàm đăng xuất
-  const logout = async () => {
-    // Save current language setting
-    const currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
-    
-    setUser(null);
-    setAccessToken(null);
-    setRefreshToken(null);
-    
-    // Clear authentication-related data but preserve language setting
-    const keysToKeep = ['selectedLanguage'];
-    const keysToRemove = [
-      'accessToken', 
-      'refreshToken', 
-      'userId', 
-      'userData', 
-      'gemini_api_key', 
-      'gemini_api_key_timestamp', 
-      'api_key', 
-      'redirectAfterLogin', 
-      'userInfo'
-    ];
-    
-    // Remove specific keys
-    keysToRemove.forEach(key => localStorage.removeItem(key));
-    
-    // Restore language setting
-    localStorage.setItem('selectedLanguage', currentLanguage);
-    
-    // Trả về true để component cha có thể xử lý điều hướng
-    return true;
-  };
-
-  // Hàm làm mới token
-  const refreshAccessToken = async () => {
-    if (!refreshToken) {
-      console.log('No refresh token available');
-      await logout();
-      return null;
-    }
-
-    try {
-      const refreshUrl = `${API_URL}/Auth/refresh-token`;
-      console.log('Sending refresh token request to:', refreshUrl);
-      
-      const response = await fetch(refreshUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        },
-        body: JSON.stringify({ refreshToken }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setAccessToken(data.token);
-        localStorage.setItem('accessToken', data.token);
-        console.log('Token refresh successful');
-        return data.token;
-      } else {
-        // Nếu làm mới token thất bại, đăng xuất người dùng
-        console.error('Token refresh failed');
-        await logout();
-        return null;
-      }
-    } catch (error) {
-      console.error('Lỗi khi làm mới token:', error);
-      await logout();
-      return null;
-    }
-  };
-
   // Hàm xử lý lỗi xác thực
   const handleAuthError = useCallback(async (status) => {
     console.log('Handling auth error with status:', status);
@@ -271,6 +197,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Hàm đăng xuất
+  const logout = async () => {
+    setUser(null);
+    setAccessToken(null);
+    setRefreshToken(null);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('gemini_api_key');
+    localStorage.removeItem('gemini_api_key_timestamp');
+    localStorage.removeItem('api_key');
+    localStorage.removeItem('redirectAfterLogin');
+    localStorage.removeItem('userInfo');
+    
+    // Trả về true để component cha có thể xử lý điều hướng
+    return true;
+  };
+
   // Hàm lưu API key Gemini
   const storeApiKey = async (apiKey) => {
     // Check token before making API call
@@ -354,101 +299,4 @@ export const AuthProvider = ({ children }) => {
         };
       } else {
         console.error('Lưu API key thất bại:', response.status);
-        toast.error(`Lỗi khi lưu API key: ${response.status} ${response.statusText}`);
-        return { 
-          success: false,
-          status: response.status,
-          statusText: response.statusText,
-          message: `Lỗi khi lưu API key: ${response.status} ${response.statusText}`,
-          data,
-          text
-        };
-      }
-    } catch (error) {
-      console.error('Lỗi khi lưu API key:', error);
-      toast.error(`Lỗi khi lưu API key: ${error.message}`);
-      return { 
-        success: false, 
-        status: 0,
-        statusText: 'Network Error',
-        message: `Lỗi khi lưu API key: ${error.message}`,
-        data: null,
-        error: error.toString()
-      };
-    }
-  };
-
-  // Kiểm tra token khi component mount và định kỳ
-  useEffect(() => {
-    const checkAuth = async () => {
-      if (accessToken) {
-        // Kiểm tra tính hợp lệ của token
-        const isValid = await checkTokenExpiration();
-        if (!isValid) {
-          console.log('Token invalid or expired');
-          await logout();
-        }
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-    
-    // Kiểm tra token theo định kỳ (mỗi 15 phút)
-    const tokenCheckInterval = setInterval(() => {
-      if (accessToken) {
-        checkTokenExpiration().catch(console.error);
-      }
-    }, 15 * 60 * 1000); // 15 minutes
-    
-    return () => clearInterval(tokenCheckInterval);
-  }, [accessToken, checkTokenExpiration]);
-
-  // Kiểm tra xem đã có API key trong localStorage chưa
-  const checkLocalApiKey = () => {
-    const apiKey = localStorage.getItem('gemini_api_key');
-    const timestamp = localStorage.getItem('gemini_api_key_timestamp');
-    
-    if (!apiKey || !timestamp) {
-      return null;
-    }
-    
-    // Kiểm tra xem API key có còn hiệu lực không (2 giờ)
-    const now = Date.now();
-    const saved = parseInt(timestamp, 10);
-    const twoHoursMs = 2 * 60 * 60 * 1000;
-    
-    if (now - saved > twoHoursMs) {
-      // API key đã hết hạn, xóa khỏi localStorage
-      console.log('API key đã hết hạn, xóa khỏi localStorage');
-      localStorage.removeItem('gemini_api_key');
-      localStorage.removeItem('gemini_api_key_timestamp');
-      return null;
-    }
-    
-    return apiKey;
-  };
-
-  const value = {
-    user,
-    accessToken,
-    login,
-    logout,
-    refreshAccessToken,
-    updateStreak,
-    storeApiKey,
-    checkLocalApiKey,
-    handleAuthError,
-    checkTokenExpiration,
-    isAuthenticated: !!accessToken,
-    loading,
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading ? children : <div>Loading...</div>}
-    </AuthContext.Provider>
-  );
-};
+        toast.error(`

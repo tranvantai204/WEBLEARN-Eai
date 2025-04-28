@@ -3,15 +3,17 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import '../css/components/Home.css';
+import Features from './Features';
+import Hero from './Hero';
 
-// Predefined translations instead of dynamic translation to improve performance
+// Translations for each language
 const allTranslations = {
     en: {
         selectLanguage: 'Select Language',
         heroBadge: 'Smart Language Learning',
         heroTitle: 'Learn Languages Effectively with AI Technology',
-        heroSubtitle: 'Optimize your learning with advanced AI technology. Create smart flashcards, practice effectively, and track progress easily.',
-        startFree: 'Start for Free',
+        heroSubtitle: 'Optimize your learning with advanced AI technology. Create smart flashcards, practice effectively, and track your progress easily.',
+        startFree: 'Start Free',
         learnMore: 'Learn More',
         featuresTitle: 'Key Features',
         featuresSubtitle: 'Discover powerful tools that make language learning easier and more effective',
@@ -22,7 +24,7 @@ const allTranslations = {
             },
             {
                 title: 'Progress Tracking',
-                description: 'Detailed analysis of your learning progress and improvement suggestions'
+                description: 'Detailed analysis of your learning progress and suggested improvements'
             },
             {
                 title: 'Smart Review',
@@ -34,57 +36,57 @@ const allTranslations = {
         register: 'Register for Free',
         // Logged in user translations
         welcomeBack: 'Welcome Back!',
-        continueProgress: 'Continue your learning progress',
+        continueProgress: 'Continue your learning journey',
         recentActivity: 'Your Recent Activity',
         noActivity: 'No recent activity found. Start learning now!',
         flashcardsSummary: 'Flashcards',
-        flashcardsDescription: 'Review your flashcard sets and continue learning vocabulary',
-        readingSummary: 'Readings',
-        readingsDescription: 'Improve your comprehension with reading exercises',
+        flashcardsDescription: 'Review flashcard sets and continue learning vocabulary',
+        readingSummary: 'Reading',
+        readingsDescription: 'Enhance your reading comprehension with exercises',
         writingSummary: 'Writing',
         writingsDescription: 'Enhance your written expression through practice',
         viewAll: 'View All',
         continueLearning: 'Continue Learning'
     },
     vi: {
-        selectLanguage: 'Chọn Ngôn Ngữ',
-        heroBadge: 'Học Ngôn Ngữ Thông Minh',
-        heroTitle: 'Học Ngôn Ngữ Hiệu Quả với Công Nghệ AI',
-        heroSubtitle: 'Tối ưu hóa việc học của bạn với công nghệ AI tiên tiến. Tạo thẻ ghi nhớ thông minh, luyện tập hiệu quả và theo dõi tiến trình dễ dàng.',
-        startFree: 'Bắt Đầu Miễn Phí',
-        learnMore: 'Tìm Hiểu Thêm',
-        featuresTitle: 'Tính Năng Chính',
-        featuresSubtitle: 'Khám phá các công cụ mạnh mẽ giúp việc học ngôn ngữ dễ dàng và hiệu quả hơn',
+        selectLanguage: 'Select Language',
+        heroBadge: 'Smart Language Learning',
+        heroTitle: 'Learn Languages Effectively with AI Technology',
+        heroSubtitle: 'Optimize your learning with advanced AI technology. Create smart flashcards, practice effectively, and track your progress easily.',
+        startFree: 'Start Free',
+        learnMore: 'Learn More',
+        featuresTitle: 'Key Features',
+        featuresSubtitle: 'Discover powerful tools that make language learning easier and more effective',
         features: [
             {
-                title: 'AI Thông Minh',
-                description: 'Tự động tạo thẻ ghi nhớ và bài tập phù hợp với trình độ của bạn'
+                title: 'Smart AI',
+                description: 'Automatically generate flashcards and exercises tailored to your level'
             },
             {
-                title: 'Theo Dõi Tiến Trình',
-                description: 'Phân tích chi tiết tiến trình học tập và đề xuất cải thiện'
+                title: 'Progress Tracking',
+                description: 'Detailed analysis of your learning progress and suggested improvements'
             },
             {
-                title: 'Ôn Tập Thông Minh',
-                description: 'Hệ thống lặp lại ngắt quãng giúp bạn nhớ từ vựng lâu hơn'
+                title: 'Smart Review',
+                description: 'Spaced repetition system helps you remember vocabulary longer'
             }
         ],
-        ctaTitle: 'Sẵn Sàng Bắt Đầu?',
-        ctaSubtitle: 'Tham gia cùng hàng triệu người học đang sử dụng WordWise',
-        register: 'Đăng Ký Miễn Phí',
+        ctaTitle: 'Ready to Start?',
+        ctaSubtitle: 'Join millions of learners using WordWise',
+        register: 'Register for Free',
         // Logged in user translations
-        welcomeBack: 'Chào Mừng Trở Lại!',
-        continueProgress: 'Tiếp tục quá trình học tập của bạn',
-        recentActivity: 'Hoạt Động Gần Đây Của Bạn',
-        noActivity: 'Không tìm thấy hoạt động gần đây. Bắt đầu học ngay!',
-        flashcardsSummary: 'Thẻ Ghi Nhớ',
-        flashcardsDescription: 'Xem lại bộ thẻ ghi nhớ và tiếp tục học từ vựng',
-        readingSummary: 'Bài Đọc',
-        readingsDescription: 'Cải thiện khả năng đọc hiểu với các bài tập đọc',
-        writingSummary: 'Viết',
-        writingsDescription: 'Nâng cao kỹ năng viết thông qua luyện tập',
-        viewAll: 'Xem Tất Cả',
-        continueLearning: 'Tiếp Tục Học'
+        welcomeBack: 'Welcome Back!',
+        continueProgress: 'Continue your learning journey',
+        recentActivity: 'Your Recent Activity',
+        noActivity: 'No recent activity found. Start learning now!',
+        flashcardsSummary: 'Flashcards',
+        flashcardsDescription: 'Review flashcard sets and continue learning vocabulary',
+        readingSummary: 'Reading',
+        readingsDescription: 'Enhance your reading comprehension with exercises',
+        writingSummary: 'Writing',
+        writingsDescription: 'Enhance your written expression through practice',
+        viewAll: 'View All',
+        continueLearning: 'Continue Learning'
     }
     // Other languages can be added here as needed
 };
@@ -242,14 +244,60 @@ function HomePage() {
                             </Link>
                         </div>
                         
-                        <div className="hero-image">
-                            <img 
-                                src="/images/dashboard-preview.png" 
-                                alt="WordWise Dashboard" 
-                                loading="lazy" 
-                                width="600" 
-                                height="400" 
-                            />
+                        <div className="hero-dashboard-preview">
+                            <div className="dashboard-content">
+                                <div className="dashboard-header">
+                                    <img src="/images/wordwise-logo.svg" alt="WordWise Logo" className="dashboard-logo" />
+                                    <h3>WordWise Dashboard</h3>
+                                </div>
+                                <div className="dashboard-body">
+                                    <div className="dashboard-stats">
+                                        <div className="stat-box">
+                                            <h4>Flashcards</h4>
+                                            <div className="stat-number">120</div>
+                                        </div>
+                                        <div className="stat-box">
+                                            <h4>Readings</h4>
+                                            <div className="stat-number">24</div>
+                                        </div>
+                                        <div className="stat-box">
+                                            <h4>Writing</h4>
+                                            <div className="stat-number">18</div>
+                                        </div>
+                                    </div>
+                                    <div className="dashboard-mascot">
+                                        <svg width="120" height="120" viewBox="0 0 120 120" className="mascot-image">
+                                            <g transform="translate(10,10)">
+                                                {/* Head */}
+                                                <circle cx="50" cy="50" r="40" fill="#FF7518" />
+                                                
+                                                {/* Face */}
+                                                <circle cx="50" cy="55" r="32" fill="#ffffff" />
+                                                
+                                                {/* Eyes */}
+                                                <circle cx="38" cy="45" r="8" fill="#333333" />
+                                                <circle cx="62" cy="45" r="8" fill="#333333" />
+                                                
+                                                {/* Eye shine */}
+                                                <circle cx="40" cy="42" r="3" fill="#ffffff" />
+                                                <circle cx="64" cy="42" r="3" fill="#ffffff" />
+                                                
+                                                {/* Mouth */}
+                                                <path d="M35,65 Q50,80 65,65" stroke="#333333" strokeWidth="3" fill="none" />
+                                                
+                                                {/* Graduation cap */}
+                                                <rect x="25" y="20" width="50" height="8" fill="#333333" />
+                                                <rect x="45" y="10" width="10" height="10" fill="#333333" />
+                                                <rect x="47" y="5" width="6" height="5" fill="#333333" />
+                                                
+                                                {/* Tassel */}
+                                                <path d="M70,24 Q75,35 68,40" stroke="#4A6CF7" strokeWidth="2" fill="none" />
+                                                <circle cx="68" cy="40" r="3" fill="#4A6CF7" />
+                                            </g>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>

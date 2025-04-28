@@ -29,7 +29,7 @@ function ResetPasswordPage() {
         const token = queryParams.get('token');
         
         if (!email || !token) {
-            toast.error('Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.');
+            toast.error('The password reset link is invalid or has expired.');
             navigate('/forgot-password');
             return;
         }
@@ -60,27 +60,27 @@ function ResetPasswordPage() {
 
     const validatePassword = () => {
         if (formData.password.length < 8) {
-            setPasswordError('Mật khẩu phải có ít nhất 8 ký tự.');
+            setPasswordError('Password must be at least 8 characters long.');
             return false;
         }
         
         if (!/[A-Z]/.test(formData.password)) {
-            setPasswordError('Mật khẩu phải chứa ít nhất một chữ cái viết hoa.');
+            setPasswordError('Password must contain at least one uppercase letter.');
             return false;
         }
         
         if (!/\d/.test(formData.password)) {
-            setPasswordError('Mật khẩu phải chứa ít nhất một chữ số.');
+            setPasswordError('Password must contain at least one digit.');
             return false;
         }
         
         if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
-            setPasswordError('Mật khẩu phải chứa ít nhất một ký tự đặc biệt.');
+            setPasswordError('Password must contain at least one special character.');
             return false;
         }
         
         if (formData.password !== formData.confirmPassword) {
-            setPasswordError('Mật khẩu xác nhận không khớp.');
+            setPasswordError('Passwords do not match.');
             return false;
         }
         
@@ -100,7 +100,7 @@ function ResetPasswordPage() {
             const response = await axios.post(`${API_URL}/Auth/resetPassword`, formData);
             
             setSuccess(true);
-            toast.success('Mật khẩu của bạn đã được đặt lại thành công!');
+            toast.success('Your password has been reset successfully!');
             
             // Add transition effect
             document.body.classList.add('page-transition');
@@ -121,10 +121,10 @@ function ResetPasswordPage() {
                 } else if (error.response.data.message) {
                     toast.error(error.response.data.message);
                 } else {
-                    toast.error('Có lỗi xảy ra khi đặt lại mật khẩu. Vui lòng thử lại.');
+                    toast.error('An error occurred while resetting your password. Please try again.');
                 }
             } else {
-                toast.error('Không thể kết nối tới máy chủ. Vui lòng kiểm tra kết nối của bạn và thử lại.');
+                toast.error('Unable to connect to the server. Please check your connection and try again.');
             }
         }
     };
@@ -147,10 +147,10 @@ function ResetPasswordPage() {
                 </Link>
                 
                 <div className="register-welcome-content">
-                    <h1 className="register-welcome-title">Đặt lại mật khẩu</h1>
+                    <h1 className="register-welcome-title">Reset Password</h1>
                     <p className="register-welcome-text">
-                        Tạo mật khẩu mới cho tài khoản của bạn. 
-                        Mật khẩu mới phải khác với mật khẩu trước đây và đảm bảo các yêu cầu bảo mật.
+                        Create a new password for your account. 
+                        The new password must be different from your previous one and meet security requirements.
                     </p>
                     
                     <div className="register-features">
@@ -159,8 +159,8 @@ function ResetPasswordPage() {
                                 <i className="fas fa-shield-alt"></i>
                             </div>
                             <div className="register-feature-text">
-                                <h3>Mật khẩu mạnh</h3>
-                                <p>Sử dụng kết hợp chữ cái thường, chữ cái viết hoa, số và ký tự đặc biệt để tăng độ bảo mật.</p>
+                                <h3>Strong Password</h3>
+                                <p>Use a combination of lowercase letters, uppercase letters, numbers, and special characters to enhance security.</p>
                             </div>
                         </div>
                         
@@ -169,8 +169,8 @@ function ResetPasswordPage() {
                                 <i className="fas fa-key"></i>
                             </div>
                             <div className="register-feature-text">
-                                <h3>Độ dài</h3>
-                                <p>Mật khẩu phải có ít nhất 8 ký tự để đảm bảo an toàn.</p>
+                                <h3>Length</h3>
+                                <p>Password must be at least 8 characters to ensure security.</p>
                             </div>
                         </div>
                         
@@ -179,8 +179,8 @@ function ResetPasswordPage() {
                                 <i className="fas fa-lock"></i>
                             </div>
                             <div className="register-feature-text">
-                                <h3>Không dùng lại</h3>
-                                <p>Tránh sử dụng mật khẩu đã dùng cho các tài khoản khác.</p>
+                                <h3>Don't Reuse</h3>
+                                <p>Avoid using passwords that you've used for other accounts.</p>
                             </div>
                         </div>
                     </div>
@@ -191,8 +191,8 @@ function ResetPasswordPage() {
             <div className="register-form-wrapper">
                 <div className={`register-form-card ${success ? 'scale-up' : ''}`}>
                     <div className="register-form-header">
-                        <h2 className="register-form-title">Đặt Lại Mật Khẩu</h2>
-                        <p className="register-form-subtitle">Tạo mật khẩu mới an toàn</p>
+                        <h2 className="register-form-title">Reset Password</h2>
+                        <p className="register-form-subtitle">Create a secure new password</p>
                     </div>
                     
                     <div className="register-form-body">
@@ -200,7 +200,7 @@ function ResetPasswordPage() {
                             <div className="form-group">
                                 <label className="form-label" htmlFor="password">
                                     <i className="fas fa-lock"></i>
-                                    Mật khẩu mới
+                                    New Password
                                 </label>
                                 <div className="password-field">
                                     <input
@@ -209,7 +209,7 @@ function ResetPasswordPage() {
                                         id="password"
                                         value={formData.password}
                                         onChange={handleInputChange}
-                                        placeholder="Nhập mật khẩu mới"
+                                        placeholder="Enter new password"
                                         disabled={loading || success}
                                         required
                                     />
@@ -222,13 +222,13 @@ function ResetPasswordPage() {
                                         <i className={`fas ${passwordVisible ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                                     </button>
                                 </div>
-                                <p className="password-hint">Mật khẩu phải có ít nhất 8 ký tự, có một chữ cái viết hoa, một chữ số và một ký tự đặc biệt</p>
+                                <p className="password-hint">Password must be at least 8 characters, have one uppercase letter, one number, and one special character</p>
                             </div>
                             
                             <div className="form-group">
                                 <label className="form-label" htmlFor="confirmPassword">
                                     <i className="fas fa-lock"></i>
-                                    Xác nhận mật khẩu
+                                    Confirm Password
                                 </label>
                                 <input
                                     type="password"
@@ -236,7 +236,7 @@ function ResetPasswordPage() {
                                     id="confirmPassword"
                                     value={formData.confirmPassword}
                                     onChange={handleInputChange}
-                                    placeholder="Xác nhận mật khẩu mới"
+                                    placeholder="Confirm new password"
                                     disabled={loading || success}
                                     required
                                 />
@@ -252,17 +252,17 @@ function ResetPasswordPage() {
                                     {loading ? (
                                         <>
                                             <i className="fas fa-spinner fa-spin"></i>
-                                            Đang xử lý...
+                                            Processing...
                                         </>
                                     ) : success ? (
                                         <>
                                             <i className="fas fa-check"></i>
-                                            Thành công!
+                                            Password Reset!
                                         </>
                                     ) : (
                                         <>
                                             <i className="fas fa-key"></i>
-                                            Đặt lại mật khẩu
+                                            Reset Password
                                         </>
                                     )}
                                 </button>
@@ -272,9 +272,9 @@ function ResetPasswordPage() {
                     
                     <div className="register-form-footer">
                         <p>
-                            Quay lại trang {' '}
+                            Remember your password?{' '}
                             <Link to="/login" className="register-login-link">
-                                Đăng nhập
+                                Login Now
                             </Link>
                         </p>
                     </div>

@@ -18,10 +18,10 @@ function LoginPage() {
     const navigate = useNavigate();
     const location = useLocation();
     
-    // Lấy API URL từ biến môi trường
+    // Get API URL from environment variable
     const API_URL = process.env.REACT_APP_API_URL || 'https://da20-115-76-51-131.ngrok-free.app/api';
     
-    // Log URL API đang sử dụng
+    // Log the API URL being used
     useEffect(() => {
         console.log('Using API URL:', API_URL);
     }, [API_URL]);
@@ -37,7 +37,7 @@ function LoginPage() {
         // Check if there's a redirect path stored in localStorage
         const redirectPath = localStorage.getItem('redirectAfterLogin');
         
-        // Thay đổi cách xử lý chuyển trang để tránh chặn tương tác
+        // Change the page transition handling to avoid blocking interactions
         setTimeout(() => {
             if (redirectPath) {
                 // Clear the stored redirect path
@@ -50,9 +50,9 @@ function LoginPage() {
                 navigate('/progress');
             }
             
-            // Đảm bảo không có hiệu ứng page-transition trên body
+            // Ensure there's no page-transition effect on the body
             document.body.classList.remove('page-transition');
-        }, 300); // Giảm thời gian chuyển trang xuống 300ms
+        }, 300); // Reduce page transition time to 300ms
     };
 
     // Remove the page transition effect
@@ -61,10 +61,10 @@ function LoginPage() {
             // Get redirect path if any
             const redirectPath = localStorage.getItem('redirectAfterLogin');
             
-            // Đảm bảo không có hiệu ứng page-transition 
+            // Ensure there's no page-transition effect
             document.body.classList.remove('page-transition');
             
-            // Sử dụng setTimeout để tránh hiệu ứng chặn
+            // Use setTimeout to avoid blocking effects
             setTimeout(() => {
                 // Navigate to the stored path or default to progress
                 navigate(redirectPath || '/progress');
@@ -104,7 +104,7 @@ function LoginPage() {
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('Login failed response:', errorText);
-                throw new Error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+                throw new Error('Login failed. Please check your information.');
             }
             
             const data = await response.json();
@@ -112,20 +112,20 @@ function LoginPage() {
             console.log('Token present:', !!data.token);
             console.log('RefreshToken present:', !!data.refreshToken);
             
-            // Tạo đối tượng user từ thông tin trong response
+            // Create user object from response information
             const userData = {
                 email: data.email,
                 roles: data.roles || [],
-                // Các thông tin khác có thể bổ sung nếu có
+                // Other information can be added if available
             };
             
             console.log('Calling login function with userData:', userData);
             
             try {
-                // Gọi hàm login từ AuthContext với cấu trúc phù hợp
+                // Call login function from AuthContext with appropriate structure
                 const loginSuccess = await login(
                     userData,           // user object
-                    data.token,         // accessToken (đổi từ "token")
+                    data.token,         // accessToken (changed from "token")
                     data.refreshToken   // refreshToken
                 );
 
@@ -140,15 +140,15 @@ function LoginPage() {
                     // Continue anyway - this shouldn't block login
                 }
             
-                // Hiển thị thông báo thành công
+                // Display success message
                 if (loginSuccess) {
                     setLoginSuccess(true);
-                    toast.success('Đăng nhập thành công!', {
+                    toast.success('Login successful!', {
                         position: "top-right",
                         autoClose: 1500,
                     });
                     
-                    // Gọi API để lấy thông tin tiến độ học tập (nếu cần)
+                    // Call API to get learning progress information (if needed)
                     try {
                         const progressResponse = await fetch(`${API_URL}/Learning/progress`, {
                             headers: {
@@ -169,16 +169,16 @@ function LoginPage() {
                 }
             } catch (loginError) {
                 console.error('Error during auth context login:', loginError);
-                setError('Lỗi xác thực: ' + (loginError.message || 'Đã xảy ra lỗi không xác định'));
-                toast.error('Lỗi xác thực: ' + (loginError.message || 'Đã xảy ra lỗi không xác định'));
+                setError('Authentication error: ' + (loginError.message || 'An unknown error occurred'));
+                toast.error('Authentication error: ' + (loginError.message || 'An unknown error occurred'));
                 setLoading(false);
             }
         } catch (err) {
-            setError(err.message || 'Đã xảy ra lỗi khi đăng nhập');
+            setError(err.message || 'An error occurred during login');
             console.error('Login error:', err);
             
-            // Hiển thị thông báo lỗi
-            toast.error(err.message || 'Đã xảy ra lỗi khi đăng nhập', {
+            // Display error message
+            toast.error(err.message || 'An error occurred during login', {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -194,7 +194,7 @@ function LoginPage() {
 
     return (
         <div className={`login-container ${redirecting ? 'fade-out' : ''}`}>
-            {/* Thêm ToastContainer để hiển thị thông báo */}
+            {/* Add ToastContainer to display notifications */}
             <ToastContainer
                 position="top-right"
                 autoClose={5000}

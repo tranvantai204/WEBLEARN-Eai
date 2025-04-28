@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Flashcards.css';
 import FlashcardReviews from './FlashcardReviews';
 import LanguageSelector from './LanguageSelector';
+import ContentReportModal from './ContentReportModal';
 
 // Thêm CSS cho animations
 const modalStyles = `
@@ -151,6 +152,9 @@ function FlashcardSetDetailsPage() {
 
     // Add a state to store reviews
     const [reviews, setReviews] = useState([]);
+
+    // Add this state for the report modal
+    const [showReportModal, setShowReportModal] = useState(false);
 
     // Fetch flashcard set details on component mount
     useEffect(() => {
@@ -1321,6 +1325,19 @@ function FlashcardSetDetailsPage() {
       }
     };
 
+    // Add handlers for the report functionality
+    const openReportModal = () => {
+        if (!isAuthenticated) {
+            toast.warning('Please log in to report content');
+            return;
+        }
+        setShowReportModal(true);
+    };
+    
+    const closeReportModal = () => {
+        setShowReportModal(false);
+    };
+
     return (
         <div className="flashcard-details-page">
             {/* Thêm style cho animations */}
@@ -2286,6 +2303,12 @@ function FlashcardSetDetailsPage() {
                                     <button className='btn' onClick={() => copyToClipboard(window.location.href)}>Share to your friend</button>:
                                     <></>
                                 }
+                                {/* Add Report button */}
+                                {isAuthenticated && !isOwner && (
+                                    <button className='btn btn-report' onClick={openReportModal}>
+                                        <i className="fas fa-flag"></i> Report Content
+                                    </button>
+                                )}
                                 </div>
                             </div>
                             
@@ -2486,6 +2509,15 @@ function FlashcardSetDetailsPage() {
                     </Link>
                 </div>
             )}
+
+            {/* Add this component at the end of the JSX */}
+            <ContentReportModal
+                isOpen={showReportModal}
+                onClose={closeReportModal}
+                contentId={flashcardSetId}
+                contentType={2} // 2 for Flashcard
+                contentName={flashcardSet?.title || 'Flashcard Set'}
+            />
         </div>
     );
 }

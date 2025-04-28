@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import { getLanguageOptions } from '../utils/countriesAPI';
 import '../css/components/LanguageSelector.css';
 
@@ -27,6 +28,7 @@ function LanguageSelector({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const dropdownRef = useRef(null);
   const selectorRef = useRef(null);
 
@@ -56,7 +58,8 @@ function LanguageSelector({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (selectorRef.current && !selectorRef.current.contains(event.target)) {
+      if (selectorRef.current && !selectorRef.current.contains(event.target) && 
+          dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
@@ -66,6 +69,18 @@ function LanguageSelector({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Update position when dropdown is opened
+  useEffect(() => {
+    if (isOpen && selectorRef.current) {
+      const rect = selectorRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
+  }, [isOpen]);
 
   // Filter options based on search term
   const filteredOptions = options.filter(option => 
@@ -95,6 +110,64 @@ function LanguageSelector({
     }
   };
 
+  // Render dropdown using Portal
+  const renderDropdown = () => {
+    if (!isOpen) return null;
+
+    const dropdownContent = (
+      <div 
+        className="language-selector__dropdown" 
+        ref={dropdownRef}
+        style={{
+          position: 'absolute',
+          top: `${dropdownPosition.top}px`,
+          left: `${dropdownPosition.left}px`,
+          width: `${dropdownPosition.width}px`
+        }}
+      >
+        <div className="language-selector__search">
+          <input
+            type="text"
+            className="language-selector__search-input"
+            placeholder="Tìm kiếm ngôn ngữ..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+        
+        <div className="language-selector__options">
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map(option => (
+              <div
+                key={option.value}
+                className={`language-selector__option ${selectedOption?.value === option.value ? 'language-selector__option--selected' : ''}`}
+                onClick={() => handleOptionSelect(option)}
+              >
+                <img
+                  src={option.flag}
+                  alt={`${option.label} flag`}
+                  className="language-selector__flag"
+                />
+                <span className="language-selector__option-label">{option.label}</span>
+              </div>
+            ))
+          ) : (
+            <div className="language-selector__no-results">
+              Không tìm thấy ngôn ngữ
+            </div>
+          )}
+        </div>
+      </div>
+    );
+
+    // Use React Portal to render dropdown at document body level
+    return ReactDOM.createPortal(
+      dropdownContent,
+      document.body
+    );
+  };
+
   return (
     <div 
       className={`language-selector ${isOpen ? 'language-selector--open' : ''} ${loading ? 'language-selector--loading' : ''}`}
@@ -111,7 +184,7 @@ function LanguageSelector({
         onClick={toggleDropdown}
       >
         <div className="language-selector__current-selection">
-          {selectedOption ? selectedOption.label : 'Select language'}
+          {selectedOption ? selectedOption.label : 'Chọn ngôn ngữ'}
         </div>
         
         {/* Hide the actual select element but keep it for form submission */}
@@ -150,43 +223,7 @@ function LanguageSelector({
         </div>
       )}
       
-      {isOpen && (
-        <div className="language-selector__dropdown" ref={dropdownRef}>
-          <div className="language-selector__search">
-            <input
-              type="text"
-              className="language-selector__search-input"
-              placeholder="Search languages..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
-          
-          <div className="language-selector__options">
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map(option => (
-                <div
-                  key={option.value}
-                  className={`language-selector__option ${selectedOption?.value === option.value ? 'language-selector__option--selected' : ''}`}
-                  onClick={() => handleOptionSelect(option)}
-                >
-                  <img
-                    src={option.flag}
-                    alt={`${option.label} flag`}
-                    className="language-selector__flag"
-                  />
-                  <span className="language-selector__option-label">{option.label}</span>
-                </div>
-              ))
-            ) : (
-              <div className="language-selector__no-results">
-                No languages found
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {renderDropdown()}
     </div>
   );
 }

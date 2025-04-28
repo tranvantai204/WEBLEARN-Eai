@@ -18,7 +18,7 @@ function ForgotPasswordPage() {
         e.preventDefault();
         
         if (!email) {
-            toast.error('Vui lòng nhập địa chỉ email của bạn.');
+            toast.error('Please enter your email address.');
             return;
         }
         
@@ -34,7 +34,7 @@ function ForgotPasswordPage() {
             });
             
             setSuccess(true);
-            toast.success('Vui lòng kiểm tra email của bạn để đặt lại mật khẩu.');
+            toast.success('Please check your email to reset your password.');
             
             // Add transition effect
             document.body.classList.add('page-transition');
@@ -48,9 +48,9 @@ function ForgotPasswordPage() {
             
             if (error.response && error.response.data) {
                 // Show specific error message if available
-                toast.error(error.response.data.message || 'Có lỗi xảy ra. Vui lòng thử lại sau.');
+                toast.error(error.response.data.message || 'An error occurred. Please try again later.');
             } else {
-                toast.error('Không thể kết nối tới máy chủ. Vui lòng kiểm tra kết nối của bạn và thử lại.');
+                toast.error('Could not connect to the server. Please check your connection and try again.');
             }
             
             setLoading(false);
@@ -75,10 +75,10 @@ function ForgotPasswordPage() {
                 </Link>
                 
                 <div className="register-welcome-content">
-                    <h1 className="register-welcome-title">Quên mật khẩu?</h1>
+                    <h1 className="register-welcome-title">Forgot Password?</h1>
                     <p className="register-welcome-text">
-                        Đừng lo lắng! Chúng tôi sẽ giúp bạn lấy lại quyền truy cập vào tài khoản.
-                        Nhập địa chỉ email đã đăng ký và chúng tôi sẽ gửi cho bạn liên kết để đặt lại mật khẩu.
+                        Don't worry! We'll help you regain access to your account.
+                        Enter your registered email address and we'll send you a link to reset your password.
                     </p>
                     
                     <div className="register-features">
@@ -87,8 +87,8 @@ function ForgotPasswordPage() {
                                 <i className="fas fa-shield-alt"></i>
                             </div>
                             <div className="register-feature-text">
-                                <h3>Bảo mật</h3>
-                                <p>Liên kết đặt lại mật khẩu chỉ có hiệu lực trong 24 giờ.</p>
+                                <h3>Security</h3>
+                                <p>The password reset link is only valid for 24 hours.</p>
                             </div>
                         </div>
                         
@@ -97,8 +97,8 @@ function ForgotPasswordPage() {
                                 <i className="fas fa-envelope"></i>
                             </div>
                             <div className="register-feature-text">
-                                <h3>Kiểm tra Email</h3>
-                                <p>Hãy kiểm tra cả thư mục spam nếu bạn không thấy email của chúng tôi.</p>
+                                <h3>Check Email</h3>
+                                <p>Please check your spam folder if you don't see our email.</p>
                             </div>
                         </div>
                         
@@ -107,8 +107,8 @@ function ForgotPasswordPage() {
                                 <i className="fas fa-lock"></i>
                             </div>
                             <div className="register-feature-text">
-                                <h3>Mật khẩu mới</h3>
-                                <p>Tạo mật khẩu mạnh với ít nhất 8 ký tự, bao gồm chữ số và ký tự đặc biệt.</p>
+                                <h3>New Password</h3>
+                                <p>Create a strong password with at least 8 characters, including numbers and special characters.</p>
                             </div>
                         </div>
                     </div>
@@ -119,8 +119,8 @@ function ForgotPasswordPage() {
             <div className="register-form-wrapper">
                 <div className={`register-form-card ${success ? 'scale-up' : ''}`}>
                     <div className="register-form-header">
-                        <h2 className="register-form-title">Quên Mật Khẩu</h2>
-                        <p className="register-form-subtitle">Nhập email đã đăng ký của bạn</p>
+                        <h2 className="register-form-title">Forgot Password</h2>
+                        <p className="register-form-subtitle">Enter your registered email</p>
                     </div>
                     
                     <div className="register-form-body">
@@ -128,7 +128,7 @@ function ForgotPasswordPage() {
                             <div className="form-group">
                                 <label className="form-label" htmlFor="email">
                                     <i className="fas fa-envelope"></i>
-                                    Địa chỉ Email
+                                    Email Address
                                 </label>
                                 <input
                                     type="email"
@@ -136,7 +136,7 @@ function ForgotPasswordPage() {
                                     id="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Nhập địa chỉ email của bạn"
+                                    placeholder="Enter your email address"
                                     disabled={loading || success}
                                     required
                                 />
@@ -151,17 +151,17 @@ function ForgotPasswordPage() {
                                     {loading ? (
                                         <>
                                             <i className="fas fa-spinner fa-spin"></i>
-                                            Đang xử lý...
+                                            Processing...
                                         </>
                                     ) : success ? (
                                         <>
                                             <i className="fas fa-check"></i>
-                                            Đã gửi email!
+                                            Email sent!
                                         </>
                                     ) : (
                                         <>
                                             <i className="fas fa-paper-plane"></i>
-                                            Gửi liên kết đặt lại
+                                            Send Reset Link
                                         </>
                                     )}
                                 </button>
@@ -171,9 +171,9 @@ function ForgotPasswordPage() {
                     
                     <div className="register-form-footer">
                         <p>
-                            Bạn đã nhớ lại mật khẩu?{' '}
+                            Remembered your password?{' '}
                             <Link to="/login" className="register-login-link">
-                                Đăng nhập ngay
+                                Login Now
                             </Link>
                         </p>
                     </div>

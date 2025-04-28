@@ -343,8 +343,8 @@
 
 .btn-secondary {
     background-color: transparent;
-    border: 2px solid white;
-    color: white;
+    border: 2px solid rgb(206, 99, 28);
+    color: rgb(206, 99, 28);
 }
 
 .btn-secondary:hover {

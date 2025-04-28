@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
+import { forceEnglishLanguage } from '../utils/forceEnglishLanguage';
 import { 
     FaGlobeAmericas,
     FaChevronDown,
@@ -42,7 +43,7 @@ function Header() {
   
   const languages = [
     { code: 'en', name: 'English', icon: FlagGBIcon },
-    { code: 'vi', name: 'Tiếng Việt', icon: FlagVNIcon },
+    { code: 'vi', name: 'Vietnamese', icon: FlagVNIcon },
     { code: 'ja', name: '日本語', icon: FlagJPIcon },
     { code: 'ko', name: '한국어', icon: FlagKRIcon },
     { code: 'zh', name: '中文', icon: FlagCNIcon },
@@ -123,60 +124,42 @@ function Header() {
   }, [showMobileLanguageOptions, showDesktopLanguageOptions]);
 
   // Update translations when language changes
-  useEffect(() => {
-    const updateTranslations = async () => {
-      try {
-        const newTranslations = {
-          home: await translateText('Home'),
-          flashcards: await translateText('Flashcards'),
-          yourFlashcards: await translateText('Your Flashcards'),
-          exploreFlashcards: await translateText('Explore Flashcards'),
-          readings: await translateText('Readings'),
-          yourReadings: await translateText('Your Readings'),
-          exploreTests: await translateText('Explore Tests'),
-          writing: await translateText('Writing'),
-          yourWriting: await translateText('Your Writing'),
-          exploreWriting: await translateText('Explore Writing'),
-          writingExercises: await translateText('Writing Exercises'),
-          discover: await translateText('Discover'),
-          signIn: await translateText('Sign In'),
-          getStarted: await translateText('Get Started'),
-          profile: await translateText('Progress'),
-          logout: await translateText('Logout'),
-          explore: await translateText('Explore'),
-          multipleChoice: await translateText('Multiple Choice Tests'),
-        };
-        setTranslations(newTranslations);
-      } catch (error) {
-        console.error('Translation error in Header:', error);
-      }
-    };
-    
-    if (currentLanguage !== 'en') {
-      updateTranslations();
-    } else {
-      setTranslations({
-        home: 'Home',
-        flashcards: 'Flashcards',
-        yourFlashcards: 'Your Flashcards',
-        exploreFlashcards: 'Explore Flashcards',
-        readings: 'Readings',
-        yourReadings: 'Your Readings',
-        exploreTests: 'Explore Tests',
-        writing: 'Writing',
-        yourWriting: 'Your Writing',
-        exploreWriting: 'Explore Writing',
-        writingExercises: 'Writing Exercises',
-        discover: 'Discover',
-        signIn: 'Sign In',
-        getStarted: 'Get Started',
-        profile: 'Progress',
-        logout: 'Logout',
-        explore: 'Explore',
-        multipleChoice: 'Multiple Choice Tests',
-      });
+  const updateTranslations = async () => {
+    try {
+      const newTranslations = {
+        home: await translateText('Home'),
+        flashcards: await translateText('Flashcards'),
+        yourFlashcards: await translateText('Your Flashcards'),
+        exploreFlashcards: await translateText('Explore Flashcards'),
+        readings: await translateText('Readings'),
+        yourReadings: await translateText('Your Readings'),
+        exploreTests: await translateText('Explore Tests'),
+        writing: await translateText('Writing'),
+        yourWriting: await translateText('Your Writing'),
+        exploreWriting: await translateText('Explore Writing'),
+        writingExercises: await translateText('Writing Exercises'),
+        discover: await translateText('Discover'),
+        signIn: await translateText('Sign In'),
+        getStarted: await translateText('Get Started'),
+        profile: await translateText('Progress'),
+        logout: await translateText('Logout'),
+        explore: await translateText('Explore'),
+        multipleChoice: await translateText('Multiple Choice Tests'),
+      };
+      setTranslations(newTranslations);
+    } catch (error) {
+      console.error('Translation error in Header:', error);
     }
-  }, [currentLanguage, translateText]);
+  };
+
+  // Force English language on component mount
+  useEffect(() => {
+    // Force English using our utility
+    forceEnglishLanguage(changeLanguage, false);
+    
+    // Update translations immediately
+    updateTranslations();
+  }, [changeLanguage]);
 
   const handleLanguageChange = (langCode) => {
     changeLanguage(langCode);
@@ -189,7 +172,7 @@ function Header() {
       const success = await logout();
       if (success) {
         setShowMobileMenu(false);
-        toast.info('Đã đăng xuất thành công.', {
+        toast.info('Successfully logged out.', {
           position: "top-right",
           autoClose: 3000
         });
@@ -197,7 +180,7 @@ function Header() {
       }
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('Có lỗi xảy ra khi đăng xuất. Vui lòng thử lại sau.', {
+      toast.error('An error occurred during logout. Please try again later.', {
         position: "top-right",
         autoClose: 5000
       });
@@ -306,7 +289,7 @@ function Header() {
                 <Link to="/progress" className="header-login" onClick={() => setShowMobileMenu(false)}>
                   <i className="fas fa-chart-line"></i> {translations.profile}
                 </Link>
-                <button className="header-signup" onClick={handleLogout}>
+                <button className="header-logout" onClick={handleLogout}>
                   <i className="fas fa-sign-out-alt"></i> {translations.logout}
                 </button>
               </>
@@ -392,12 +375,14 @@ function Header() {
           </nav>
           
           <div className="header-actions">
+            {/* Đã xóa nút English Language Button */}
+            
             {isAuthenticated ? (
               <>
                 <Link to="/progress" className="header-login">
                   <i className="fas fa-chart-line"></i> {translations.profile}
                 </Link>
-                <button className="header-signup" onClick={handleLogout}>
+                <button className="header-logout" onClick={handleLogout}>
                   <i className="fas fa-sign-out-alt"></i> {translations.logout}
                 </button>
               </>

@@ -106,7 +106,7 @@ function RegisterPage() {
         
         try {
             // Đường dẫn API đầy đủ
-            const REGISTER_API_URL = `${API_BASE_URL}/api/Auth/register`;
+            const REGISTER_API_URL = `${API_BASE_URL}/Auth/register`;
             console.log('Sending registration request to:', REGISTER_API_URL);
             
             // Convert gender to boolean as expected by the API
@@ -204,7 +204,7 @@ function RegisterPage() {
                                 
                                 // Gọi API để khởi tạo dữ liệu tiến độ học tập (nếu cần)
                                 try {
-                                    const progressResponse = await fetch(`${API_BASE_URL}/api/Learning/progress/init`, {
+                                    const progressResponse = await fetch(`${API_BASE_URL}/Learning/progress/init`, {
                                         method: 'POST',
                                         headers: {
                                             'Authorization': `Bearer ${data.token}`,

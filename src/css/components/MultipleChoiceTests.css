@@ -692,4 +692,42 @@
 
 .mobile-nav-item:nth-child(even) .mobile-nav-link i {
   color: #34a853;
+}
+
+.flag-icon {
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
+.language-info {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    backdrop-filter: blur(5px);
+}
+
+.test-language {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    backdrop-filter: blur(5px);
+}
+
+/* Make sure flags appear at the proper size in various places */
+span.flag-icon {
+    font-size: 16px;
+    margin-right: 4px;
+    vertical-align: -1px;
+}
+
+/* Make language selection dropdowns show flags nicely */
+select option {
+    font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
 } 

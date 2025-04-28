@@ -1,23 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { useAuthenticatedRequest } from '../utils/apiUtils';
 import '../css/components/MultipleChoiceTest.css';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
-import { FaArrowLeft, FaShare, FaRedo } from 'react-icons/fa';
+import { FaArrowLeft, FaShare, FaRedo, FaFlag } from 'react-icons/fa';
+import ContentReportModal from './ContentReportModal';
 
 function MultipleChoiceTestDetailPage() {
-    const { testId } = useParams();
+    const { testId, id } = useParams(); // Get both possible parameter names
     const navigate = useNavigate();
+    const location = useLocation();
     const makeRequest = useAuthenticatedRequest();
     const { currentLanguage, translateText } = useLanguage();
     const { isAuthenticated } = useAuth();
     
-    console.log("MultipleChoiceTestDetailPage - URL ID Parameter:", testId);
+    // Determine which ID to use (testId from public route or id from protected route)
+    const actualTestId = testId || id;
+    
+    console.log("MultipleChoiceTestDetailPage - URL ID Parameter:", actualTestId);
+    console.log("Current path:", location.pathname);
     
     // Check if this is accessed via public route
-    const isPublicRoute = window.location.pathname.includes('/public-test/');
+    const isPublicRoute = location.pathname.includes('/public-test/');
     
     const [testData, setTestData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -36,9 +42,12 @@ function MultipleChoiceTestDetailPage() {
     // Timer reference to track session duration
     const learnStartTimeRef = useRef(null);
 
+    // Add state for report modal
+    const [showReportModal, setShowReportModal] = useState(false);
+
     useEffect(() => {
         // Fetch test data first
-        if (testId) {
+        if (actualTestId) {
             fetchTestData();
         } else {
             console.error("ID is missing in URL parameters");
@@ -50,7 +59,7 @@ function MultipleChoiceTestDetailPage() {
         return () => {
             endLearningSession();
         };
-    }, [testId]);
+    }, [actualTestId]);
     
     // Function to start learning session
     const startLearningSession = async () => {
@@ -113,7 +122,7 @@ function MultipleChoiceTestDetailPage() {
     };
 
     const fetchTestData = async () => {
-        if (!testId) {
+        if (!actualTestId) {
             console.error('Missing test ID in URL parameters');
             setError('No test ID provided');
             setLoading(false);
@@ -121,44 +130,48 @@ function MultipleChoiceTestDetailPage() {
         }
 
         try {
-            // Đảm bảo ID có định dạng chuẩn, chuyển đổi sang chữ hoa nếu cần
-            const formattedId = testId.toUpperCase();
+            // Ensure ID is properly formatted (not lower/upper case sensitivity)
+            const formattedId = actualTestId.toString().trim();
             console.log(`Fetching test details for ID: ${formattedId}`);
             
-            // Sử dụng chính xác endpoint API theo tài liệu
+            // Use exact API endpoint according to documentation
             const apiEndpoint = `${API_URL}/MultipleChoiceTest/GetById/${formattedId}`;
             console.log('Calling API endpoint:', apiEndpoint);
             
-            // Gọi API để lấy chi tiết bài kiểm tra
-            let response = await makeRequest(apiEndpoint, {
+            // Call API to get test details - with detailed error handling
+            const response = await fetch(apiEndpoint, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
-                    'ngrok-skip-browser-warning': 'true'
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true',
+                    'Authorization': isAuthenticated ? `Bearer ${localStorage.getItem('accessToken')}` : undefined
                 }
-            }, false); // false parameter indicates authentication is optional
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`API error (${response.status}):`, errorText);
+                throw new Error(`Failed to fetch test: ${response.status} ${response.statusText}`);
+            }
 
-            if (response.success) {
-                console.log('Test data fetched successfully:', response.data);
-                setTestData(response.data);
+            const data = await response.json();
+            console.log('Test data fetched successfully:', data);
+            setTestData(data);
+            
+            // Initialize userAnswers object with empty values for each question
+            const initialAnswers = {};
+            if (data.questions && Array.isArray(data.questions)) {
+                data.questions.forEach((q) => {
+                    initialAnswers[q.questionId] = null;
+                });
+                setUserAnswers(initialAnswers);
                 
-                // Initialize userAnswers object with empty values for each question
-                const initialAnswers = {};
-                if (response.data.questions && Array.isArray(response.data.questions)) {
-                    response.data.questions.forEach((q) => {
-                        initialAnswers[q.questionId] = null;
-                    });
-                    setUserAnswers(initialAnswers);
-                    
-                    // Start learning session only after successfully loading test data
-                    startLearningSession();
-                } else {
-                    console.error('No questions found in the test data or invalid format');
-                    setError('Invalid test data format: questions missing or not in array format');
-                }
+                // Start learning session only after successfully loading test data
+                startLearningSession();
             } else {
-                console.error('Failed to fetch test:', response);
-                setError(response.data?.message || 'Failed to fetch test data');
+                console.error('No questions found in the test data or invalid format');
+                setError('Invalid test data format: questions missing or not in array format');
             }
         } catch (error) {
             console.error('Error fetching test:', error);
@@ -244,6 +257,19 @@ function MultipleChoiceTestDetailPage() {
                 console.error('Error resetting learning session:', err);
             }
         }
+    };
+
+    // Add handlers for the report functionality
+    const openReportModal = () => {
+        if (!isAuthenticated) {
+            toast.warning('Please log in to report content');
+            return;
+        }
+        setShowReportModal(true);
+    };
+    
+    const closeReportModal = () => {
+        setShowReportModal(false);
     };
 
     if (loading) {
@@ -349,6 +375,15 @@ function MultipleChoiceTestDetailPage() {
                             </button>:
                             <></>
                         }
+                        {/* Add report button */}
+                        {isAuthenticated && !testData.isOwner && (
+                            <button 
+                                className="report-button"
+                                onClick={openReportModal}
+                            >
+                                <FaFlag /> {translateText('Report Content')}
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -522,6 +557,15 @@ function MultipleChoiceTestDetailPage() {
                     </div>
                 )}
             </div>
+
+            {/* Add the ContentReportModal at the end of the component */}
+            <ContentReportModal
+                isOpen={showReportModal}
+                onClose={closeReportModal}
+                contentId={actualTestId}
+                contentType={1} // 1 for MultipleChoice
+                contentName={testData?.title || 'Multiple Choice Test'}
+            />
         </div>
     );
 }

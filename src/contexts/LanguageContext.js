@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useCallback, useMemo } from 'react';
+import React, { createContext, useState, useContext, useCallback, useMemo, useEffect } from 'react';
 
 const LanguageContext = createContext();
 
@@ -7,10 +7,17 @@ export const LanguageProvider = ({ children }) => {
     const initialLanguage = localStorage.getItem('selectedLanguage') || 'en';
     const [currentLanguage, setCurrentLanguage] = useState(initialLanguage);
     
+    // Force English language across the app
+    useEffect(() => {
+        // Set language to English
+        setCurrentLanguage('en');
+        localStorage.setItem('selectedLanguage', 'en');
+    }, []);
+    
     // All available languages
     const languages = useMemo(() => [
         { code: 'en', name: 'English' },
-        { code: 'vi', name: 'Tiếng Việt' },
+        { code: 'vi', name: 'Vietnamese' },
         { code: 'ja', name: '日本語' },
         { code: 'ko', name: '한국어' },
         { code: 'zh', name: '中文' },

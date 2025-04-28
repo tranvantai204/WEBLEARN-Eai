@@ -3,20 +3,21 @@ body, html {
     margin: 0;
     padding: 0;
     font-family: 'Nunito', sans-serif;
-    background-color: #ffffff !important;
+    background: linear-gradient(135deg, #e0f7fa, #bbdefb, #c5cae9) !important;
+    background-attachment: fixed !important;
 }
 
 .app-container {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #ffffff !important;
+    background: transparent !important;
 }
 
 .main-content {
     flex: 1;
     padding: 20px;
-    background-color: #ffffff !important;
+    background: transparent !important;
 }
 
 /* Add these styles to override any global background colors */
@@ -26,12 +27,12 @@ body, html {
 .flashcards-container, 
 .profile-container, 
 .discover-container {
-    background-color: #ffffff !important;
+    background: transparent !important;
 }
 
 /* Override any auto-applied background colors */
 [class*="Page"] {
-    background-color: #ffffff !important;
+    background: transparent !important;
 }
 
 /* Fix for specific elements */
@@ -40,7 +41,10 @@ body, html {
 .stat-card,
 .activity-item,
 .streak-day {
-    background-color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 /* Smooth scrolling for the entire site */

@@ -260,6 +260,38 @@ function ReadingsPage() {
     // Get unique languages for the dropdown
     const languages = [...new Set((multipleChoiceTests || []).map(test => test.learningLanguage))].filter(Boolean);
 
+    // Add at the top of the component function where the other variables are defined
+    const getFlagIcon = (langCode) => {
+        switch(langCode) {
+            case 'ENG':
+                return <span className="flag-icon">🇬🇧</span>;
+            case 'VIE':
+                return <span className="flag-icon">🇻🇳</span>;
+            case 'FRA':
+                return <span className="flag-icon">🇫🇷</span>;
+            case 'DEU':
+                return <span className="flag-icon">🇩🇪</span>;
+            case 'ESP':
+                return <span className="flag-icon">🇪🇸</span>;
+            case 'JPN':
+                return <span className="flag-icon">🇯🇵</span>;
+            case 'KOR':
+                return <span className="flag-icon">🇰🇷</span>;
+            case 'CHN':
+                return <span className="flag-icon">🇨🇳</span>;
+            case 'AR':
+                return <span className="flag-icon">🇸🇦</span>;
+            case 'RUS':
+                return <span className="flag-icon">🇷🇺</span>;
+            case 'POR':
+                return <span className="flag-icon">🇵🇹</span>;
+            case 'THA':
+                return <span className="flag-icon">🇹🇭</span>;
+            default:
+                return <span className="flag-icon">🌐</span>;
+        }
+    };
+
     if (loading) {
         return (
             <div className="main-content">
@@ -409,6 +441,9 @@ function ReadingsPage() {
                                             <span className={`level-badge ${getLevelBadgeClass(test.level)}`}>
                                             {getLevelLabel(test.level) || test.level || translations.beginner}
                                             </span>
+                                            <div className="language-info">
+                                                {getFlagIcon(test.learningLanguage)} {test.learningLanguage || 'ENG'}
+                                            </div>
                                             <div className="students-count">
                                                 <i className="fas fa-user-graduate"></i> {test.learnerCount} {translations.students}
                                             </div>
