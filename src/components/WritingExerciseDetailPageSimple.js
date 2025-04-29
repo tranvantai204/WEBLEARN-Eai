@@ -170,15 +170,8 @@ const WritingExerciseDetailPageSimple = () => {
             
             // Thêm thông báo đã tải đánh giá AI sau khi trang đã tải xong hoàn toàn
             setTimeout(() => {
-              toast.info("Đã tải đánh giá AI cho bài viết của bạn", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                icon: "🤖"
+              toast.info("AI evaluation for your writing has been loaded", {
+                autoClose: 3000
               });
               
               // Cuộn đến phần đánh giá AI sau khi trang đã tải xong và AI feedback đã render
@@ -207,7 +200,7 @@ const WritingExerciseDetailPageSimple = () => {
       } catch (err) {
         console.error('Error loading exercise:', err);
         setError(err.message || 'Failed to load writing exercise');
-        toast.error('Không thể tải bài tập viết. Vui lòng thử lại sau.');
+        toast.error('Unable to load writing exercise. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -301,7 +294,7 @@ const WritingExerciseDetailPageSimple = () => {
       const token = localStorage.getItem('accessToken');
       
       if (!token) {
-        toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        toast.error('Login session expired. Please log in again.');
         setSaving(false);
         return;
       }
@@ -337,11 +330,11 @@ const WritingExerciseDetailPageSimple = () => {
       if (!response.ok) {
         toast.dismiss("saving-toast");
         if (response.status === 401) {
-          toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+          toast.error('Login session expired. Please log in again.');
         } else if (response.status === 400) {
           toast.error('Nội dung không hợp lệ.');
         } else if (response.status === 404) {
-          toast.error('Không tìm thấy bài tập viết.');
+          toast.error("Writing exercise not found.");
         } else {
           throw new Error(`Network response was not ok: ${response.status}`);
         }
@@ -378,7 +371,7 @@ const WritingExerciseDetailPageSimple = () => {
     } catch (error) {
       console.error("Error saving writing:", error);
       toast.dismiss("saving-toast");
-      toast.error("Đã xảy ra lỗi khi lưu bài viết.");
+      toast.error("An error occurred while saving the writing exercise.");
     } finally {
       setSaving(false);
     }
@@ -572,7 +565,7 @@ const WritingExerciseDetailPageSimple = () => {
       
     } catch (error) {
       console.error("Error submitting for AI feedback:", error);
-      toast.error("Đã xảy ra lỗi khi chuẩn bị bài viết.");
+      toast.error("An error occurred while preparing the writing for AI feedback.");
     }
   };
   
@@ -587,7 +580,7 @@ const WritingExerciseDetailPageSimple = () => {
       const token = localStorage.getItem('accessToken');
       
       if (!token) {
-        toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        toast.error('Login session expired. Please log in again.');
         setSubmitting(false);
         setAiLoading(false);
         return;
@@ -621,7 +614,7 @@ const WritingExerciseDetailPageSimple = () => {
         if (response.status === 400) {
           toast.error("Nội dung bài viết không hợp lệ. Vui lòng kiểm tra lại.");
         } else if (response.status === 404) {
-          toast.error("Không tìm thấy bài tập viết.");
+          toast.error("Writing exercise not found.");
         } else if (response.status === 500) {
           // Thử đọc thông tin lỗi chi tiết từ phản hồi
           try {
@@ -634,13 +627,13 @@ const WritingExerciseDetailPageSimple = () => {
             } else if (errorData.includes("Bad Request") || errorData.includes("rate limit")) {
               toast.error("Yêu cầu không hợp lệ hoặc đã vượt quá giới hạn tần suất Gemini API. Vui lòng thử lại sau vài phút.");
             } else {
-              toast.error("Đã xảy ra lỗi ở máy chủ khi phân tích bài viết. Vui lòng thử lại sau.");
+              toast.error("An error occurred on the server when analyzing the writing. Please try again later.");
             }
           } catch (parseError) {
-            toast.error("Đã xảy ra lỗi ở máy chủ khi phân tích bài viết. API key có thể không hợp lệ hoặc đã hết hạn.");
+            toast.error("An error occurred on the server when analyzing the writing. API key may be invalid or expired.");
           }
         } else {
-          toast.error(`Đã xảy ra lỗi: ${response.status}`);
+          toast.error(`An error occurred: ${response.status}`);
         }
         throw new Error(`Network response was not ok: ${response.status}`);
       }
@@ -693,7 +686,7 @@ const WritingExerciseDetailPageSimple = () => {
       
     } catch (error) {
       console.error("Error submitting for AI feedback:", error);
-      toast.error("Đã xảy ra lỗi khi gửi bài viết để nhận phản hồi AI.");
+      toast.error("An error occurred while submitting the writing for AI feedback.");
     } finally {
       setSubmitting(false);
       setAiLoading(false);
@@ -798,7 +791,7 @@ const WritingExerciseDetailPageSimple = () => {
       const token = localStorage.getItem('accessToken');
       
       if (!token) {
-        toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        toast.error('Login session expired. Please log in again.');
         setDeleting(false);
         return;
       }
@@ -830,9 +823,9 @@ const WritingExerciseDetailPageSimple = () => {
       
       if (!response.ok) {
         if (response.status === 401) {
-          toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+          toast.error('Login session expired. Please log in again.');
         } else if (response.status === 400 || response.status === 404) {
-          toast.error('Không tìm thấy bài tập viết hoặc bạn không có quyền xóa nó.');
+          toast.error('Writing exercise not found or you don\'t have permission to delete it.');
         } else {
           throw new Error(`Network response was not ok: ${response.status}`);
         }
@@ -844,7 +837,7 @@ const WritingExerciseDetailPageSimple = () => {
       console.log("Delete response:", responseText);
       
       // Hiển thị thông báo xóa thành công
-      toast.success("Bài tập viết đã được xóa thành công!", {
+      toast.success("Writing exercise has been deleted successfully!", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
@@ -861,7 +854,7 @@ const WritingExerciseDetailPageSimple = () => {
       
     } catch (error) {
       console.error("Error deleting writing exercise:", error);
-      toast.error("Đã xảy ra lỗi khi xóa bài tập viết.");
+      toast.error("An error occurred while deleting the writing exercise.");
     } finally {
       setDeleting(false);
       setShowDeleteConfirm(false);
@@ -912,7 +905,7 @@ const WritingExerciseDetailPageSimple = () => {
       const token = localStorage.getItem('accessToken');
       
       if (!token) {
-        toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        toast.error('Login session expired. Please log in again.');
         setEditing(false);
         return;
       }
@@ -925,19 +918,19 @@ const WritingExerciseDetailPageSimple = () => {
       }
       
       if (!editFormData.learningLanguage) {
-        toast.error('Vui lòng chọn ngôn ngữ học');
+        toast.error('Please select your learning language');
         setEditing(false);
         return;
       }
       
       if (!editFormData.nativeLanguage) {
-        toast.error('Vui lòng chọn ngôn ngữ mẹ đẻ');
+        toast.error('Please select your native language');
         setEditing(false);
         return;
       }
       
       // Hiển thị toast trước khi gọi API
-      toast.info("Đang cập nhật thông tin bài tập...", {
+      toast.info("Updating exercise information...", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
@@ -969,13 +962,13 @@ const WritingExerciseDetailPageSimple = () => {
       
       if (!response.ok) {
         if (response.status === 401) {
-          toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+          toast.error('Login session expired. Please log in again.');
         } else if (response.status === 400) {
           toast.error('Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.');
         } else if (response.status === 404) {
-          toast.error('Không tìm thấy bài tập viết.');
+          toast.error('Writing exercise not found.');
         } else if (response.status === 403) {
-          toast.error('Bạn không có quyền chỉnh sửa bài tập này.');
+          toast.error('You don\'t have permission to edit this exercise.');
         } else {
           throw new Error(`Network response was not ok: ${response.status}`);
         }
@@ -983,7 +976,7 @@ const WritingExerciseDetailPageSimple = () => {
       }
       
       // Hiển thị thông báo cập nhật thành công
-      toast.success("Thông tin bài tập viết đã được cập nhật thành công!", {
+      toast.success("Writing exercise information has been updated successfully!", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
@@ -1006,7 +999,7 @@ const WritingExerciseDetailPageSimple = () => {
       
     } catch (error) {
       console.error("Error updating writing exercise:", error);
-      toast.error("Đã xảy ra lỗi khi cập nhật thông tin bài tập viết.");
+      toast.error("An error occurred while updating the writing exercise information.");
     } finally {
       setEditing(false);
     }
@@ -1080,8 +1073,7 @@ const WritingExerciseDetailPageSimple = () => {
         <div className="container my-5">
           <div className="alert alert-danger">{error}</div>
           <Link to="/writing" className="btn btn-primary">
-            <i className="fas fa-arrow-left me-2"></i>
-            Quay lại danh sách bài tập
+            <i className="fas fa-arrow-left me-2"></i>Back to exercise list
           </Link>
         </div>
       </div>
@@ -1092,9 +1084,9 @@ const WritingExerciseDetailPageSimple = () => {
     return (
       <div className="main-content">
         <div className="container my-5">
-          <div className="alert alert-warning">Không tìm thấy bài tập viết.</div>
+          <div className="alert alert-warning">Writing exercise not found.</div>
           <Link to="/writing" className="btn btn-primary">
-            <i className="fas fa-arrow-left me-2"></i>Quay lại danh sách bài tập
+            <i className="fas fa-arrow-left me-2"></i>Back to exercise list
           </Link>
         </div>
       </div>
@@ -1115,7 +1107,7 @@ const WritingExerciseDetailPageSimple = () => {
               <i className="fas fa-arrow-left"></i>
             </Link>
             <div>
-              <h2 className="page-title mb-0">Chi tiết bài tập viết</h2>
+              <h2 className="page-title mb-0">Writing Exercise Details</h2>
             </div>
           </div>
           <div className="d-flex align-items-center">
@@ -1127,13 +1119,13 @@ const WritingExerciseDetailPageSimple = () => {
               className="btn btn-outline-primary btn-sm me-2"
               onClick={handleShowEditForm}
             >
-              <i className="fas fa-edit me-1"></i> Sửa
+              <i className="fas fa-edit me-1"></i>Edit
             </button>
             <button 
               className="btn btn-outline-danger btn-sm"
               onClick={() => setShowDeleteConfirm(true)}
             >
-              <i className="fas fa-trash-alt me-1"></i> Xóa
+              <i className="fas fa-trash-alt me-1"></i>Delete
             </button>
           </div>
         </div>

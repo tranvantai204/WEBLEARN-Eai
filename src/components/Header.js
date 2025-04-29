@@ -44,20 +44,20 @@ function Header() {
   const languages = [
     { code: 'en', name: 'English', icon: FlagGBIcon },
     { code: 'vi', name: 'Vietnamese', icon: FlagVNIcon },
-    { code: 'ja', name: '日本語', icon: FlagJPIcon },
-    { code: 'ko', name: '한국어', icon: FlagKRIcon },
-    { code: 'zh', name: '中文', icon: FlagCNIcon },
-    { code: 'fr', name: 'Français', icon: FlagFRIcon },
-    { code: 'de', name: 'Deutsch', icon: FlagDEIcon },
-    { code: 'es', name: 'Español', icon: FlagESIcon },
-    { code: 'it', name: 'Italiano', icon: FlagITIcon },
-    { code: 'ru', name: 'Русский', icon: FlagRUIcon },
-    { code: 'pt', name: 'Português', icon: FlagPTIcon },
-    { code: 'nl', name: 'Nederlands', icon: FlagNLIcon },
-    { code: 'ar', name: 'العربية', icon: FlagARIcon },
-    { code: 'hi', name: 'हिन्दी', icon: FlagHIIcon },
-    { code: 'th', name: 'ไทย', icon: FlagTHIcon },
-    { code: 'id', name: 'Bahasa Indonesia', icon: FlagIDIcon }
+    { code: 'ja', name: 'Japanese', icon: FlagJPIcon },
+    { code: 'ko', name: 'Korean', icon: FlagKRIcon },
+    { code: 'zh', name: 'Chinese', icon: FlagCNIcon },
+    { code: 'fr', name: 'French', icon: FlagFRIcon },
+    { code: 'de', name: 'German', icon: FlagDEIcon },
+    { code: 'es', name: 'Spanish', icon: FlagESIcon },
+    { code: 'it', name: 'Italian', icon: FlagITIcon },
+    { code: 'ru', name: 'Russian', icon: FlagRUIcon },
+    { code: 'pt', name: 'Portuguese', icon: FlagPTIcon },
+    { code: 'nl', name: 'Dutch', icon: FlagNLIcon },
+    { code: 'ar', name: 'Arabic', icon: FlagARIcon },
+    { code: 'hi', name: 'Hindi', icon: FlagHIIcon },
+    { code: 'th', name: 'Thai', icon: FlagTHIcon },
+    { code: 'id', name: 'Indonesian', icon: FlagIDIcon }
   ];
 
   const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
@@ -215,6 +215,19 @@ function Header() {
         
         {/* Mobile Menu */}
         <div className={`mobile-menu ${showMobileMenu ? 'active' : ''}`} ref={mobileMenuRef}>
+          <div className="mobile-menu-header">
+            <Link to="/" className="header-logo" onClick={() => setShowMobileMenu(false)}>
+              <img src="/images/wordwise-logo.svg" alt="WordWise" className="logo-image" />
+              <span className="logo-text">WordWise</span>
+            </Link>
+            <button 
+              className="mobile-menu-close-btn"
+              onClick={() => setShowMobileMenu(false)}
+              aria-label="Close menu"
+            >
+              <FaTimes />
+            </button>
+          </div>
           <ul className="mobile-nav-list">
             <li className="mobile-nav-item">
               <Link to="/" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
@@ -259,7 +272,7 @@ function Header() {
                   </span>
                   <span className="lang-name">{currentLang.name}</span>
                 </div>
-                <FaChevronDown />
+                <FaChevronDown className={`arrow-icon ${showMobileLanguageOptions ? 'active' : ''}`} />
               </button>
               
               <div 
@@ -306,6 +319,11 @@ function Header() {
           </div>
         </div>
         
+        {/* Overlay for mobile menu */}
+        {showMobileMenu && (
+          <div className="mobile-menu-overlay" onClick={() => setShowMobileMenu(false)}></div>
+        )}
+        
         {/* Desktop Navigation */}
         <div className="desktop-menu">
           <nav className="main-nav">
@@ -348,7 +366,6 @@ function Header() {
                       <currentLang.icon className="current-lang-icon" />
                       <span className="lang-name">{currentLang.name}</span>
                     </span>
-                    <FaChevronDown className="lang-arrow" />
                   </button>
                   
                   <div 
@@ -375,8 +392,6 @@ function Header() {
           </nav>
           
           <div className="header-actions">
-            {/* Đã xóa nút English Language Button */}
-            
             {isAuthenticated ? (
               <>
                 <Link to="/progress" className="header-login">

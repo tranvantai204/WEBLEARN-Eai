@@ -57,6 +57,7 @@ import ContactPage from './components/ContactPage.js';
 import PrivacyPolicyPage from './components/PrivacyPolicyPage.js';
 import TermsOfServicePage from './components/TermsOfServicePage.js';
 import CookiesPage from './components/CookiesPage.js';
+import './css/mobile-utils.css'; // Import mobile utilities
 
 
 // Layout wrapper component

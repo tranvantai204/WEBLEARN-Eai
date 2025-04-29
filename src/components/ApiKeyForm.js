@@ -13,12 +13,12 @@ function ApiKeyForm({ onSuccess, onSkip }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!apiKey.trim()) {
-      toast.error('Vui lòng nhập API key');
+      toast.error('Please enter an API key');
       return;
     }
 
     if (!isAuthenticated) {
-      toast.error('Bạn cần đăng nhập để sử dụng tính năng này');
+      toast.error('You need to log in to use this feature');
       return;
     }
 
@@ -29,15 +29,15 @@ function ApiKeyForm({ onSuccess, onSkip }) {
       
       if (result.success) {
         if (localStorage.getItem('gemini_api_key')) {
-          toast.success('API key đã được lưu vào localStorage! Bạn không cần nhập lại trong 2 giờ tới.');
+          toast.success('API key has been saved to localStorage! You won\'t need to enter it again for the next 2 hours.');
         }
         
         setApiKey('');
         if (onSuccess) onSuccess();
       }
     } catch (error) {
-      console.error('Lỗi khi lưu API key:', error);
-      toast.error(`Đã xảy ra lỗi: ${error.message}`);
+      console.error('Error saving API key:', error);
+      toast.error(`An error occurred: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -47,17 +47,17 @@ function ApiKeyForm({ onSuccess, onSkip }) {
     if (onSkip) {
       onSkip();
     } else {
-      toast.info('Bạn có thể thêm API key sau trong phần cài đặt.');
+      toast.info('You can add an API key later in the settings.');
     }
   };
 
   return (
     <div className="api-key-form-container">
       <div className="api-key-form-card">
-        <h2><i className="fas fa-key"></i> Thêm Gemini API Key</h2>
+        <h2><i className="fas fa-key"></i> Add Gemini API Key</h2>
         <p>
-          Để sử dụng tính năng AI, bạn cần cung cấp API key Gemini.
-          Không bắt buộc - bạn vẫn có thể sử dụng những tính năng cơ bản.
+          To use the AI features, you need to provide a Gemini API key.
+          This is optional - you can still use the basic features without it.
         </p>
         
         <form onSubmit={handleSubmit} className="api-key-form">
@@ -69,7 +69,7 @@ function ApiKeyForm({ onSuccess, onSkip }) {
                 id="apiKey"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder="Nhập Gemini API key của bạn"
+                placeholder="Enter your Gemini API key"
                 className="form-input"
                 disabled={loading}
               />
@@ -82,16 +82,16 @@ function ApiKeyForm({ onSuccess, onSkip }) {
               </button>
             </div>
             <small className="form-text">
-              Lấy API key tại <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a> sau đó ấn vào create key để lấy key
+              Get your API key from <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a> by clicking on "Create key"
             </small>
           </div>
           
           <div className="api-key-info">
-            <h3>Thông tin</h3>
+            <h3>Information</h3>
             <p>
-              API key cho phép ứng dụng sử dụng AI để tạo flashcard tự động và các tính năng nâng cao khác. 
-              API key sẽ được lưu trữ trên server và chỉ có hiệu lực trong 2 tiếng sau khi đăng nhập.
-              Bạn có thể bỏ qua hoặc thêm API key sau trong trang cá nhân.
+              The API key allows the application to use AI to automatically create flashcards and other advanced features.
+              The API key will be stored on the server and is only valid for 2 hours after login.
+              You can skip this or add an API key later in your profile page.
             </p>
           </div>
           
@@ -102,7 +102,7 @@ function ApiKeyForm({ onSuccess, onSkip }) {
               className="form-button form-button-secondary"
               disabled={loading}
             >
-              <i className="fas fa-times"></i> Bỏ qua
+              <i className="fas fa-times"></i> Skip
             </button>
             <button 
               type="submit" 
@@ -111,11 +111,11 @@ function ApiKeyForm({ onSuccess, onSkip }) {
             >
               {loading ? (
                 <>
-                  <i className="fas fa-spinner fa-spin"></i> Đang lưu...
+                  <i className="fas fa-spinner fa-spin"></i> Saving...
                 </>
               ) : (
                 <>
-                  <i className="fas fa-save"></i> Lưu API Key
+                  <i className="fas fa-save"></i> Save API Key
                 </>
               )}
             </button>

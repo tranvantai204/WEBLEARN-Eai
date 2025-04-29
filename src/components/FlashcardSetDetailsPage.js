@@ -2245,8 +2245,9 @@ function FlashcardSetDetailsPage() {
                     </div>
                     
                     {loading ? (
-                        <div className="loading-spinner">
-                            <i className="fas fa-spinner fa-spin"></i> Loading...
+                        <div className="custom-loading-spinner">
+                            <div className="spinner-circle"></div>
+                            <div className="spinner-text">Loading set details...</div>
                         </div>
                     ) : error ? (
                         <div className="error-message">

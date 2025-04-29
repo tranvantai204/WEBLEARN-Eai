@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../css/components/About.css'; // Sử dụng chung CSS với AboutPage
+import '../css/components/About.css'; // Shared CSS with AboutPage
 import '../css/components/HowItWorks.css';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -11,9 +11,9 @@ function HowItWorksPage() {
         <div className="about-container">
             <section className="about-hero">
                 <div className="about-hero-content">
-                    <h1 className="about-title">Cách hoạt động</h1>
+                    <h1 className="about-title">How It Works</h1>
                     <p className="about-subtitle">
-                        Khám phá cách WordWise giúp bạn học ngôn ngữ hiệu quả hơn
+                        Discover how WordWise helps you learn languages more effectively
                     </p>
                 </div>
             </section>
@@ -22,20 +22,20 @@ function HowItWorksPage() {
                 <div className="container">
                     <div className="intro-content">
                         <div className="intro-text">
-                            <h2>Phương pháp học ngôn ngữ thông minh</h2>
+                            <h2>Smart Language Learning Method</h2>
                             <p>
-                                WordWise kết hợp các phương pháp học tập hiệu quả nhất được chứng minh bởi khoa học 
-                                nhận thức với công nghệ trí tuệ nhân tạo tiên tiến. Hệ thống của chúng tôi liên tục 
-                                phân tích cách học của bạn và điều chỉnh để tối ưu hóa tiến trình học tập.
+                                WordWise combines the most effective learning methods proven by cognitive science 
+                                with advanced artificial intelligence technology. Our system continuously analyzes 
+                                how you learn and adjusts to optimize your learning progress.
                             </p>
                             <p>
-                                Không giống như các ứng dụng học ngôn ngữ khác, chúng tôi không áp dụng cùng một 
-                                phương pháp cho tất cả mọi người. Thay vào đó, chúng tôi tạo ra một lộ trình học tập 
-                                riêng biệt phù hợp với cách học, mục tiêu và sở thích của bạn.
+                                Unlike other language learning apps, we don't apply the same method to everyone. 
+                                Instead, we create a unique learning path that suits your learning style, goals, 
+                                and preferences.
                             </p>
                         </div>
                         <div className="intro-image">
-                            <img src="/images/how-it-works-intro.jpg" alt="Học ngôn ngữ thông minh" />
+                            <img src="/images/how-it-works-intro.jpg" alt="Smart language learning" />
                         </div>
                     </div>
                 </div>
@@ -43,18 +43,18 @@ function HowItWorksPage() {
 
             <section className="learning-steps">
                 <div className="container">
-                    <h2 className="section-title">Quy trình học tập</h2>
+                    <h2 className="section-title">Learning Process</h2>
                     <div className="steps-container">
                         <div className="step-card">
                             <div className="step-number">1</div>
                             <div className="step-content">
-                                <h3>Đánh giá trình độ</h3>
+                                <h3>Proficiency Assessment</h3>
                                 <p>
-                                    Khi bắt đầu, bạn sẽ thực hiện bài kiểm tra đánh giá để xác định trình độ hiện tại,
-                                    điểm mạnh và điểm yếu. Điều này giúp hệ thống xây dựng lộ trình học tập phù hợp với bạn.
+                                    When you start, you'll take an assessment test to determine your current level,
+                                    strengths, and weaknesses. This helps the system build a learning path that's right for you.
                                 </p>
                                 <div className="step-image">
-                                    <img src="/images/step-assessment.jpg" alt="Đánh giá trình độ" />
+                                    <img src="/images/step-assessment.jpg" alt="Proficiency assessment" />
                                 </div>
                             </div>
                         </div>
@@ -62,14 +62,14 @@ function HowItWorksPage() {
                         <div className="step-card">
                             <div className="step-number">2</div>
                             <div className="step-content">
-                                <h3>Xây dựng nền tảng từ vựng</h3>
+                                <h3>Building Vocabulary Foundation</h3>
                                 <p>
-                                    Sử dụng phương pháp Spaced Repetition, chúng tôi giúp bạn xây dựng vốn từ vựng mạnh mẽ 
-                                    thông qua các bộ thẻ ghi nhớ thông minh. Hệ thống sẽ nhắc bạn ôn tập những từ bạn dễ quên
-                                    đúng thời điểm, tối ưu hóa quá trình ghi nhớ.
+                                    Using the Spaced Repetition method, we help you build a strong vocabulary base 
+                                    through smart flashcards. The system will remind you to review words you're likely to forget
+                                    at just the right time, optimizing the memorization process.
                                 </p>
                                 <div className="step-image">
-                                    <img src="/images/step-vocabulary.jpg" alt="Xây dựng từ vựng" />
+                                    <img src="/images/step-vocabulary.jpg" alt="Building vocabulary" />
                                 </div>
                             </div>
                         </div>
@@ -77,14 +77,14 @@ function HowItWorksPage() {
                         <div className="step-card">
                             <div className="step-number">3</div>
                             <div className="step-content">
-                                <h3>Luyện tập kỹ năng ngôn ngữ</h3>
+                                <h3>Practicing Language Skills</h3>
                                 <p>
-                                    Thông qua các bài tập tương tác, bạn sẽ luyện tập cả bốn kỹ năng: nghe, nói, đọc, viết.
-                                    AI của chúng tôi phân tích phát âm, cấu trúc câu và cung cấp phản hồi chi tiết để giúp
-                                    bạn cải thiện liên tục.
+                                    Through interactive exercises, you'll practice all four skills: listening, speaking, reading, and writing.
+                                    Our AI analyzes pronunciation, sentence structure, and provides detailed feedback to help
+                                    you continuously improve.
                                 </p>
                                 <div className="step-image">
-                                    <img src="/images/step-skills.jpg" alt="Luyện tập kỹ năng" />
+                                    <img src="/images/step-skills.jpg" alt="Practicing skills" />
                                 </div>
                             </div>
                         </div>
@@ -92,14 +92,14 @@ function HowItWorksPage() {
                         <div className="step-card">
                             <div className="step-number">4</div>
                             <div className="step-content">
-                                <h3>Học trong ngữ cảnh thực tế</h3>
+                                <h3>Learning in Real Context</h3>
                                 <p>
-                                    Thay vì học từ và ngữ pháp riêng lẻ, bạn sẽ học ngôn ngữ trong các ngữ cảnh thực tế 
-                                    thông qua các bài đọc, video và tình huống đối thoại. Điều này giúp bạn hiểu cách 
-                                    ngôn ngữ được sử dụng trong thực tế.
+                                    Instead of learning words and grammar in isolation, you'll learn language in real contexts 
+                                    through readings, videos, and dialogue situations. This helps you understand how 
+                                    language is used in practice.
                                 </p>
                                 <div className="step-image">
-                                    <img src="/images/step-context.jpg" alt="Học trong ngữ cảnh" />
+                                    <img src="/images/step-context.jpg" alt="Learning in context" />
                                 </div>
                             </div>
                         </div>
@@ -107,13 +107,13 @@ function HowItWorksPage() {
                         <div className="step-card">
                             <div className="step-number">5</div>
                             <div className="step-content">
-                                <h3>Phản hồi và điều chỉnh</h3>
+                                <h3>Feedback and Adjustment</h3>
                                 <p>
-                                    Hệ thống liên tục theo dõi tiến độ và điều chỉnh nội dung học tập dựa trên hiệu suất của bạn.
-                                    Bạn nhận được báo cáo chi tiết về tiến bộ và lời khuyên cụ thể để cải thiện.
+                                    The system continuously tracks your progress and adjusts learning content based on your performance.
+                                    You receive detailed progress reports and specific advice for improvement.
                                 </p>
                                 <div className="step-image">
-                                    <img src="/images/step-feedback.jpg" alt="Phản hồi và điều chỉnh" />
+                                    <img src="/images/step-feedback.jpg" alt="Feedback and adjustment" />
                                 </div>
                             </div>
                         </div>
@@ -123,17 +123,17 @@ function HowItWorksPage() {
 
             <section className="technology-section">
                 <div className="container">
-                    <h2 className="section-title">Công nghệ đằng sau WordWise</h2>
+                    <h2 className="section-title">Technology Behind WordWise</h2>
                     <div className="tech-grid">
                         <div className="tech-card">
                             <div className="tech-icon">
                                 <i className="fas fa-brain"></i>
                             </div>
-                            <h3>Trí tuệ nhân tạo</h3>
+                            <h3>Artificial Intelligence</h3>
                             <p>
-                                Các thuật toán học máy phân tích hàng triệu điểm dữ liệu để hiểu cách bạn học và 
-                                tạo ra lộ trình học tập tối ưu. AI của chúng tôi cũng đánh giá ngữ pháp, phát âm và 
-                                cung cấp phản hồi chi tiết.
+                                Machine learning algorithms analyze millions of data points to understand how you learn and 
+                                create an optimal learning path. Our AI also evaluates grammar, pronunciation, and 
+                                provides detailed feedback.
                             </p>
                         </div>
                         
@@ -143,8 +143,8 @@ function HowItWorksPage() {
                             </div>
                             <h3>Spaced Repetition System</h3>
                             <p>
-                                Hệ thống SRS tiên tiến tính toán chính xác thời điểm bạn sắp quên một từ hoặc khái niệm 
-                                và nhắc bạn ôn tập đúng lúc, giúp tối ưu hóa quá trình ghi nhớ dài hạn.
+                                Advanced SRS calculates exactly when you're about to forget a word or concept 
+                                and reminds you to review at the right moment, helping optimize long-term memory retention.
                             </p>
                         </div>
                         
@@ -152,10 +152,10 @@ function HowItWorksPage() {
                             <div className="tech-icon">
                                 <i className="fas fa-microphone"></i>
                             </div>
-                            <h3>Nhận dạng giọng nói</h3>
+                            <h3>Speech Recognition</h3>
                             <p>
-                                Công nghệ xử lý giọng nói giúp bạn luyện phát âm chính xác và tự tin nói chuyện 
-                                bằng ngôn ngữ mới. Hệ thống phân tích từng âm tiết và cung cấp hướng dẫn cách cải thiện.
+                                Voice processing technology helps you practice accurate pronunciation and confidently speak 
+                                in the new language. The system analyzes each syllable and provides guidance on how to improve.
                             </p>
                         </div>
                         
@@ -163,10 +163,10 @@ function HowItWorksPage() {
                             <div className="tech-icon">
                                 <i className="fas fa-chart-line"></i>
                             </div>
-                            <h3>Phân tích học tập</h3>
+                            <h3>Learning Analytics</h3>
                             <p>
-                                Dashboard phân tích chi tiết giúp bạn theo dõi tiến bộ, xác định điểm mạnh và điểm yếu, 
-                                đồng thời cung cấp các chiến lược cụ thể để cải thiện hiệu quả học tập.
+                                Detailed analytics dashboard helps you track progress, identify strengths and weaknesses, 
+                                and provides specific strategies to improve learning effectiveness.
                             </p>
                         </div>
                     </div>
@@ -175,49 +175,49 @@ function HowItWorksPage() {
 
             <section className="features-section">
                 <div className="container">
-                    <h2 className="section-title">Tính năng nổi bật</h2>
+                    <h2 className="section-title">Key Features</h2>
                     <div className="features-grid">
                         <div className="feature-card">
                             <div className="feature-image">
-                                <img src="/images/feature-flashcards.jpg" alt="Thẻ ghi nhớ thông minh" />
+                                <img src="/images/feature-flashcards.jpg" alt="Smart flashcards" />
                             </div>
-                            <h3>Thẻ ghi nhớ thông minh</h3>
+                            <h3>Smart Flashcards</h3>
                             <p>
-                                Tạo và học các bộ thẻ ghi nhớ được cá nhân hóa với công nghệ SRS giúp bạn nhớ lâu hơn
-                                với thời gian học ít hơn.
+                                Create and study personalized flashcard sets with SRS technology to help you remember longer
+                                with less study time.
                             </p>
                         </div>
                         
                         <div className="feature-card">
                             <div className="feature-image">
-                                <img src="/images/feature-writing.jpg" alt="Luyện viết có phản hồi" />
+                                <img src="/images/feature-writing.jpg" alt="Writing practice with feedback" />
                             </div>
-                            <h3>Luyện viết có phản hồi</h3>
+                            <h3>Writing Practice with Feedback</h3>
                             <p>
-                                Nhận phản hồi chi tiết về bài viết của bạn từ AI, bao gồm gợi ý ngữ pháp, từ vựng
-                                và cấu trúc văn bản.
+                                Receive detailed feedback on your writing from AI, including grammar suggestions, vocabulary,
+                                and text structure.
                             </p>
                         </div>
                         
                         <div className="feature-card">
                             <div className="feature-image">
-                                <img src="/images/feature-reading.jpg" alt="Đọc thông minh" />
+                                <img src="/images/feature-reading.jpg" alt="Smart reading" />
                             </div>
-                            <h3>Đọc thông minh</h3>
+                            <h3>Smart Reading</h3>
                             <p>
-                                Đọc các bài viết phù hợp với trình độ của bạn, với tính năng tra từ nhanh, ghi chú và
-                                lưu từ vựng mới vào thẻ ghi nhớ.
+                                Read articles suitable for your level, with the quick-lookup feature, note-taking,
+                                and adding new words to flashcards.
                             </p>
                         </div>
                         
                         <div className="feature-card">
                             <div className="feature-image">
-                                <img src="/images/feature-speaking.jpg" alt="Luyện nói tương tác" />
+                                <img src="/images/feature-speaking.jpg" alt="Speaking practice" />
                             </div>
-                            <h3>Luyện nói tương tác</h3>
+                            <h3>Speaking Practice</h3>
                             <p>
-                                Thực hành đối thoại với AI và nhận phản hồi về phát âm, ngữ điệu và độ lưu loát
-                                của bạn trong thời gian thực.
+                                Practice speaking with AI and receive feedback on pronunciation, grammar, and fluency
+                                in real-time.
                             </p>
                         </div>
                     </div>
@@ -226,37 +226,36 @@ function HowItWorksPage() {
 
             <section className="education-science">
                 <div className="container">
-                    <h2 className="section-title">Khoa học giáo dục</h2>
+                    <h2 className="section-title">Educational Science</h2>
                     <div className="science-content">
                         <div className="science-text">
                             <p>
-                                WordWise được xây dựng dựa trên các nghiên cứu khoa học về cách não bộ học ngôn ngữ hiệu quả nhất.
-                                Chúng tôi kết hợp các phương pháp đã được chứng minh là hiệu quả:
+                                WordWise is built on the most effective language learning science research.
+                                We combine effective methods:
                             </p>
                             <ul className="science-list">
                                 <li>
-                                    <strong>Spaced Repetition:</strong> Ôn tập theo khoảng thời gian tối ưu để ghi nhớ lâu dài
+                                    <strong>Spaced Repetition:</strong> Review words at optimal intervals for long-term retention
                                 </li>
                                 <li>
-                                    <strong>Active Recall:</strong> Chủ động nhớ lại thông tin thay vì chỉ đọc lại
+                                    <strong>Active Recall:</strong> Actively recall information instead of just re-reading
                                 </li>
                                 <li>
-                                    <strong>Comprehensible Input:</strong> Học thông qua nội dung bạn có thể hiểu được phần lớn
+                                    <strong>Comprehensible Input:</strong> Learn through content you can understand most
                                 </li>
                                 <li>
-                                    <strong>Contextual Learning:</strong> Học từ vựng và ngữ pháp trong bối cảnh thực tế
+                                    <strong>Contextual Learning:</strong> Learn vocabulary and grammar in real contexts
                                 </li>
                                 <li>
-                                    <strong>Gamification:</strong> Sử dụng các yếu tố trò chơi để tăng động lực học tập
+                                    <strong>Gamification:</strong> Use game elements to increase motivation
                                 </li>
                             </ul>
                             <p>
-                                Mỗi tính năng trên nền tảng của chúng tôi đều được thiết kế dựa trên các nguyên tắc khoa học 
-                                này để đảm bảo bạn học hiệu quả và thú vị nhất có thể.
+                                Each feature on our platform is designed based on these scientific principles to ensure you learn effectively and enjoyably.
                             </p>
                         </div>
                         <div className="science-image">
-                            <img src="/images/education-science.jpg" alt="Khoa học giáo dục" />
+                            <img src="/images/education-science.jpg" alt="Educational science" />
                         </div>
                     </div>
                 </div>
@@ -265,19 +264,18 @@ function HowItWorksPage() {
             <section className="about-cta">
                 <div className="container">
                     <div className="cta-content">
-                        <h2>Sẵn sàng trải nghiệm cách học mới?</h2>
+                        <h2>Ready to Experience New Learning?</h2>
                         <p>
-                            Khám phá WordWise ngay hôm nay và trải nghiệm cách học ngôn ngữ hiệu quả, thú vị và 
-                            được cá nhân hóa hoàn toàn.
+                            Discover WordWise today and experience effective, fun, and personalized language learning.
                         </p>
                         <div className="cta-buttons">
                             {!isAuthenticated && (
                                 <Link to="/register" className="btn btn-primary">
-                                    Bắt đầu miễn phí
+                                    Start Free Trial
                                 </Link>
                             )}
                             <Link to="/testimonials" className="btn btn-secondary">
-                                Xem đánh giá từ người học
+                                Read Student Testimonials
                             </Link>
                         </div>
                     </div>

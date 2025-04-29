@@ -129,7 +129,7 @@ export const AuthProvider = ({ children }) => {
         console.log('Token refresh failed, logging out user');
         await logout();
         // Thông báo cho người dùng
-        toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        toast.error('Login session has expired. Please log in again.');
         return null;
       }
     }
@@ -137,7 +137,7 @@ export const AuthProvider = ({ children }) => {
     // Các lỗi xác thực khác, đăng xuất
     if (status === 403) {
       console.log('User not authorized for this resource');
-      toast.error('Bạn không có quyền truy cập vào tài nguyên này.');
+      toast.error('You don\'t have permission to access this resource.');
     }
     
     return null;
@@ -281,7 +281,7 @@ export const AuthProvider = ({ children }) => {
         success: false, 
         status: 401,
         statusText: 'Unauthorized',
-        message: 'Bạn cần đăng nhập để lưu API key',
+        message: 'You need to log in to save the API key',
         data: null
       };
     }
@@ -317,7 +317,7 @@ export const AuthProvider = ({ children }) => {
           success: false, 
           status: response.status,
           statusText: response.statusText,
-          message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+          message: 'Login session has expired. Please log in again.',
           data: null
         };
       }
@@ -343,12 +343,12 @@ export const AuthProvider = ({ children }) => {
           console.log('Đã lưu API key vào localStorage');
         }
         
-        toast.success('API key đã được lưu thành công! Bạn có thể sử dụng các tính năng AI trong 2 giờ.');
+        toast.success('API key has been saved successfully! You can use AI features for 2 hours.');
         return { 
           success: true,
           status: response.status,
           statusText: response.statusText, 
-          message: 'API key đã được lưu thành công! Bạn có thể sử dụng các tính năng AI trong 2 giờ.',
+          message: 'API key has been saved successfully! You can use AI features for 2 hours.',
           data,
           text
         };

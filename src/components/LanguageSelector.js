@@ -129,7 +129,7 @@ function LanguageSelector({
           <input
             type="text"
             className="language-selector__search-input"
-            placeholder="Tìm kiếm ngôn ngữ..."
+            placeholder="Search language..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onClick={(e) => e.stopPropagation()}
@@ -154,7 +154,7 @@ function LanguageSelector({
             ))
           ) : (
             <div className="language-selector__no-results">
-              Không tìm thấy ngôn ngữ
+              No languages found
             </div>
           )}
         </div>
@@ -184,7 +184,7 @@ function LanguageSelector({
         onClick={toggleDropdown}
       >
         <div className="language-selector__current-selection">
-          {selectedOption ? selectedOption.label : 'Chọn ngôn ngữ'}
+          {selectedOption ? selectedOption.label : 'Select language'}
         </div>
         
         {/* Hide the actual select element but keep it for form submission */}

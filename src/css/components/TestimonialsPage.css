@@ -1,0 +1,275 @@
+.testimonials-page {
+  padding: 2rem 0;
+}
+
+.testimonials-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.about-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.about-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.stats-section {
+  background-color: #f8f9fa;
+  padding: 2rem 0;
+  margin-bottom: 3rem;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: space-around;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 1rem;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 1rem;
+  color: #555;
+}
+
+.testimonials-section,
+.success-stories-section,
+.case-studies-section {
+  margin-bottom: 4rem;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: #333;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.testimonial-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+}
+
+.testimonial-content {
+  padding: 1.5rem;
+}
+
+.testimonial-rating {
+  color: #ffc107;
+  margin-bottom: 1rem;
+}
+
+.testimonial-text {
+  color: #444;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 1rem;
+  object-fit: cover;
+}
+
+.story-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.story-content {
+  padding: 2rem;
+}
+
+.story-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.story-author {
+  display: flex;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.story-author .author-avatar {
+  margin-right: 1rem;
+}
+
+.author-name {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.case-study {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.case-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.case-image {
+  flex: 0 0 30%;
+  margin-right: 2rem;
+}
+
+.case-image img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.case-text {
+  flex: 1;
+}
+
+.case-author {
+  font-style: italic;
+  margin-top: 1rem;
+  color: #666;
+}
+
+.testimonial-cta {
+  background-color: #f0f4f8;
+  padding: 3rem 0;
+  margin-bottom: 4rem;
+}
+
+.cta-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 1.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #0056b3;
+}
+
+.join-section {
+  text-align: center;
+  padding: 3rem 0;
+  background-color: #f8f9fa;
+}
+
+.join-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.join-buttons {
+  margin-top: 2rem;
+}
+
+.join-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.join-button.primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.join-button.secondary {
+  background-color: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+}
+
+.join-button.primary:hover {
+  background-color: #0056b3;
+}
+
+.join-button.secondary:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .stats-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .stat-card {
+    margin-bottom: 1.5rem;
+  }
+  
+  .case-content {
+    flex-direction: column;
+  }
+  
+  .case-image {
+    flex: 0 0 100%;
+    margin-right: 0;
+    margin-bottom: 1.5rem;
+  }
+} 

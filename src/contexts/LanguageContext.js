@@ -18,20 +18,20 @@ export const LanguageProvider = ({ children }) => {
     const languages = useMemo(() => [
         { code: 'en', name: 'English' },
         { code: 'vi', name: 'Vietnamese' },
-        { code: 'ja', name: '日本語' },
-        { code: 'ko', name: '한국어' },
-        { code: 'zh', name: '中文' },
-        { code: 'fr', name: 'Français' },
-        { code: 'de', name: 'Deutsch' },
-        { code: 'es', name: 'Español' },
-        { code: 'it', name: 'Italiano' },
-        { code: 'ru', name: 'Русский' },
-        { code: 'pt', name: 'Português' },
-        { code: 'nl', name: 'Nederlands' },
-        { code: 'ar', name: 'العربية' },
-        { code: 'hi', name: 'हिन्दी' },
-        { code: 'th', name: 'ไทย' },
-        { code: 'id', name: 'Bahasa Indonesia' }
+        { code: 'ja', name: 'Japanese' },
+        { code: 'ko', name: 'Korean' },
+        { code: 'zh', name: 'Chinese' },
+        { code: 'fr', name: 'French' },
+        { code: 'de', name: 'German' },
+        { code: 'es', name: 'Spanish' },
+        { code: 'it', name: 'Italian' },
+        { code: 'ru', name: 'Russian' },
+        { code: 'pt', name: 'Portuguese' },
+        { code: 'nl', name: 'Dutch' },
+        { code: 'ar', name: 'Arabic' },
+        { code: 'hi', name: 'Hindi' },
+        { code: 'th', name: 'Thai' },
+        { code: 'id', name: 'Indonesian' }
     ], []);
 
     // Static translations for common UI elements

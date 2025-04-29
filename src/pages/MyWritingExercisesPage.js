@@ -76,7 +76,7 @@ const MyWritingExercisesPage = () => {
         }
       } catch (error) {
         console.error('Error fetching countries:', error);
-        toast.error('Không thể tải danh sách quốc gia. Đang sử dụng danh sách mặc định.');
+        toast.error('Cannot load country list. Using default list.');
         // Set fallback countries if API fails
         setCountries([
           { id: "1", iso3: "VIE", niceName: "Vietnam", flag: "https://flagsapi.com/VN/flat/64.png" },
@@ -100,7 +100,7 @@ const MyWritingExercisesPage = () => {
     return (
       <div className="container mt-5">
         <div className="alert alert-warning">
-          Vui lòng đăng nhập để xem bài tập viết của bạn.
+          Please log in to view your writing exercises.
         </div>
       </div>
     );
@@ -110,7 +110,7 @@ const MyWritingExercisesPage = () => {
     e.preventDefault();
     
     if (!topic.trim()) {
-      toast.error('Vui lòng nhập chủ đề cho bài tập viết');
+      toast.error('Please enter a topic for the writing exercise');
       return;
     }
     
@@ -140,7 +140,7 @@ const MyWritingExercisesPage = () => {
       }
       
       if (!userId) {
-        toast.error('Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.');
+        toast.error('User information not found. Please log in again.');
         setIsSubmitting(false);
         return;
       }
@@ -153,7 +153,7 @@ const MyWritingExercisesPage = () => {
       const token = localStorage.getItem('accessToken');
       
       if (!token) {
-        toast.error('Bạn cần đăng nhập lại để thực hiện chức năng này');
+        toast.error('You need to log in again to use this feature');
         setIsSubmitting(false);
         return;
       }
@@ -179,14 +179,14 @@ const MyWritingExercisesPage = () => {
         if (response.status === 400) {
           const errorData = await response.json();
           if (errorData.message && errorData.message.includes('maximum limit')) {
-            toast.error('Bạn đã đạt đến giới hạn tối đa 5 bài tập viết cùng lúc.');
+            toast.error('You have reached the maximum limit of 5 writing exercises at once.');
           } else {
-            toast.error(`Lỗi: ${errorData.message || 'Dữ liệu không hợp lệ'}`);
+            toast.error(`Error: ${errorData.message || 'Invalid data'}`);
           }
         } else if (response.status === 401) {
-          toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+          toast.error('Login session expired. Please log in again.');
         } else {
-          toast.error('Đã xảy ra lỗi khi tạo bài tập viết.');
+          toast.error('An error occurred while creating the writing exercise.');
         }
         setIsSubmitting(false);
         return;
@@ -195,7 +195,7 @@ const MyWritingExercisesPage = () => {
       const data = await response.json();
       
       // Success
-      toast.success('Tạo bài tập viết mới thành công!');
+      toast.success('New writing exercise created successfully!');
       
       // Reset form and hide it
       setTopic('');
@@ -206,7 +206,7 @@ const MyWritingExercisesPage = () => {
       
     } catch (error) {
       console.error('Error creating writing exercise:', error);
-      toast.error('Đã xảy ra lỗi khi kết nối đến máy chủ.');
+      toast.error('An error occurred while connecting to the server.');
     } finally {
       setIsSubmitting(false);
     }
@@ -216,15 +216,15 @@ const MyWritingExercisesPage = () => {
     <WritingExerciseProvider>
       <div className="container my-5">
         <Helmet>
-          <title>Bài tập viết của tôi | WebLearn-EAI</title>
+          <title>My Writing Exercises | WebLearn-EAI</title>
         </Helmet>
         
         <div className="page-header d-flex justify-content-between align-items-center">
           <div>
             <Link to="/writing" className="back-link">
-              <i className="fas fa-arrow-left me-2"></i>Quay lại
+              <i className="fas fa-arrow-left me-2"></i>Back
             </Link>
-            <h2 className="page-title">Bài tập viết của tôi</h2>
+            <h2 className="page-title">My Writing Exercises</h2>
           </div>
           <button 
             className="btn create-btn" 
@@ -233,12 +233,12 @@ const MyWritingExercisesPage = () => {
             {showCreateForm ? (
               <>
                 <i className="fas fa-times me-2"></i>
-                Hủy
+                Cancel
               </>
             ) : (
               <>
                 <i className="fas fa-plus me-2"></i>
-                Tạo bài tập viết mới
+                Create New Writing Exercise
               </>
             )}
           </button>
@@ -247,28 +247,26 @@ const MyWritingExercisesPage = () => {
         {showCreateForm && (
           <div className="card create-exercise-form mb-4">
             <div className="card-header">
-              <h5 className="card-title">Tạo bài tập viết mới</h5>
+              <h5 className="card-title">Create New Writing Exercise</h5>
             </div>
             <div className="card-body">
               <form onSubmit={handleCreateExercise}>
                 <div className="mb-3">
-                  <label htmlFor="topic" className="form-label">Chủ đề bài tập viết</label>
+                  <label htmlFor="topic" className="form-label">Writing Exercise Topic</label>
                   <textarea
                     id="topic"
                     className="form-control"
                     rows="3"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
-                    placeholder="Nhập chủ đề hoặc đề bài chi tiết của bài tập viết"
+                    placeholder="Enter the topic or detailed prompt for your writing exercise"
                     required
                   ></textarea>
                 </div>
                 
                 <div className="row">
                   <div className="col-md-6 mb-3">
-                    <label htmlFor="learningLanguage" className="form-label">Ngôn ngữ viết bài</label>
-                    {/* Note: Standard HTML select/option elements don't support images inside options properly.
-                        For a better UI with flags, we would need to implement a custom dropdown component. */}
+                    <label htmlFor="learningLanguage" className="form-label">Writing Language</label>
                     <select
                       id="learningLanguage"
                       className="form-select"
@@ -277,7 +275,7 @@ const MyWritingExercisesPage = () => {
                       disabled={isLoading}
                     >
                       {isLoading ? (
-                        <option>Đang tải...</option>
+                        <option>Loading...</option>
                       ) : (
                         countries.map(country => (
                           <option key={country.id} value={country.iso3}>
@@ -289,7 +287,7 @@ const MyWritingExercisesPage = () => {
                   </div>
                   
                   <div className="col-md-6 mb-3">
-                    <label htmlFor="nativeLanguage" className="form-label">Ngôn ngữ mẹ đẻ</label>
+                    <label htmlFor="nativeLanguage" className="form-label">Native Language</label>
                     <select
                       id="nativeLanguage"
                       className="form-select"
@@ -298,7 +296,7 @@ const MyWritingExercisesPage = () => {
                       disabled={isLoading}
                     >
                       {isLoading ? (
-                        <option>Đang tải...</option>
+                        <option>Loading...</option>
                       ) : (
                         countries.map(country => (
                           <option key={country.id} value={country.iso3}>
@@ -310,29 +308,26 @@ const MyWritingExercisesPage = () => {
                   </div>
                 </div>
                 
-                <div className="text-end">
+                <div className="d-flex justify-content-end">
                   <button 
                     type="button" 
                     className="btn btn-outline-secondary me-2"
                     onClick={() => setShowCreateForm(false)}
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button 
                     type="submit" 
                     className="btn btn-primary"
-                    disabled={isSubmitting || isLoading}
+                    disabled={isSubmitting}
                   >
                     {isSubmitting ? (
                       <>
                         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Đang tạo...
+                        Creating...
                       </>
                     ) : (
-                      <>
-                        <i className="fas fa-check me-2"></i>
-                        Tạo bài tập viết
-                      </>
+                      'Create Writing Exercise'
                     )}
                   </button>
                 </div>
@@ -341,10 +336,12 @@ const MyWritingExercisesPage = () => {
           </div>
         )}
         
-        <p className="text-muted mb-4">
-          Dưới đây là danh sách các bài tập viết của bạn. 
-          Mỗi người dùng chỉ được phép có tối đa 5 bài tập viết cùng lúc.
-        </p>
+        <div className="intro-text mb-4">
+          <p>
+            Below is a list of your writing exercises.
+            Each user is limited to a maximum of 5 writing exercises at a time.
+          </p>
+        </div>
         
         <WritingExerciseList />
       </div>

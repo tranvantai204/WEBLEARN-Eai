@@ -30,20 +30,20 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
     
     // Validate learning language
     if (!learningLanguage) {
-      setLearningLanguageError('Vui lòng chọn ngôn ngữ học');
+      setLearningLanguageError('Please select a learning language');
       isValid = false;
     }
     
     // Validate native language
     if (!nativeLanguage) {
-      setNativeLanguageError('Vui lòng chọn ngôn ngữ mẹ đẻ');
+      setNativeLanguageError('Please select a native language');
       isValid = false;
     }
     
     // Validate languages are different
     if (learningLanguage && nativeLanguage && learningLanguage === nativeLanguage) {
-      setLearningLanguageError('Ngôn ngữ học và ngôn ngữ mẹ đẻ không được giống nhau');
-      setNativeLanguageError('Ngôn ngữ học và ngôn ngữ mẹ đẻ không được giống nhau');
+      setLearningLanguageError('Learning language and native language cannot be the same');
+      setNativeLanguageError('Learning language and native language cannot be the same');
       isValid = false;
     }
     
@@ -53,7 +53,7 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
   // Handle API key form success
   const handleApiKeySuccess = () => {
     setShowApiKeyForm(false);
-    toast.success('API key đã được lưu thành công!');
+    toast.success('API key saved successfully!');
     // Continue with AI generation
     generateTopicWithAI();
   };
@@ -61,7 +61,7 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
   // Skip API key for now
   const handleSkipApiKey = () => {
     setShowApiKeyForm(false);
-    toast.info('Bạn có thể thêm API key sau trong phần cài đặt. Các tính năng AI sẽ không hoạt động nếu không có API key.');
+    toast.info('You can add API key later in the settings. The AI features will not work without an API key.');
   };
   
   // Generate topic with AI
@@ -70,12 +70,12 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
     if (!validateForm()) return;
     
     setIsGenerating(true);
-    toast.info('🤖 Đang tạo chủ đề bài viết...');
+    toast.info('🤖 Generating writing topic...');
     
     try {
       const result = await autoGenerateWritingExercise(learningLanguage, nativeLanguage);
       
-      toast.success('✨ Đã tạo chủ đề bài viết thành công!');
+      toast.success('✨ Generated writing topic successfully!');
       console.log('Generated writing exercise:', result);
       
       // Call the onSuccess callback with the result
@@ -93,7 +93,7 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
   // Check for API key and generate topic
   const handleGenerateTopic = async () => {
     if (!isAuthenticated) {
-      toast.error('Bạn cần đăng nhập để sử dụng tính năng này.');
+      toast.error('You need to log in to use this feature.');
       return;
     }
     
@@ -125,7 +125,7 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
       const key = await getUserApiKey();
       if (!key) {
         setShowApiKeyForm(true);
-        toast.warn('Tính năng AI yêu cầu API key Gemini.');
+        toast.warn('AI feature requires Gemini API key.');
         return;
       }
       
@@ -142,21 +142,21 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
   const getLanguageName = (code) => {
     switch (code) {
       case 'ENG':
-        return 'Tiếng Anh';
+        return 'English';
       case 'VIE':
-        return 'Tiếng Việt';
+        return 'Vietnamese';
       case 'JPN':
-        return 'Tiếng Nhật';
+        return 'Japanese';
       case 'KOR':
-        return 'Tiếng Hàn';
+        return 'Korean';
       case 'CHI':
-        return 'Tiếng Trung';
+        return 'Chinese';
       case 'FRA':
-        return 'Tiếng Pháp';
+        return 'French';
       case 'GER':
-        return 'Tiếng Đức';
+        return 'German';
       case 'SPA':
-        return 'Tiếng Tây Ban Nha';
+        return 'Spanish';
       default:
         return code;
     }
@@ -167,7 +167,7 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
       <div className="card-header">
         <h5 className="card-title">
           <i className="fas fa-robot me-2"></i>
-          Tạo đề bài viết bằng AI
+          Generate Writing Topic with AI
         </h5>
       </div>
       <div className="card-body">
@@ -184,17 +184,17 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
             fontWeight: '600'
           }}>
             <i className="fas fa-info-circle me-2"></i> 
-            Cách thức hoạt động
+            How it works
           </h6>
           <p style={{ color: '#475569', fontSize: '14px', margin: 0 }}>
-            AI sẽ tự động tạo ra một chủ đề bài tập viết dựa trên ngôn ngữ bạn đang học và ngôn ngữ mẹ đẻ của bạn.
-            Tính năng này yêu cầu bạn đã lưu trữ khóa API Gemini.
+            AI will automatically generate a writing topic based on your learning language and native language.
+            This feature requires that you have saved your Gemini API key.
           </p>
         </div>
         
         <form>
           <div className="mb-3">
-            <label htmlFor="learningLanguage" className="form-label">Ngôn ngữ học</label>
+            <label htmlFor="learningLanguage" className="form-label">Learning Language</label>
             <LanguageSelector
               id="learningLanguage"
               value={learningLanguage}
@@ -207,7 +207,7 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
           </div>
           
           <div className="mb-3">
-            <label htmlFor="nativeLanguage" className="form-label">Ngôn ngữ mẹ đẻ</label>
+            <label htmlFor="nativeLanguage" className="form-label">Native Language</label>
             <LanguageSelector
               id="nativeLanguage"
               value={nativeLanguage}
@@ -226,7 +226,7 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
               onClick={onCancel}
               disabled={isGenerating}
             >
-              Hủy
+              Cancel
             </button>
             <button
               type="button"
@@ -237,12 +237,12 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
               {isGenerating ? (
                 <>
                   <Spinner size="sm" className="me-2" />
-                  Đang tạo...
+                  Generating...
                 </>
               ) : (
                 <>
                   <i className="fas fa-magic me-2"></i>
-                  Tạo đề bài
+                  Generate Topic
                 </>
               )}
             </button>

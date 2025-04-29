@@ -12,10 +12,8 @@ import LanguageSelector from './LanguageSelector';
 const LoadingPopup = ({ message }) => (
     <div className="loading-popup-overlay">
         <div className="loading-popup-container">
-            <div className="loading-spinner">
-                <i className="fas fa-spinner fa-spin"></i>
-            </div>
             <h3>{message}</h3>
+            <div className="loading-bar"></div>
             <p>Vui lòng đợi trong khi AI đang tạo flashcards của bạn...</p>
             <div className="loading-steps">
                 <div className="loading-step">
@@ -638,7 +636,7 @@ function CreateAIFlashcardsPage() {
                             >
                                 {loading ? (
                                     <>
-                                        <i className="fas fa-spinner fa-spin"></i> Generating...
+                                        <div className="button-progress-bar"></div> Generating...
                                     </>
                                 ) : (
                                     <>

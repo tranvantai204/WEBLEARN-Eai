@@ -50,21 +50,37 @@ function WritingPage() {
     // Translation support
     const { translateText, currentLanguage } = useLanguage();
     const [translations, setTranslations] = useState({
-        pageTitle: 'Bài tập viết',
-        introduction: 'Cải thiện kỹ năng viết của bạn thông qua các bài tập viết được thiết kế đặc biệt.',
-        createExercise: 'Tạo bài tập mới',
-        createTopicWithAI: 'Tạo đề bài bằng AI',
-        learningLanguage: 'Ngôn ngữ học',
-        nativeLanguage: 'Ngôn ngữ mẹ đẻ',
-        topic: 'Chủ đề',
-        createButton: 'Tạo bài tập',
-        cancelButton: 'Hủy',
-        noExercises: 'Bạn chưa tạo bài tập viết nào.',
-        allExercises: 'Tất cả bài tập viết',
-        createNew: 'Tạo bài tập mới',
+        pageTitle: 'Writing Exercises',
+        introduction: 'Improve your writing skills through specially designed writing exercises.',
+        createExercise: 'Create New Exercise',
+        createTopicWithAI: 'Create Topic with AI',
+        learningLanguage: 'Learning Language',
+        nativeLanguage: 'Native Language',
+        topic: 'Topic',
+        createButton: 'Create Exercise',
+        cancelButton: 'Cancel',
+        noExercises: 'You have not created any writing exercises yet.',
+        allExercises: 'All Writing Exercises',
+        createNew: 'Create New Exercise',
         searchPlaceholder: 'Tìm kiếm bài tập...',
-        generating: 'Đang tạo...',
-        generateTopic: 'Tạo chủ đề',
+        generating: 'Generating...',
+        generateTopic: 'Generate Topic',
+        aiTopicCancel: 'Cancel',
+        apiKeyMissing: 'You need to provide a Gemini API key to use AI features.',
+        confirmLeave: 'Are you sure you want to cancel? Your changes will not be saved.',
+        loginRequired: 'Please log in to view your writing exercises.',
+        creatingExercise: 'Creating writing exercise...',
+        generatingTopic: '🤖 Generating writing topic...',
+        analyzingWriting: '🤖 Analyzing your writing...',
+        topicGenerated: '✨ Writing topic generated successfully!',
+        feedbackProvided: '✨ Writing feedback is now ready!',
+        loadingError: 'Error loading writing exercises. Please try again later.',
+        createSuccess: 'New writing exercise created successfully!',
+        createError: 'Unable to create writing exercise. Please try again later.',
+        topicRequired: 'Please enter a topic for the writing exercise.',
+        languagesMustBeDifferent: 'Learning language and native language must be different.',
+        aiTopicSuccess: 'AI-generated writing topic created successfully!',
+        aiTopicError: 'Error generating writing topic with AI. Please try again later.',
     });
     
     // Messages that need to be pre-translated for toast notifications
@@ -592,8 +608,9 @@ function WritingPage() {
                     </div>
                     
                     {loading ? (
-                        <div className="text-center my-5">
-                            <Spinner />
+                        <div className="custom-loading-spinner">
+                            <div className="spinner-circle"></div>
+                            <div className="spinner-text">Loading exercises...</div>
                         </div>
                     ) : writingExercises.length === 0 ? (
                         <div className="no-exercises text-center py-5">

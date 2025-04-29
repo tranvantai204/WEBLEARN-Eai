@@ -125,7 +125,7 @@ const WritingExerciseList = () => {
   if (!isAuthenticated) {
     return (
       <div className="alert alert-warning">
-        Vui lòng đăng nhập để xem bài tập viết của bạn.
+        Please log in to view your writing exercises.
       </div>
     );
   }
@@ -142,11 +142,11 @@ const WritingExerciseList = () => {
     return (
       <div className="empty-state">
         <div className="empty-icon">
-          <i className="fas fa-pen-alt"></i>
+          <i className="fas fa-edit"></i>
         </div>
-        <h5 className="title">Không có bài tập viết nào</h5>
-        <p className="description">
-          Bạn chưa có bài tập viết nào. Các bài tập sẽ xuất hiện ở đây khi được tạo.
+        <h5 className="title">No writing exercises found</h5>
+        <p className="message">
+          You don't have any writing exercises yet. They will appear here once created.
         </p>
       </div>
     );
@@ -180,11 +180,7 @@ const WritingExerciseList = () => {
                 
                 <div className="metadata">
                   <div className="mb-1">
-                    <strong className="me-2">Ngôn ngữ học:</strong> 
-                    {getLanguageName(exercise.learningLanguage)}
-                  </div>
-                  <div>
-                    <strong className="me-2">Ngôn ngữ mẹ đẻ:</strong> 
+                    <strong className="me-2">Native Language:</strong> 
                     {getLanguageName(exercise.nativeLanguage)}
                   </div>
                 </div>

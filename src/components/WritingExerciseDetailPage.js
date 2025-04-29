@@ -59,7 +59,7 @@ const WritingExerciseDetailPage = () => {
       } catch (err) {
         console.error('Error loading exercise:', err);
         setError(err.message || 'Failed to load writing exercise');
-        toast.error('Không thể tải bài tập viết. Vui lòng thử lại sau.');
+        toast.error('Unable to load writing exercise. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -213,7 +213,7 @@ const WritingExerciseDetailPage = () => {
       const token = localStorage.getItem('accessToken');
       
       if (!token) {
-        toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        toast.error('Login session expired. Please log in again.');
         setSaving(false);
         return;
       }
@@ -333,7 +333,7 @@ const WritingExerciseDetailPage = () => {
         const token = localStorage.getItem('accessToken');
         
         if (!token) {
-          toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+          toast.error('Login session expired. Please log in again.');
           return;
         }
         
@@ -419,7 +419,7 @@ const WritingExerciseDetailPage = () => {
         if (response.status === 400) {
           toast.error("Nội dung bài viết không hợp lệ. Vui lòng kiểm tra lại.");
         } else if (response.status === 404) {
-          toast.error("Không tìm thấy bài tập viết.");
+          toast.error("Writing exercise not found.");
         } else if (response.status === 500) {
           toast.error("Đã xảy ra lỗi ở máy chủ khi phân tích bài viết. API key có thể không hợp lệ hoặc đã hết hạn.");
         } else {
@@ -488,7 +488,7 @@ const WritingExerciseDetailPage = () => {
     return (
       <div className="container mt-5">
         <div className="alert alert-warning">
-          Vui lòng đăng nhập để xem bài tập viết của bạn.
+          Please log in to view your writing exercises.
         </div>
       </div>
     );
@@ -505,12 +505,12 @@ const WritingExerciseDetailPage = () => {
         {error ? (
           <Link to="/writing" className="btn btn-primary">
             <i className="fas fa-arrow-left me-2"></i>
-            Quay lại danh sách bài tập
+            Back to exercise list
           </Link>
         ) : (
           <Link to="/writing" className="btn btn-outline-primary">
             <i className="fas fa-arrow-left me-2"></i>
-            Quay lại danh sách bài tập
+            Back to exercise list
           </Link>
         )}
       </div>
@@ -520,9 +520,9 @@ const WritingExerciseDetailPage = () => {
   if (!exercise) {
     return (
       <div className="container my-5">
-        <div className="alert alert-warning">Không tìm thấy bài tập viết.</div>
+        <div className="alert alert-warning">Writing exercise not found.</div>
         <Link to="/writing" className="btn btn-primary">
-          <i className="fas fa-arrow-left me-2"></i>Quay lại danh sách bài tập
+          <i className="fas fa-arrow-left me-2"></i>Back to exercise list
         </Link>
       </div>
     );
@@ -531,7 +531,7 @@ const WritingExerciseDetailPage = () => {
   return (
     <div className="container my-5">
       <Helmet>
-        <title>Bài tập viết | WebLearn-EAI</title>
+        <title>Writing Exercise | WebLearn-EAI</title>
       </Helmet>
       
       <div className="page-header mb-4">
@@ -540,7 +540,7 @@ const WritingExerciseDetailPage = () => {
             <i className="fas fa-arrow-left"></i>
           </Link>
           <div>
-            <h2 className="page-title mb-0">Chi tiết bài tập viết</h2>
+            <h2 className="page-title mb-0">Writing Exercise Details</h2>
           </div>
         </div>
       </div>

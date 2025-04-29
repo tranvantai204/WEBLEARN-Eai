@@ -296,7 +296,10 @@ function ReadingsPage() {
         return (
             <div className="main-content">
                 <div className="readings-wrapper">
-                    <div className="loader"></div>
+                    <div className="custom-loading-spinner">
+                        <div className="spinner-circle"></div>
+                        <div className="spinner-text">Loading reading tests...</div>
+                    </div>
                 </div>
             </div>
         );
@@ -326,8 +329,15 @@ function ReadingsPage() {
                             onClick={handleAIGenerate}
                             disabled={isGenerating}
                         >
-                            <i className={`fas ${isGenerating ? 'fa-spinner fa-spin' : 'fa-robot'}`}></i>
-                            {isGenerating ? translations.generatingText : translations.generateButton}
+                            {isGenerating ? (
+                                <>
+                                    <div className="button-progress-bar"></div> {translations.generatingText}
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-robot"></i> {translations.generateButton}
+                                </>
+                            )}
                         </button>
                     </div>
                     

@@ -141,8 +141,9 @@ function ExploreFlashcardsPage() {
                     </div>
                     
                     {loading ? (
-                        <div className="loading-spinner">
-                            <i className="fas fa-spinner fa-spin"></i> {translateText('Loading...')}
+                        <div className="custom-loading-spinner">
+                            <div className="spinner-circle"></div>
+                            <div className="spinner-text">{translateText('Loading...')}</div>
                         </div>
                     ) : error ? (
                         <div className="error-message">

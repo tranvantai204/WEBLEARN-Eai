@@ -407,9 +407,9 @@ function FlashcardLearningPage() {
             </div>
             
             {loading ? (
-                <div className="loading-container">
-                    <div className="spinner"></div>
-                    <p>Loading flashcards...</p>
+                <div className="custom-loading-spinner">
+                    <div className="spinner-circle"></div>
+                    <div className="spinner-text">Loading flashcards...</div>
                 </div>
             ) : (
                 <>

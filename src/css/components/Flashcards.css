@@ -1186,358 +1186,46 @@
 }
 
 .loading-spinner {
-    font-size: 1.2rem;
-    color: #16a085;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
 }
 
-.error-message {
-    color: #e74c3c;
-}
-
-/* Responsive styles for FlashcardSetDetailsPage */
-@media (max-width: 768px) {
-    .flashcard-set-header {
-        padding: 1.5rem;
-    }
-    
-    .set-meta {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .flashcard-details-actions {
-        flex-direction: column;
-    }
-    
-    .flashcards-list-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .list-controls {
-        width: 100%;
-        flex-direction: column;
-    }
-    
-    .search-input, .sort-select {
-        width: 100%;
-    }
-    
-    .table-header, .table-row {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-    }
-    
-    .table-header div:not(:first-child), 
-    .table-row div:not(:first-child) {
-        border-top: 1px solid #f0f0f0;
-        padding-top: 0.5rem;
-    }
-    
-    .actions-cell {
-        justify-content: flex-start;
-        margin-top: 0.5rem;
-    }
-    
-    .term-cell, .definition-cell, .example-cell {
-        padding: 0.25rem 0;
-    }
-}
-
-/* Modal Styles */
-.modal-overlay {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background-color: rgba(0, 0, 0, 0.7) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 99999 !important;
-}
-
-.modal-container {
-    background: white !important;
-    border-radius: 12px !important;
-    width: 90% !important;
-    max-width: 600px !important;
-    max-height: 90vh !important;
-    overflow-y: auto !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
-    animation: modalFadeIn 0.3s ease !important;
-    position: relative !important;
-    margin: 2rem auto !important;
-}
-
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.modal-header h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-}
-
-.modal-close-btn {
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    color: #6c757d;
-    cursor: pointer;
-    padding: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s;
-}
-
-.modal-close-btn:hover {
-    background-color: #f8f9fa;
-    color: #e74c3c;
-}
-
-.modal-body {
-    padding: 1.5rem;
-}
-
-.form-group {
-    margin-bottom: 1.25rem;
-}
-
-.form-group label {
+.loading-spinner:before,
+.loading-spinner:after {
+    content: '';
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-
-.form-group .required {
-    color: #e74c3c;
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: all 0.2s;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #16a085;
-    box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
-}
-
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-/* Responsive Modal */
-@media (max-width: 768px) {
-    .modal-container {
-        width: 95%;
-        max-height: 90vh;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .modal-body {
-        overflow-y: auto;
-    }
-    
-    .form-actions {
-        flex-direction: column-reverse;
-        gap: 0.5rem;
-    }
-    
-    .form-actions button {
-        width: 100%;
-    }
-}
-
-/* Form validation styles */
-.char-count {
-    float: right;
-    color: #6c757d;
-    font-size: 0.8rem;
-    margin-left: 0.5rem;
-}
-
-.is-invalid {
-    border-color: #dc3545 !important;
-}
-
-.invalid-feedback {
-    width: 100%;
-    margin-top: 0.25rem;
-    font-size: 80%;
-    color: #dc3545;
-}
-
-/* Loading spinner animation */
-@keyframes spinner {
-    to {transform: rotate(360deg);}
-}
-
-.fa-spinner {
-    animation: spinner 1s linear infinite;
-}
-
-/* Success state transitions */
-.form-control.is-valid {
-    border-color: #28a745 !important;
-    padding-right: calc(1.5em + 0.75rem);
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right calc(0.375em + 0.1875rem) center;
-    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-}
-
-.form-group label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.form-group label .required {
-    color: #dc3545;
-    margin-left: 0.25rem;
-}
-
-/* Additional modal form styling */
-.modal-body form {
-    max-height: 60vh;
-    overflow-y: auto;
-    padding-right: 0.5rem;
-}
-
-.form-actions {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
-}
-
-/* Term and definition highlighting */
-.term-cell {
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-.definition-cell {
-    color: #16a085;
-}
-
-/* Empty state and call-to-action */
-.no-cards-message {
-    text-align: center;
-    padding: 3rem 2rem;
-    background-color: rgba(22, 160, 133, 0.05);
-    border-radius: 12px;
-    margin: 2rem 0;
-}
-
-/* Modal Instructions */
-.modal-instructions {
-    background-color: #f8f9fa;
-    border-left: 4px solid #3498db;
-    padding: 12px 16px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-}
-
-.modal-instructions p {
-    margin: 0;
-    color: #4a4a4a;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.modal-instructions i {
-    color: #3498db;
-    margin-right: 8px;
-}
-
-/* Form improvements */
-.form-control::placeholder {
-    color: #adb5bd;
-    font-style: italic;
-    font-size: 14px;
-}
-
-.form-control:focus {
-    border-color: #3498db;
-    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
-}
-
-.char-count {
-    margin-left: 8px;
-    color: #6c757d;
-    font-weight: normal;
-}
-
-.char-count.limit-approaching {
-    color: #f39c12;
-}
-
-.char-count.limit-reached {
-    color: #e74c3c;
-}
-
-/* Loading Popup styles */
-.loading-popup-overlay {
-    position: fixed;
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #4285f4;
+    border-bottom-color: #4285f4;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    backdrop-filter: blur(5px);
+    animation: dual-spinner 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 }
 
-.loading-popup-container {
-    background-color: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-    animation: popup-fade-in 0.3s ease-out;
+.loading-spinner:before {
+    border-top-color: #4285f4;
+    border-bottom-color: #34a853;
+    animation-delay: 0.2s;
 }
 
-.loading-spinner {
-    font-size: 3rem;
-    color: #3b82f6;
-    margin-bottom: 20px;
-    animation: spin 1.5s linear infinite;
+.loading-spinner:after {
+    border-left-color: #ea4335;
+    border-right-color: #fbbc05;
+}
+
+@keyframes dual-spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .loading-popup-container h3 {
@@ -1903,4 +1591,141 @@
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 15px;
+}
+
+/* Custom Loading Spinner */
+.custom-loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+}
+
+.spinner-circle {
+    position: relative;
+    width: 200px;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.spinner-circle:before,
+.spinner-circle:after {
+    content: '';
+    position: absolute;
+    height: 100%;
+    border-radius: 2px;
+}
+
+.spinner-circle:before {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.spinner-circle:after {
+    width: 30%;
+    background-color: #ff6b2c;
+    animation: loading-bar 1.5s infinite ease-in-out;
+}
+
+.spinner-text {
+    font-size: 16px;
+    color: #4a4a4a;
+    font-weight: 500;
+    margin-top: 5px;
+}
+
+@keyframes loading-bar {
+    0% {
+        left: -30%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Button Loading Bar */
+.button-progress-bar {
+    position: relative;
+    width: 20px;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 1.5px;
+    overflow: hidden;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.button-progress-bar:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    width: 50%;
+    background-color: #ffffff;
+    border-radius: 1.5px;
+    animation: button-loading 1s infinite ease;
+}
+
+@keyframes button-loading {
+    0% {
+        left: -50%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Button Spinner - Keeping for reference, but using progress bar now */
+.button-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: button-spin 0.8s linear infinite;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+@keyframes button-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Loading Bar for Popup */
+.loading-bar {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+    margin: 15px 0;
+}
+
+.loading-bar:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    width: 60%;
+    background-color: #3b82f6;
+    border-radius: 2px;
+    animation: loading-progress 2s infinite ease;
+}
+
+@keyframes loading-progress {
+    0% {
+        left: -60%;
+    }
+    100% {
+        left: 100%;
+    }
 } 
