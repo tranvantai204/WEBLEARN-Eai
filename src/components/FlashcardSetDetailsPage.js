@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useFlashcard } from '../contexts/FlashcardContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,6 +10,7 @@ import '../css/components/Flashcards.css';
 import FlashcardReviews from './FlashcardReviews';
 import LanguageSelector from './LanguageSelector';
 import ContentReportModal from './ContentReportModal';
+import BulkImportModal from './BulkImportModal';
 
 // Thêm CSS cho animations
 const modalStyles = `
@@ -74,7 +75,7 @@ function Modal({ show, onClose, children }) {
 function FlashcardSetDetailsPage() {
     const { flashcardSetId } = useParams();
     const navigate = useNavigate();
-    const { getFlashcardSet, createFlashcard, directCreateFlashcard, getFlashcardsForSet, deleteFlashcardSet, updateFlashcardSet, togglePublicStatus, loading, error, getUserApiKey, deleteFlashcard, updateFlashcard } = useFlashcard();
+    const { getFlashcardSet, createFlashcard, directCreateFlashcard, getFlashcardsForSet, deleteFlashcardSet, updateFlashcardSet, togglePublicStatus, loading, error, getUserApiKey, deleteFlashcard, updateFlashcard, bulkImportFlashcards } = useFlashcard();
     const { isAuthenticated } = useAuth();
     const { translateText } = useLanguage();
     
@@ -155,6 +156,9 @@ function FlashcardSetDetailsPage() {
 
     // Add this state for the report modal
     const [showReportModal, setShowReportModal] = useState(false);
+
+    // New state for bulk import modal
+    const [showBulkImportModal, setShowBulkImportModal] = useState(false);
 
     // Fetch flashcard set details on component mount
     useEffect(() => {
@@ -1338,6 +1342,24 @@ function FlashcardSetDetailsPage() {
         setShowReportModal(false);
     };
 
+    // Function to open bulk import modal
+    const openBulkImportModal = () => {
+        console.log("Opening bulk import modal");
+        setShowBulkImportModal(true);
+        console.log("showBulkImportModal set to:", true);
+    };
+    
+    // Function to close bulk import modal
+    const closeBulkImportModal = () => {
+        setShowBulkImportModal(false);
+    };
+    
+    // Handle successful import of cards
+    const handleBulkImportSuccess = () => {
+        toast.success('Flashcards imported successfully!');
+        fetchFlashcardsForSet(flashcardSetId);
+    };
+
     return (
         <div className="flashcard-details-page">
             {/* Thêm style cho animations */}
@@ -2329,6 +2351,12 @@ function FlashcardSetDetailsPage() {
                                             <i className="fas fa-plus"></i> {translateText('Add Card')}
                                         </button>
                                         <button 
+                                            className="btn btn-success" 
+                                            onClick={openBulkImportModal}
+                                        >
+                                            <i className="fas fa-file-import"></i> {translateText('Bulk Import')}
+                                        </button>
+                                        <button 
                                             className="btn btn-info" 
                                             onClick={openVisibilityModal}
                                         >
@@ -2519,6 +2547,15 @@ function FlashcardSetDetailsPage() {
                 contentType={2} // 2 for Flashcard
                 contentName={flashcardSet?.title || 'Flashcard Set'}
             />
+            
+            {/* Bulk Import Modal */}
+            <Modal show={showBulkImportModal} onClose={closeBulkImportModal}>
+                <BulkImportModal 
+                    onClose={closeBulkImportModal}
+                    flashcardSetId={flashcardSetId}
+                    onImportSuccess={handleBulkImportSuccess}
+                />
+            </Modal>
         </div>
     );
 }

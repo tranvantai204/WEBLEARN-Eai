@@ -4,38 +4,28 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import { forceEnglishLanguage } from '../utils/forceEnglishLanguage';
+import ApiKeyModal from './ApiKeyModal';
 import { 
     FaGlobeAmericas,
     FaChevronDown,
     FaCheck,
     FaBars,
-    FaTimes
+    FaTimes,
+    FaKey
 } from 'react-icons/fa';
 import {
     FlagVNIcon,
-    FlagGBIcon,
-    FlagJPIcon,
-    FlagKRIcon,
-    FlagCNIcon,
-    FlagFRIcon,
-    FlagDEIcon,
-    FlagESIcon,
-    FlagITIcon,
-    FlagRUIcon,
-    FlagPTIcon,
-    FlagNLIcon,
-    FlagARIcon,
-    FlagHIIcon,
-    FlagTHIcon,
-    FlagIDIcon
+    FlagGBIcon
 } from './icons/FlagIcons';
 
 function Header() {
   const { currentLanguage, changeLanguage, translateText } = useLanguage();
-  const { isAuthenticated, logout, checkTokenExpiration } = useAuth();
+  const { isAuthenticated, logout, checkTokenExpiration, checkLocalApiKey } = useAuth();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMobileLanguageOptions, setShowMobileLanguageOptions] = useState(false);
   const [showDesktopLanguageOptions, setShowDesktopLanguageOptions] = useState(false);
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(false);
   const mobileMenuRef = useRef(null);
   const mobileLangOptionsRef = useRef(null);
   const desktopLangOptionsRef = useRef(null);
@@ -43,21 +33,7 @@ function Header() {
   
   const languages = [
     { code: 'en', name: 'English', icon: FlagGBIcon },
-    { code: 'vi', name: 'Vietnamese', icon: FlagVNIcon },
-    { code: 'ja', name: 'Japanese', icon: FlagJPIcon },
-    { code: 'ko', name: 'Korean', icon: FlagKRIcon },
-    { code: 'zh', name: 'Chinese', icon: FlagCNIcon },
-    { code: 'fr', name: 'French', icon: FlagFRIcon },
-    { code: 'de', name: 'German', icon: FlagDEIcon },
-    { code: 'es', name: 'Spanish', icon: FlagESIcon },
-    { code: 'it', name: 'Italian', icon: FlagITIcon },
-    { code: 'ru', name: 'Russian', icon: FlagRUIcon },
-    { code: 'pt', name: 'Portuguese', icon: FlagPTIcon },
-    { code: 'nl', name: 'Dutch', icon: FlagNLIcon },
-    { code: 'ar', name: 'Arabic', icon: FlagARIcon },
-    { code: 'hi', name: 'Hindi', icon: FlagHIIcon },
-    { code: 'th', name: 'Thai', icon: FlagTHIcon },
-    { code: 'id', name: 'Indonesian', icon: FlagIDIcon }
+    { code: 'vi', name: 'Vietnamese', icon: FlagVNIcon }
   ];
 
   const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
@@ -81,6 +57,7 @@ function Header() {
     logout: 'Logout',
     explore: 'Explore',
     multipleChoice: 'Multiple Choice Tests',
+    enterApiKey: 'Enter API Key'
   });
 
   // Check token expiration on component mount and when isAuthenticated changes
@@ -93,6 +70,27 @@ function Header() {
       });
     }
   }, [isAuthenticated, checkTokenExpiration]);
+
+  // Check for API key in localStorage
+  useEffect(() => {
+    const checkApiKey = () => {
+      const apiKey = checkLocalApiKey();
+      setHasApiKey(!!apiKey);
+    };
+    
+    checkApiKey();
+    
+    // Recheck when localStorage changes
+    const handleStorageChange = () => {
+      checkApiKey();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [checkLocalApiKey]);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -145,6 +143,7 @@ function Header() {
         logout: await translateText('Logout'),
         explore: await translateText('Explore'),
         multipleChoice: await translateText('Multiple Choice Tests'),
+        enterApiKey: await translateText('Enter API Key')
       };
       setTranslations(newTranslations);
     } catch (error) {
@@ -152,14 +151,10 @@ function Header() {
     }
   };
 
-  // Force English language on component mount
   useEffect(() => {
-    // Force English using our utility
-    forceEnglishLanguage(changeLanguage, false);
-    
-    // Update translations immediately
+    // Update translations when language changes
     updateTranslations();
-  }, [changeLanguage]);
+  }, [currentLanguage, translateText]);
 
   const handleLanguageChange = (langCode) => {
     changeLanguage(langCode);
@@ -196,6 +191,17 @@ function Header() {
   const getFlashcardsLabel = () => translations.flashcards;
   const getReadingsLabel = () => translations.readings;
   const getWritingLabel = () => translations.writing;
+
+  // Header actions
+  const handleOpenApiKeyModal = () => {
+    if (!isAuthenticated) {
+      toast.error('You need to log in to set an API key');
+      return;
+    }
+    // Hiển thị modal
+    console.log('Opening API key modal');
+    setShowApiKeyModal(true);
+  };
 
   return (
     <header className="main-header">
@@ -297,23 +303,29 @@ function Header() {
           </div>
           
           <div className="mobile-header-actions">
-            {isAuthenticated ? (
+            {!isAuthenticated ? (
               <>
-                <Link to="/progress" className="header-login" onClick={() => setShowMobileMenu(false)}>
-                  <i className="fas fa-chart-line"></i> {translations.profile}
-                </Link>
-                <button className="header-logout" onClick={handleLogout}>
-                  <i className="fas fa-sign-out-alt"></i> {translations.logout}
+                <button className="header-api-key" onClick={handleOpenApiKeyModal} title={translations.enterApiKey}>
+                  <FaKey />
                 </button>
-              </>
-            ) : (
-              <>
                 <Link to="/login" className="header-login" onClick={() => setShowMobileMenu(false)}>
                   {translations.signIn}
                 </Link>
                 <Link to="/register" className="header-signup" onClick={() => setShowMobileMenu(false)}>
                   {translations.getStarted}
                 </Link>
+              </>
+            ) : (
+              <>
+                <button className="header-api-key" onClick={handleOpenApiKeyModal} title={translations.enterApiKey}>
+                  <FaKey />{hasApiKey ? ' ✓' : ''}
+                </button>
+                <Link to="/progress" className="header-login" onClick={() => setShowMobileMenu(false)}>
+                  {translations.profile}
+                </Link>
+                <button className="header-signup" onClick={handleLogout}>
+                  {translations.logout}
+                </button>
               </>
             )}
           </div>
@@ -392,17 +404,11 @@ function Header() {
           </nav>
           
           <div className="header-actions">
-            {isAuthenticated ? (
+            {!isAuthenticated ? (
               <>
-                <Link to="/progress" className="header-login">
-                  <i className="fas fa-chart-line"></i> {translations.profile}
-                </Link>
-                <button className="header-logout" onClick={handleLogout}>
-                  <i className="fas fa-sign-out-alt"></i> {translations.logout}
+                <button className="header-api-key" onClick={handleOpenApiKeyModal} title={translations.enterApiKey}>
+                  <FaKey />
                 </button>
-              </>
-            ) : (
-              <>
                 <Link to="/login" className="header-login">
                   {translations.signIn}
                 </Link>
@@ -410,10 +416,36 @@ function Header() {
                   {translations.getStarted}
                 </Link>
               </>
+            ) : (
+              <>
+                <button className="header-api-key" onClick={handleOpenApiKeyModal} title={translations.enterApiKey}>
+                  <FaKey />{hasApiKey ? ' ✓' : ''}
+                </button>
+                <Link to="/progress" className="header-login">
+                  {translations.profile}
+                </Link>
+                <button className="header-signup" onClick={handleLogout}>
+                  {translations.logout}
+                </button>
+              </>
             )}
           </div>
         </div>
       </div>
+      
+      {/* API Key Modal */}
+      {showApiKeyModal && (
+        <ApiKeyModal 
+          isOpen={showApiKeyModal} 
+          onClose={() => {
+            console.log('Closing API key modal');
+            setShowApiKeyModal(false);
+            // Check if API key was added
+            const apiKey = checkLocalApiKey();
+            setHasApiKey(!!apiKey);
+          }} 
+        />
+      )}
     </header>
   );
 }

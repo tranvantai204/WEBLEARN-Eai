@@ -903,6 +903,76 @@ export const FlashcardProvider = ({ children }) => {
     }
   }, [API_URL, currentSet]);
 
+  // Bulk import flashcards
+  const bulkImportFlashcards = useCallback(async (flashcardSetId, flashcards) => {
+    try {
+      setLoading(true);
+      
+      // Get token from local storage or context
+      const currentToken = localStorage.getItem('accessToken');
+      const tokenToUse = accessToken || currentToken;
+      
+      if (!tokenToUse) {
+        throw new Error('Authentication required to import flashcards');
+      }
+      
+      // Ensure API URL has the correct format
+      const apiUrl = `${API_URL}/FlashCard/CreateRange/${flashcardSetId}`;
+      console.log('Bulk importing flashcards to:', apiUrl);
+      console.log('Number of flashcards:', flashcards.length);
+      
+      // Make API request
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          'Authorization': `Bearer ${tokenToUse}`
+        },
+        body: JSON.stringify(flashcards)
+      });
+      
+      console.log('Bulk import response status:', response.status);
+      
+      // Check if response is successful
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type');
+        let errorMessage = '';
+        
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.title || `Error ${response.status}`;
+          console.error('Error response:', errorData);
+        } else {
+          errorMessage = `Request failed with status: ${response.status}`;
+          const text = await response.text();
+          console.error('Error response text:', text.substring(0, 200));
+        }
+        
+        throw new Error(errorMessage);
+      }
+      
+      // Parse successful response
+      const result = await response.json();
+      console.log('Flashcards imported successfully:', result);
+      
+      // Update the current set if needed
+      if (currentSet?.flashcardSetId === flashcardSetId) {
+        getFlashcardSet(flashcardSetId).catch(err => 
+          console.error('Failed to refresh flashcard set after bulk import:', err)
+        );
+      }
+      
+      return result;
+    } catch (err) {
+      console.error('Bulk import failed:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [API_URL, accessToken, currentSet, getFlashcardSet]);
+
   // Value provided by the context
   const value = {
     flashcardSets,
@@ -926,7 +996,8 @@ export const FlashcardProvider = ({ children }) => {
     getUserApiKey,
     updateUserApiKey,
     deleteFlashcard,
-    updateFlashcard
+    updateFlashcard,
+    bulkImportFlashcards
   };
 
   return (

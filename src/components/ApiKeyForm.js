@@ -8,7 +8,6 @@ function ApiKeyForm({ onSuccess, onSkip }) {
   const [showKey, setShowKey] = useState(false);
   const [loading, setLoading] = useState(false);
   const { storeApiKey, isAuthenticated } = useAuth();
-  const { currentUser } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,6 +24,7 @@ function ApiKeyForm({ onSuccess, onSkip }) {
     setLoading(true);
     
     try {
+      console.log('Submitting API key...');
       const result = await storeApiKey(apiKey);
       
       if (result.success) {
@@ -34,6 +34,9 @@ function ApiKeyForm({ onSuccess, onSkip }) {
         
         setApiKey('');
         if (onSuccess) onSuccess();
+      } else {
+        // Show error message if API key couldn't be saved
+        toast.error(result.message || 'Failed to save API key. Please try again.');
       }
     } catch (error) {
       console.error('Error saving API key:', error);
@@ -44,6 +47,7 @@ function ApiKeyForm({ onSuccess, onSkip }) {
   };
 
   const handleSkip = () => {
+    console.log('API key form skipped');
     if (onSkip) {
       onSkip();
     } else {
@@ -72,11 +76,13 @@ function ApiKeyForm({ onSuccess, onSkip }) {
                 placeholder="Enter your Gemini API key"
                 className="form-input"
                 disabled={loading}
+                autoComplete="off"
               />
               <button 
                 type="button" 
                 className="toggle-visibility-btn"
                 onClick={() => setShowKey(!showKey)}
+                tabIndex="-1"
               >
                 <i className={`fas fa-${showKey ? "eye-slash" : "eye"}`}></i>
               </button>

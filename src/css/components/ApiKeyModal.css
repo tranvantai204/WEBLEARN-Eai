@@ -6,25 +6,29 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 10000;
     animation: fadeIn 0.3s ease;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .api-key-modal-content {
     background-color: white;
     border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     width: 90%;
-    max-width: 600px;
+    max-width: 480px;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
     animation: slideIn 0.3s ease;
+    margin: auto;
+    transform: translate(0, 0);
 }
 
 .modal-close-btn {
@@ -53,14 +57,53 @@
 
 /* Override some styles from ApiKeyForm.css */
 .api-key-modal-content .api-key-form-container {
-    padding: 2.5rem 2rem 2rem;
+    padding: 2rem 1.75rem;
     max-width: none;
     margin: 0;
+    width: 100%;
 }
 
 .api-key-modal-content .api-key-form-card {
     box-shadow: none;
     padding: 0;
+    max-width: 100%;
+    background-color: white;
+    width: 100%;
+}
+
+/* Đảm bảo input field hiển thị đúng */
+.api-key-modal-content .form-input {
+    width: 100%;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+}
+
+/* Đảm bảo nút hiển thị đúng */
+.api-key-modal-content .form-actions {
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+/* Làm rõ thông tin API key */
+.api-key-modal-content .api-key-info {
+    background-color: rgba(66, 133, 244, 0.05);
+    border-left: 3px solid #4285f4;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.api-key-modal-content .api-key-info h3 {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+}
+
+.api-key-modal-content .api-key-info p {
+    color: #475569;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }
 
 /* Animations */
@@ -72,18 +115,22 @@
 @keyframes slideIn {
     from { 
         opacity: 0;
-        transform: translateY(-20px);
+        transform: translate(0, -30px);
     }
     to { 
         opacity: 1;
-        transform: translateY(0);
+        transform: translate(0, 0);
     }
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+    .api-key-modal-content {
+        width: 95%;
+    }
+    
     .api-key-modal-content .api-key-form-container {
-        padding: 2.5rem 1rem 1.5rem;
+        padding: 1.5rem;
     }
 }
 

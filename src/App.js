@@ -235,12 +235,6 @@ const AppLayout = () => {
 };
 
 function App() {
-    // Force English language when the app mounts
-    useEffect(() => {
-        // Set English in localStorage without reload
-        forceEnglishLanguage(null, false);
-    }, []);
-
     return (
         <LanguageProvider>
             <AuthProvider>

@@ -47,48 +47,142 @@ const allTranslations = {
         writingsDescription: 'Enhance your written expression through practice',
         viewAll: 'View All',
         continueLearning: 'Continue Learning',
-        discover: 'Discover More'
+        discover: 'Discover More',
+        // Additional translations for non-authenticated home page
+        aiPowered: 'AI-Powered',
+        learnSmartly: 'Learn smartly with AI technology',
+        aiDescription: 'Our AI system analyzes how you learn and automatically adjusts to optimize your learning process, helping you memorize vocabulary more effectively and progress quickly.',
+        autocreateFlashcards: 'Automatically create smart flashcards',
+        adjustDifficulty: 'Adjust difficulty level to match your proficiency',
+        suggestLessons: 'Suggest lessons based on your progress',
+        testimonials: 'What users say about WordWise?',
+        partners: 'Our Partners',
+        companyA: 'Company A',
+        universityB: 'University B',
+        organizationC: 'Organization C',
+        schoolD: 'School D',
+        researchInstituteE: 'Research Institute E',
+        registeredThisMonth: '+2,500 people registered this month',
+        effectiveLearning: 'Effective Learning',
+        safeSecure: 'Safe & Secure',
+        accelerateLearning: 'Accelerate Learning',
+        lessons: 'Lessons',
+        students: 'Students',
+        satisfaction: 'Satisfaction',
+        support: 'Support',
+        // Testimonials
+        testimonial1: {
+            text: "WordWise has completely changed the way I learn foreign languages. The smart flashcard system helps me memorize vocabulary much more effectively.",
+            author: "John Smith",
+            role: "Student"
+        },
+        testimonial2: {
+            text: "The reading and writing exercises with instant AI feedback have helped me progress quickly. The interface is easy to use and I can learn anytime, anywhere.",
+            author: "Mary Johnson",
+            role: "Teacher"
+        },
+        testimonial3: {
+            text: "The progress tracking system helps me maintain motivation. I've achieved my English learning goals faster than expected.",
+            author: "Robert Lee",
+            role: "Student"
+        },
+        // Master Languages section
+        masterLanguages: 'Master Languages with',
+        smartFlashcards: 'Smart Flashcards',
+        transformJourney: 'Transform your language learning journey with AI-powered flashcards, personalized study plans, and interactive exercises. Start learning smarter, not harder.',
+        startFreeTrial: 'Start Free Trial',
+        exploreFeatures: 'Explore Features',
+        activeUsers: 'Active Users',
+        flashcardsCreated: 'Flashcards Created',
+        successRate: 'Success Rate'
     },
     vi: {
-        selectLanguage: 'Select Language',
-        heroBadge: 'Smart Language Learning',
-        heroTitle: 'Learn Languages Effectively with AI Technology',
-        heroSubtitle: 'Optimize your learning with advanced AI technology. Create smart flashcards, practice effectively, and track your progress easily.',
-        startFree: 'Start Free',
-        learnMore: 'Learn More',
-        featuresTitle: 'Key Features',
-        featuresSubtitle: 'Discover powerful tools that make language learning easier and more effective',
+        selectLanguage: 'Chọn Ngôn Ngữ',
+        heroBadge: 'Học Ngôn Ngữ Thông Minh',
+        heroTitle: 'Học Ngôn Ngữ Hiệu Quả với Công Nghệ AI',
+        heroSubtitle: 'Tối ưu hóa việc học của bạn với công nghệ AI tiên tiến. Tạo thẻ ghi nhớ thông minh, luyện tập hiệu quả và theo dõi tiến độ dễ dàng.',
+        startFree: 'Bắt Đầu Miễn Phí',
+        learnMore: 'Tìm Hiểu Thêm',
+        featuresTitle: 'Tính Năng Chính',
+        featuresSubtitle: 'Khám phá các công cụ mạnh mẽ giúp việc học ngôn ngữ dễ dàng và hiệu quả hơn',
         features: [
             {
-                title: 'Smart AI',
-                description: 'Automatically generate flashcards and exercises tailored to your level'
+                title: 'AI Thông Minh',
+                description: 'Tự động tạo thẻ ghi nhớ và bài tập phù hợp với trình độ của bạn'
             },
             {
-                title: 'Progress Tracking',
-                description: 'Detailed analysis of your learning progress and suggested improvements'
+                title: 'Theo Dõi Tiến Độ',
+                description: 'Phân tích chi tiết về tiến trình học và đề xuất cải thiện'
             },
             {
-                title: 'Smart Review',
-                description: 'Spaced repetition system helps you remember vocabulary longer'
+                title: 'Ôn Tập Thông Minh',
+                description: 'Hệ thống lặp lại ngắt quãng giúp bạn nhớ từ vựng lâu hơn'
             }
         ],
-        ctaTitle: 'Ready to Start?',
-        ctaSubtitle: 'Join millions of learners using WordWise',
-        register: 'Register for Free',
+        ctaTitle: 'Sẵn Sàng Bắt Đầu?',
+        ctaSubtitle: 'Tham gia cùng hàng triệu người học đang sử dụng WordWise',
+        register: 'Đăng Ký Miễn Phí',
         // Logged in user translations
-        welcomeBack: 'Welcome Back!',
-        continueProgress: 'Continue your learning journey',
-        recentActivity: 'Your Recent Activity',
-        noActivity: 'No recent activity found. Start learning now!',
-        flashcardsSummary: 'Flashcards',
-        flashcardsDescription: 'Review flashcard sets and continue learning vocabulary',
-        readingSummary: 'Reading',
-        readingsDescription: 'Enhance your reading comprehension with exercises',
-        writingSummary: 'Writing',
-        writingsDescription: 'Enhance your written expression through practice',
-        viewAll: 'View All',
-        continueLearning: 'Continue Learning',
-        discover: 'Discover More'
+        welcomeBack: 'Chào Mừng Trở Lại!',
+        continueProgress: 'Tiếp tục hành trình học tập của bạn',
+        recentActivity: 'Hoạt Động Gần Đây Của Bạn',
+        noActivity: 'Không tìm thấy hoạt động gần đây. Bắt đầu học ngay!',
+        flashcardsSummary: 'Thẻ Ghi Nhớ',
+        flashcardsDescription: 'Xem lại bộ thẻ ghi nhớ và tiếp tục học từ vựng',
+        readingSummary: 'Đọc Hiểu',
+        readingsDescription: 'Nâng cao khả năng đọc hiểu với các bài tập',
+        writingSummary: 'Viết',
+        writingsDescription: 'Nâng cao khả năng diễn đạt bằng văn bản thông qua thực hành',
+        viewAll: 'Xem Tất Cả',
+        continueLearning: 'Tiếp Tục Học',
+        discover: 'Khám Phá Thêm',
+        // Additional translations for non-authenticated home page
+        aiPowered: 'Công Nghệ AI',
+        learnSmartly: 'Học thông minh với công nghệ AI',
+        aiDescription: 'Hệ thống AI của chúng tôi phân tích cách bạn học và tự động điều chỉnh để tối ưu hóa quá trình học tập, giúp bạn ghi nhớ từ vựng hiệu quả hơn và tiến bộ nhanh chóng.',
+        autocreateFlashcards: 'Tự động tạo thẻ ghi nhớ thông minh',
+        adjustDifficulty: 'Điều chỉnh mức độ khó phù hợp với khả năng của bạn',
+        suggestLessons: 'Đề xuất bài học dựa trên tiến độ của bạn',
+        testimonials: 'Người dùng nói gì về WordWise?',
+        partners: 'Đối Tác Của Chúng Tôi',
+        companyA: 'Công ty A',
+        universityB: 'Đại học B',
+        organizationC: 'Tổ chức C',
+        schoolD: 'Trường học D',
+        researchInstituteE: 'Viện Nghiên cứu E',
+        registeredThisMonth: '+2,500 người đã đăng ký tháng này',
+        effectiveLearning: 'Học Tập Hiệu Quả',
+        safeSecure: 'An Toàn & Bảo Mật',
+        accelerateLearning: 'Đẩy Nhanh Việc Học',
+        lessons: 'Bài học',
+        students: 'Học viên',
+        satisfaction: 'Độ hài lòng',
+        support: 'Hỗ trợ',
+        // Testimonials
+        testimonial1: {
+            text: "WordWise đã hoàn toàn thay đổi cách tôi học ngoại ngữ. Hệ thống thẻ ghi nhớ thông minh giúp tôi ghi nhớ từ vựng hiệu quả hơn nhiều.",
+            author: "John Smith",
+            role: "Học sinh"
+        },
+        testimonial2: {
+            text: "Các bài tập đọc và viết với phản hồi tức thì từ AI đã giúp tôi tiến bộ nhanh chóng. Giao diện dễ sử dụng và tôi có thể học bất cứ lúc nào, bất cứ nơi đâu.",
+            author: "Mary Johnson",
+            role: "Giáo viên"
+        },
+        testimonial3: {
+            text: "Hệ thống theo dõi tiến độ giúp tôi duy trì động lực. Tôi đã đạt được mục tiêu học tiếng Anh nhanh hơn dự kiến.",
+            author: "Robert Lee",
+            role: "Học sinh"
+        },
+        // Master Languages section
+        masterLanguages: 'Làm Chủ Ngôn Ngữ với',
+        smartFlashcards: 'Thẻ Ghi Nhớ Thông Minh',
+        transformJourney: 'Biến đổi hành trình học ngôn ngữ của bạn với thẻ ghi nhớ được hỗ trợ bởi AI, kế hoạch học tập cá nhân hóa và bài tập tương tác. Bắt đầu học thông minh hơn, không phải khó khăn hơn.',
+        startFreeTrial: 'Dùng Thử Miễn Phí',
+        exploreFeatures: 'Khám Phá Tính Năng',
+        activeUsers: 'Người Dùng Đang Hoạt Động',
+        flashcardsCreated: 'Thẻ Ghi Nhớ Đã Tạo',
+        successRate: 'Tỷ Lệ Thành Công'
     }
     // Other languages can be added here as needed
 };
@@ -224,22 +318,22 @@ function HomePage() {
                     <div className="stats-banner">
                         <div className="stat-item">
                             <div className="stat-number-large">200+</div>
-                            <div className="stat-label">Lessons</div>
+                            <div className="stat-label">{translations.lessons}</div>
                         </div>
                         <div className="stat-divider"></div>
                         <div className="stat-item">
                             <div className="stat-number-large">10k+</div>
-                            <div className="stat-label">Students</div>
+                            <div className="stat-label">{translations.students}</div>
                         </div>
                         <div className="stat-divider"></div>
                         <div className="stat-item">
                             <div className="stat-number-large">98%</div>
-                            <div className="stat-label">Satisfaction</div>
+                            <div className="stat-label">{translations.satisfaction}</div>
                         </div>
                         <div className="stat-divider"></div>
                         <div className="stat-item">
                             <div className="stat-number-large">24/7</div>
-                            <div className="stat-label">Support</div>
+                            <div className="stat-label">{translations.support}</div>
                         </div>
                     </div>
                 </section>
@@ -250,16 +344,16 @@ function HomePage() {
                         <div className="visual-feature-content">
                             <div className="visual-feature-badge">
                                 <i className="fas fa-bolt"></i>
-                                <span>AI-Powered</span>
+                                <span>{translations.aiPowered}</span>
                             </div>
-                            <h2 className="visual-feature-title">Learn <span className="highlight">smartly</span> with AI technology</h2>
+                            <h2 className="visual-feature-title">{translations.learnSmartly}</h2>
                             <p className="visual-feature-description">
-                                Our AI system analyzes how you learn and automatically adjusts to optimize your learning process, helping you memorize vocabulary more effectively and progress quickly.
+                                {translations.aiDescription}
                             </p>
                             <ul className="visual-feature-list">
-                                <li><i className="fas fa-check"></i> Automatically create smart flashcards</li>
-                                <li><i className="fas fa-check"></i> Adjust difficulty level to match your proficiency</li>
-                                <li><i className="fas fa-check"></i> Suggest lessons based on your progress</li>
+                                <li><i className="fas fa-check"></i> {translations.autocreateFlashcards}</li>
+                                <li><i className="fas fa-check"></i> {translations.adjustDifficulty}</li>
+                                <li><i className="fas fa-check"></i> {translations.suggestLessons}</li>
                             </ul>
                         </div>
                         <div className="visual-feature-image">
@@ -315,7 +409,7 @@ function HomePage() {
                 
                 {/* Testimonials Section */}
                 <section className="testimonials-section">
-                    <h2 className="testimonials-title">What users say about WordWise?</h2>
+                    <h2 className="testimonials-title">{translations.testimonials}</h2>
                     <div className="testimonials-container">
                         <div className="testimonial-card">
                             <div className="testimonial-rating">
@@ -326,15 +420,15 @@ function HomePage() {
                                 <i className="fas fa-star"></i>
                             </div>
                             <p className="testimonial-text">
-                                "WordWise has completely changed the way I learn foreign languages. The smart flashcard system helps me memorize vocabulary much more effectively."
+                                {translations.testimonial1.text}
                             </p>
                             <div className="testimonial-author">
                                 <div className="testimonial-avatar">
                                     <i className="fas fa-user-circle"></i>
                                 </div>
                                 <div className="testimonial-info">
-                                    <h4 className="testimonial-name">John Smith</h4>
-                                    <p className="testimonial-role">Student</p>
+                                    <h4 className="testimonial-name">{translations.testimonial1.author}</h4>
+                                    <p className="testimonial-role">{translations.testimonial1.role}</p>
                                 </div>
                             </div>
                         </div>
@@ -348,15 +442,15 @@ function HomePage() {
                                 <i className="fas fa-star"></i>
                             </div>
                             <p className="testimonial-text">
-                                "The reading and writing exercises with instant AI feedback have helped me progress quickly. The interface is easy to use and I can learn anytime, anywhere."
+                                {translations.testimonial2.text}
                             </p>
                             <div className="testimonial-author">
                                 <div className="testimonial-avatar">
                                     <i className="fas fa-user-circle"></i>
                                 </div>
                                 <div className="testimonial-info">
-                                    <h4 className="testimonial-name">Mary Johnson</h4>
-                                    <p className="testimonial-role">Teacher</p>
+                                    <h4 className="testimonial-name">{translations.testimonial2.author}</h4>
+                                    <p className="testimonial-role">{translations.testimonial2.role}</p>
                                 </div>
                             </div>
                         </div>
@@ -370,15 +464,15 @@ function HomePage() {
                                 <i className="fas fa-star-half-alt"></i>
                             </div>
                             <p className="testimonial-text">
-                                "The progress tracking system helps me maintain motivation. I've achieved my English learning goals faster than expected."
+                                {translations.testimonial3.text}
                             </p>
                             <div className="testimonial-author">
                                 <div className="testimonial-avatar">
                                     <i className="fas fa-user-circle"></i>
                                 </div>
                                 <div className="testimonial-info">
-                                    <h4 className="testimonial-name">Robert Lee</h4>
-                                    <p className="testimonial-role">Student</p>
+                                    <h4 className="testimonial-name">{translations.testimonial3.author}</h4>
+                                    <p className="testimonial-role">{translations.testimonial3.role}</p>
                                 </div>
                             </div>
                         </div>
@@ -387,13 +481,13 @@ function HomePage() {
                 
                 {/* Partners Section - Moved up before CTA for better flow */}
                 <section className="partners-section">
-                    <h3 className="partners-title">Our Partners</h3>
+                    <h3 className="partners-title">{translations.partners}</h3>
                     <div className="partners-container">
-                        <div className="partner-logo"><i className="fas fa-building"></i> Company A</div>
-                        <div className="partner-logo"><i className="fas fa-university"></i> University B</div>
-                        <div className="partner-logo"><i className="fas fa-globe"></i> Organization C</div>
-                        <div className="partner-logo"><i className="fas fa-school"></i> School D</div>
-                        <div className="partner-logo"><i className="fas fa-landmark"></i> Research Institute E</div>
+                        <div className="partner-logo"><i className="fas fa-building"></i> {translations.companyA}</div>
+                        <div className="partner-logo"><i className="fas fa-university"></i> {translations.universityB}</div>
+                        <div className="partner-logo"><i className="fas fa-globe"></i> {translations.organizationC}</div>
+                        <div className="partner-logo"><i className="fas fa-school"></i> {translations.schoolD}</div>
+                        <div className="partner-logo"><i className="fas fa-landmark"></i> {translations.researchInstituteE}</div>
                     </div>
                 </section>
                 
@@ -429,7 +523,7 @@ function HomePage() {
                                     <i className="fas fa-user-plus"></i>
                                 </div>
                             </div>
-                            <span className="cta-users-count">+2,500 people registered this month</span>
+                            <span className="cta-users-count">{translations.registeredThisMonth}</span>
                         </div>
                         <i className="fas fa-book cta-decoration bottom-right"></i>
                     </div>
@@ -437,15 +531,15 @@ function HomePage() {
                     <div className="cta-badges">
                         <div className="cta-badge-item">
                             <i className="fas fa-star"></i>
-                            <span className="cta-badge-text">Effective Learning</span>
+                            <span className="cta-badge-text">{translations.effectiveLearning}</span>
                         </div>
                         <div className="cta-badge-item">
                             <i className="fas fa-shield-alt"></i>
-                            <span className="cta-badge-text">Safe & Secure</span>
+                            <span className="cta-badge-text">{translations.safeSecure}</span>
                         </div>
                         <div className="cta-badge-item">
                             <i className="fas fa-bolt"></i>
-                            <span className="cta-badge-text">Accelerate Learning</span>
+                            <span className="cta-badge-text">{translations.accelerateLearning}</span>
                         </div>
                     </div>
                 </section>

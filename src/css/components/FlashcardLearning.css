@@ -198,12 +198,13 @@
 }
 
 .flashcard-front {
-    background-color: white;
+    background: linear-gradient(135deg, #2c3e50, #34495e); 
+    color: white;
     z-index: 2;
 }
 
 .flashcard-back {
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     transform: rotateY(180deg);
 }
 
@@ -213,40 +214,71 @@
 
 .term {
     font-size: 28px;
-    color: #333;
+    color: #ffffff;
     margin-bottom: 20px;
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .definition {
     font-size: 22px;
     color: #333;
     margin-bottom: 20px;
+    font-weight: 600;
+    background-color: rgba(46, 204, 113, 0.15);
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-block;
+    border: 1px solid rgba(46, 204, 113, 0.4);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .card-hint {
-    color: #999;
+    color: rgba(255, 255, 255, 1);
     font-size: 14px;
     margin-top: 20px;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: 500;
+}
+
+.card-hint-back {
+    color: #333;
+    background-color: rgba(0, 0, 0, 0.1);
+    margin-top: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    font-weight: 500;
 }
 
 .example {
     margin-top: 20px;
     padding: 15px;
-    background-color: #f0f9f6;
+    background-color: rgba(52, 152, 219, 0.15);
     border-radius: 8px;
     text-align: left;
+    border: 1px solid rgba(52, 152, 219, 0.4);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .example strong {
-    color: #16a085;
+    color: #2980b9;
     display: block;
     margin-bottom: 5px;
+    font-weight: 600;
 }
 
 .example p {
     margin: 0;
     font-style: italic;
-    color: #555;
+    color: #333;
 }
 
 /* Card Navigation */
@@ -495,4 +527,105 @@
     .guest-user-banner i {
         margin-bottom: 0.5rem;
     }
+}
+
+/* Animation cho thông báo hài hước */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.funny-message {
+    margin-top: 20px;
+    padding: 15px 20px;
+    background-color: rgba(66, 133, 244, 0.1);
+    border-radius: 10px;
+    text-align: center;
+    border-left: 4px solid #4285f4;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    animation: bounce 1s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.funny-message i {
+    margin-right: 10px;
+    color: #4285f4;
+    font-size: 1.2em;
+}
+
+.funny-message.perfect {
+    background-color: rgba(46, 204, 113, 0.1);
+    border-left-color: #2ecc71;
+}
+
+.funny-message.perfect i {
+    color: #2ecc71;
+}
+
+.funny-message.bad {
+    background-color: rgba(231, 76, 60, 0.1);
+    border-left-color: #e74c3c;
+}
+
+.funny-message.bad i {
+    color: #e74c3c;
+}
+
+/* Tùy chỉnh toast message */
+.Toastify__toast {
+    font-family: 'Roboto', sans-serif;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.Toastify__toast--success {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.Toastify__toast--error {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.Toastify__toast--info {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.Toastify__toast--warning {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.Toastify__toast-body {
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+}
+
+.Toastify__progress-bar {
+    height: 4px;
+}
+
+.Toastify__close-button {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.Toastify__close-button:hover {
+    color: white;
 } 

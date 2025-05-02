@@ -230,9 +230,98 @@ function MultipleChoiceTestDetailPage() {
         setScore(finalScore);
         setShowResults(true);
         
+        // Hiển thị thông báo hài hước sau khi hoàn thành
+        const funnyCompletionMessage = getFunnyCompletionMessage(finalScore);
+        
+        // Thêm hiệu ứng đặc biệt cho trường hợp 0 điểm
+        if (finalScore === 0) {
+            toast.error("😱 Ồ KHÔNG! 0 ĐIỂM!!! Bạn có đọc bài không vậy???", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                icon: "🤯"
+            });
+            
+            // Thêm một thông báo nữa sau 1.5 giây
+            setTimeout(() => {
+                toast.info("Lần sau nhớ đọc kỹ bài trước khi làm nhé! 📚👀", {
+                    position: "top-center",
+                    autoClose: 4000,
+                    icon: "🧐"
+                });
+            }, 1500);
+        } else {
+            toast.success(funnyCompletionMessage, {
+                position: "top-center",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
+        
         // Không cần gọi RecordCompletion vì API này không tồn tại
         // Chỉ giữ lại logs để theo dõi
         console.log('Test completed with score:', finalScore);
+    };
+
+    // Hàm trả về thông báo toast hài hước khi hoàn thành
+    const getFunnyCompletionMessage = (score) => {
+        if (score === 100) {
+            return "🏆 Xuất sắc quá! Dễ òm luôn, đúng không nào?";
+        } else if (score >= 80) {
+            return "🎯 Bao nhiêu câu đúng rồi đó! Quá đỉnh luôn!";
+        } else if (score >= 60) {
+            return "👊 Làm tốt lắm! Tiếp tục phát huy nào!";
+        } else if (score >= 40) {
+            return "💪 Bạn sẽ làm tốt hơn lần sau thôi!";
+        } else if (score > 0) {
+            return "🧠 Lần sau ngồi thẳng lưng đọc kỹ hơn nha!";
+        } else {
+            return "🤣 Ồ! 0 điểm luôn hả? Thử cố gắng đọc bài một chút xem nào!";
+        }
+    };
+
+    // Hàm trả về thông báo hài hước dựa vào điểm số
+    const getFunnyMessage = (score) => {
+        if (score === 100) {
+            return "Vi diệu ghê! Não bạn nhìn cái hiểu liền! 🧠🌟";
+        } else if (score >= 90) {
+            return "Bá đạo thiệt! Còn xíu nữa là perfect! 💪✨";
+        } else if (score >= 80) {
+            return "Ghê ghê! Thông minh dễ sợ! 😎🔥";
+        } else if (score >= 70) {
+            return "Đỉnh đấy! Tự hào về bạn đó! 👏";
+        } else if (score >= 60) {
+            return "Cũng ổn áp rồi đó bạn ơi! 👍";
+        } else if (score >= 50) {
+            return "Có cố gắng đó, cần luyện thêm nha! 🌱";
+        } else if (score >= 30) {
+            return "Ông già, bạn đọc hay ngủ gật vậy? 😴";
+        } else if (score > 0) {
+            return "Ui, não bị nghỉ phép à? Đọc lại nè! 🤯";
+        } else {
+            return "Bạn có thực sự làm bài không đấy? Ngày mai làm lại đi!!! 😂";
+        }
+    };
+
+    // Hàm trả về class CSS dựa vào điểm số
+    const getMessageColorClass = (score) => {
+        if (score >= 80) {
+            return "excellent";
+        } else if (score >= 60) {
+            return "good";
+        } else if (score >= 40) {
+            return "average";
+        } else if (score > 0) {
+            return "poor";
+        } else {
+            return "zero-score";
+        }
     };
 
     const resetTest = () => {
@@ -244,6 +333,29 @@ function MultipleChoiceTestDetailPage() {
         setUserAnswers(initialAnswers);
         setSelectedQuestion(0);
         setShowResults(false);
+        
+        // Hiển thị thông báo hài hước khi làm lại bài
+        if (score === 0) {
+            toast.info("OK! Làm lại đi, lần này nhớ đọc bài đàng hoàng nhé! 👊", {
+                position: "top-center",
+                autoClose: 3000,
+                icon: "🔄"
+            });
+            
+            // Thêm thông báo sau 1 giây
+            setTimeout(() => {
+                toast.success("Tin bạn lần này làm tốt hơn! Cố lên! 💯", {
+                    position: "top-center", 
+                    autoClose: 2500,
+                    icon: "👍"
+                });
+            }, 1200);
+        } else {
+            toast.info("Sẵn sàng chinh phục điểm cao hơn nhé! Lần này phải tập trung! 🧠💪", {
+                position: "top-center",
+                autoClose: 3000
+            });
+        }
         
         // Record the reset action in learning stats if authenticated
         if (isAuthenticated) {
@@ -403,7 +515,8 @@ function MultipleChoiceTestDetailPage() {
                             <div className={`score-circle ${
                                 score >= 80 ? 'excellent' :
                                 score >= 60 ? 'good' :
-                                score >= 40 ? 'average' : 'poor'
+                                score >= 40 ? 'average' : 
+                                score > 0 ? 'poor' : 'zero-score'
                             }`}>
                                 <span className="score-number">{score}%</span>
                             </div>
@@ -411,6 +524,39 @@ function MultipleChoiceTestDetailPage() {
                                 You answered {testData.questions.filter(q => userAnswers[q.questionId] === q.correctAnswer).length} 
                                 out of {testData.questions.length} questions correctly.
                             </p>
+                            
+                            {score === 100 && (
+                                <div className="perfect-score-celebration">
+                                    <div className="celebration-icons">
+                                        <span>🏆</span>
+                                        <span>🧠</span>
+                                        <span>✨</span>
+                                        <span>🎯</span>
+                                        <span>🔥</span>
+                                    </div>
+                                    <h3>PERFECT SCORE!!!</h3>
+                                    <p>Quá đỉnh! Bạn thật sự là thiên tài đấy!</p>
+                                </div>
+                            )}
+                            
+                            {score === 0 && (
+                                <div className="zero-score-celebration">
+                                    <div className="celebration-icons">
+                                        <span>🤡</span>
+                                        <span>😴</span>
+                                        <span>🫠</span>
+                                        <span>🥴</span>
+                                        <span>💤</span>
+                                    </div>
+                                    <h3>0 ĐIỂM RỒI KÌA!!!</h3>
+                                    <p>Ôi bạn ơi! Não đang mắc kẹt ở đâu đó rồi!!!</p>
+                                </div>
+                            )}
+                            
+                            <div className={`funny-message ${getMessageColorClass(score)}`}>
+                                <i className="fas fa-laugh-beam"></i>
+                                {getFunnyMessage(score)}
+                            </div>
                         </div>
 
                         <div className="results-details">
@@ -452,13 +598,13 @@ function MultipleChoiceTestDetailPage() {
                                 className="reset-test-btn"
                                 onClick={resetTest}
                             >
-                                <FaRedo /> {translateText('Try Again')}
+                                <FaRedo /> {translateText('Làm lại thử xem 💪')}
                             </button>
                             <Link 
                                 to={isPublicRoute ? "/readings/tests/explore" : "/readings"}
                                 className="back-to-readings-btn"
                             >
-                                <FaArrowLeft /> {isPublicRoute ? translateText('Back to Explore') : translateText('Back to Reading Tests')}
+                                <FaArrowLeft /> {isPublicRoute ? translateText('Quay lại khám phá') : translateText('Quay lại Reading Tests')}
                             </Link>
                         </div>
                     </div>

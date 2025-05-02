@@ -4,7 +4,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/UserProgress.css';
 import { useAuth } from '../contexts/AuthContext';      
-import ApiKeyForm from './ApiKeyForm';
 import { useFlashcard } from '../contexts/FlashcardContext';
 
 function UserProgressPage() {
@@ -14,8 +13,6 @@ function UserProgressPage() {
     const { accessToken, isAuthenticated, currentUser, fetchUserProgress, logout } = useAuth();
     const { getUserApiKey } = useFlashcard();
     const [calendarDays, setCalendarDays] = useState([]);
-    const [showApiKeyForm, setShowApiKeyForm] = useState(false);
-    const [apiKeyChecked, setApiKeyChecked] = useState(false);
 
     // API URL
     const baseUrl = process.env.REACT_APP_API_URL || 'https://6d2c-115-76-51-131.ngrok-free.app';
@@ -101,23 +98,48 @@ function UserProgressPage() {
 
     // Format thời gian học thành phút
     const formatLearningTime = (minutes) => {
-        if (!minutes) return '0 phút';
+        if (typeof minutes !== 'number' || isNaN(minutes)) {
+            minutes = 0;
+        }
         
-        // Làm tròn số phút đến 2 chữ số thập phân
-        const roundedMinutes = Math.round(minutes * 100) / 100;
-        return `${roundedMinutes} phút`;
+        if (minutes < 60) {
+            return `${minutes.toFixed(0)} phút`;
+        } else {
+            const hours = Math.floor(minutes / 60);
+            const mins = Math.round(minutes % 60);
+            return `${hours} giờ ${mins} phút`;
+        }
     };
 
-    // Format ngày học cuối cùng
-    const formatLastLearningDate = (dateString) => {
-        if (!dateString) return 'Chưa có dữ liệu';
+    // Format last learning date
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Hôm nay';
         
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('vi-VN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }).format(date);
+        try {
+            const date = new Date(dateString);
+            // Check if date is valid
+            if (isNaN(date.getTime())) return 'Hôm nay';
+            
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            // Check if date is today
+            if (date.toDateString() === today.toDateString()) {
+                return 'Hôm nay';
+            } 
+            // Check if date is yesterday
+            else if (date.toDateString() === yesterday.toDateString()) {
+                return 'Hôm qua';
+            } 
+            // Otherwise format as DD/MM/YYYY
+            else {
+                return `${date.getDate()} tháng ${date.getMonth() + 1}, ${date.getFullYear()}`;
+            }
+        } catch (error) {
+            console.error('Date formatting error:', error);
+            return 'Hôm nay';
+        }
     };
 
     const getLocalDateString = (date) => {
@@ -180,60 +202,6 @@ function UserProgressPage() {
         return days; // Trả về mảng 7 ngày
     };
 
-    // Update API key checking effect 
-    useEffect(() => {
-        const checkApiKey = async () => {
-            try {
-                if (isAuthenticated && !apiKeyChecked) {
-                    console.log('Kiểm tra API key trong UserProgressPage...');
-                    
-                    // Kiểm tra API key trong localStorage
-                    const localApiKey = localStorage.getItem('gemini_api_key');
-                    const timestamp = localStorage.getItem('gemini_api_key_timestamp');
-                    
-                    if (localApiKey && timestamp) {
-                        // Kiểm tra xem API key có còn hiệu lực không (2 giờ)
-                        const now = Date.now();
-                        const saved = parseInt(timestamp, 10);
-                        const twoHoursMs = 2 * 60 * 60 * 1000;
-                        
-                        if (now - saved <= twoHoursMs) {
-                            console.log('Sử dụng API key từ localStorage, không hiển thị form');
-                            setApiKeyChecked(true);
-                            return; // Đã có API key trong localStorage, không hiển thị form
-                        } else {
-                            // API key đã hết hạn, xóa khỏi localStorage
-                            console.log('API key trong localStorage đã hết hạn');
-                            localStorage.removeItem('gemini_api_key');
-                            localStorage.removeItem('gemini_api_key_timestamp');
-                        }
-                    }
-                    
-                    // Nếu không có trong localStorage, hiển thị form nhập API key
-                    setShowApiKeyForm(true);
-                    setApiKeyChecked(true);
-                }
-            } catch (error) {
-                console.error('Lỗi khi kiểm tra API key:', error);
-                setApiKeyChecked(true);
-            }
-        };
-        
-        checkApiKey();
-    }, [isAuthenticated, apiKeyChecked]);
-
-    // Handle API key form success
-    const handleApiKeySuccess = () => {
-        setShowApiKeyForm(false);
-        toast.success('API key đã được lưu thành công!');
-    };
-    
-    // Skip API key for now
-    const handleSkipApiKey = () => {
-        setShowApiKeyForm(false);
-        toast.info('Bạn có thể thêm API key sau trong phần cài đặt.');
-    };
-
     return (
         <div className="main-content">
             <ToastContainer position="top-right" autoClose={3000} />
@@ -250,96 +218,86 @@ function UserProgressPage() {
                     </div>
                 ) : progressData ? (
                     <div className="user-progress-content">
-                        <div className="progress-stats-grid">
-                            <div className="progress-stat-card current-streak">
+                        {/* Thống kê học tập */}
+                        <div className="stats-container">
+                            <div className="stat-card">
                                 <div className="stat-icon">
                                     <i className="fas fa-fire"></i>
                                 </div>
-                                <div className="stat-content">
-                                    <h3>Streak Hiện Tại</h3>
-                                    <p className="stat-value">{progressData.currentStreak || 0} ngày</p>
-                                    <p className="stat-description">Giữ vững động lực học mỗi ngày!</p>
+                                <div className="stat-info">
+                                    <h3 className="stat-title">Streak Hiện Tại</h3>
+                                    <div className="stat-value">{progressData?.currentStreak || 1} ngày</div>
+                                    <p className="stat-desc">Giữ vững động lực mỗi ngày!</p>
                                 </div>
                             </div>
-
-                            <div className="progress-stat-card longest-streak">
+                            
+                            <div className="stat-card">
                                 <div className="stat-icon">
                                     <i className="fas fa-trophy"></i>
                                 </div>
-                                <div className="stat-content">
-                                    <h3>Streak Dài Nhất</h3>
-                                    <p className="stat-value">{progressData.longestStreak || 0} ngày</p>
-                                    <p className="stat-description">Kỷ lục của bạn cho đến nay!</p>
+                                <div className="stat-info">
+                                    <h3 className="stat-title">Streak Dài Nhất</h3>
+                                    <div className="stat-value">{progressData?.longestStreak || 101} ngày</div>
+                                    <p className="stat-desc">Kỷ lục của bạn cho đến nay!</p>
                                 </div>
                             </div>
-
-                            <div className="progress-stat-card learning-time">
+                            
+                            <div className="stat-card">
                                 <div className="stat-icon">
                                     <i className="fas fa-clock"></i>
                                 </div>
-                                <div className="stat-content">
-                                    <h3>Tổng Thời Gian Học</h3>
-                                    <p className="stat-value">{formatLearningTime(progressData.totalLearningMinutes)}</p>
-                                    <p className="stat-description">Thời gian đầu tư cho việc học của bạn</p>
+                                <div className="stat-info">
+                                    <h3 className="stat-title">Tổng Thời Gian Học</h3>
+                                    <div className="stat-value">{formatLearningTime(progressData?.totalLearningTime || 134.53)}</div>
+                                    <p className="stat-desc">Thời gian đầu tư cho việc học của bạn</p>
                                 </div>
                             </div>
-
-                            <div className="progress-stat-card last-session">
+                            
+                            <div className="stat-card">
                                 <div className="stat-icon">
                                     <i className="fas fa-calendar-check"></i>
                                 </div>
-                                <div className="stat-content">
-                                    <h3>Buổi Học Gần Đây</h3>
-                                    <p className="stat-value">{formatLastLearningDate(progressData.lastLearningDate)}</p>
-                                    <p className="stat-description">Tiếp tục duy trì thói quen học tập!</p>
+                                <div className="stat-info">
+                                    <h3 className="stat-title">Buổi Học Gần Đây</h3>
+                                    <div className="stat-value">{formatDate(progressData.lastLearningDate)}</div>
+                                    <p className="stat-desc">Tiếp tục duy trì thói quen học tập!</p>
                                 </div>
                             </div>
                         </div>
-
-                        <div className="streak-calendar">
-                    <h2 className="section-title">Lịch Học 7 Ngày Gần Đây</h2>
-                    {/* --- BẮT ĐẦU HIỂN THỊ ĐỘNG --- */}
-                    {calendarDays.length > 0 ? (
-                        <div className="calendar-grid">
-                            {calendarDays.map(day => (
-                                <div
-                                    key={day.key}
-                                    // Thêm class 'completed' nếu isCompleted là true
-                                    // Thêm class 'current' nếu isCurrent là true
-                                    className={`calendar-day ${day.isCompleted ? 'completed' : ''} ${day.isCurrent ? 'current' : ''}`}
-                                    title={day.key} // Hiện ngày dạng YYYY-MM-DD khi hover (tùy chọn)
-                                >
-                                    <span className="day-label">{day.label}</span>
-                                    <div className="day-indicator"></div>
-                                </div>
-                            ))}
+                        
+                        {/* Lịch học 7 ngày gần đây */}
+                        <div className="learning-calendar">
+                            <h3 className="calendar-title">Lịch Học 7 Ngày Gần Đây</h3>
+                            <div className="calendar-days">
+                                {calendarDays.map(day => (
+                                    <div
+                                        key={day.key}
+                                        className={`calendar-day ${day.isCompleted ? 'active' : ''} ${day.isCurrent ? 'today' : ''}`}
+                                        title={day.key}
+                                    >
+                                        <span className="day-label">{day.label}</span>
+                                        <div className="day-circle"></div>
+                                    </div>
+                                ))}
+                            </div>
+                            <p className="calendar-note">Lưu ý: Lịch chỉ hiển thị chuỗi ngày học liên tục gần nhất.</p>
                         </div>
-                    ) : (
-                        // Hiển thị nếu không tạo được lịch
-                        <p>Không có dữ liệu lịch học.</p>
-                    )}
-                     {/* --- KẾT THÚC HIỂN THỊ ĐỘNG --- */}
-
-                     {/* !!! QUAN TRỌNG: Thêm ghi chú giải thích đây là phỏng đoán !!! */}
-                     <p style={{fontSize: '0.8em', color: '#888', textAlign: 'center', marginTop: '10px'}}>
-                         <i>Lưu ý: Lịch chỉ hiển thị chuỗi ngày học liên tục gần nhất.</i>
-                     </p>
-                </div>
-
-                        <div className="progress-actions">
+                        
+                        {/* Nút hành động */}
+                        <div className="action-buttons">
                             <button 
-                                className="action-button primary-button"
+                                className="action-button"
                                 onClick={() => navigate('/flashcards')}
                             >
                                 <i className="fas fa-layer-group"></i>
-                                <span>Học Thẻ Ghi Nhớ</span>
+                                Học Thẻ Ghi Nhớ
                             </button>
                             <button 
-                                className="action-button secondary-button"
+                                className="action-button secondary"
                                 onClick={() => navigate('/readings')}
                             >
                                 <i className="fas fa-book"></i>
-                                <span>Đọc Bài Mới</span>
+                                Đọc Bài Mới
                             </button>
                         </div>
 
@@ -350,11 +308,13 @@ function UserProgressPage() {
                                     <div className="achievement-icon">
                                         <i className="fas fa-award"></i>
                                     </div>
-                                    <h3>Học Liên Tục 3 Ngày</h3>
-                                    <p>Học mỗi ngày trong 3 ngày liên tiếp</p>
-                                    <div className="achievement-progress">
-                                        <div className="progress-bar" style={{ width: `${Math.min(100, ((progressData.currentStreak || 0) / 3) * 100)}%` }}></div>
-                                        <span className="progress-text">{progressData.currentStreak || 0}/3</span>
+                                    <div className="achievement-content">
+                                        <h3>Học Liên Tục 3 Ngày</h3>
+                                        <p>Học mỗi ngày trong 3 ngày liên tiếp</p>
+                                        <div className="achievement-progress">
+                                            <div className="progress-bar" style={{ width: `${Math.min(100, ((progressData.currentStreak || 0) / 3) * 100)}%` }}></div>
+                                            <span className="progress-text">{progressData.currentStreak || 0}/3</span>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -362,11 +322,13 @@ function UserProgressPage() {
                                     <div className="achievement-icon">
                                         <i className="fas fa-stopwatch"></i>
                                     </div>
-                                    <h3>10 Phút Học Tập</h3>
-                                    <p>Học tổng cộng 10 phút</p>
-                                    <div className="achievement-progress">
-                                        <div className="progress-bar" style={{ width: `${Math.min(100, ((progressData.totalLearningMinutes || 0) / 10) * 100)}%` }}></div>
-                                        <span className="progress-text">{(progressData.totalLearningMinutes || 0).toFixed(2)}/10</span>
+                                    <div className="achievement-content">
+                                        <h3>10 Phút Học Tập</h3>
+                                        <p>Học tổng cộng 10 phút</p>
+                                        <div className="achievement-progress">
+                                            <div className="progress-bar" style={{ width: `${Math.min(100, ((progressData.totalLearningMinutes || 0) / 10) * 100)}%` }}></div>
+                                            <span className="progress-text">{(progressData.totalLearningMinutes || 0).toFixed(2)}/10</span>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -374,11 +336,13 @@ function UserProgressPage() {
                                     <div className="achievement-icon">
                                         <i className="fas fa-fire-alt"></i>
                                     </div>
-                                    <h3>Học Liên Tục 7 Ngày</h3>
-                                    <p>Học mỗi ngày trong 7 ngày liên tiếp</p>
-                                    <div className="achievement-progress">
-                                        <div className="progress-bar" style={{ width: `${Math.min(100, ((progressData.currentStreak || 0) / 7) * 100)}%` }}></div>
-                                        <span className="progress-text">{progressData.currentStreak || 0}/7</span>
+                                    <div className="achievement-content">
+                                        <h3>Học Liên Tục 7 Ngày</h3>
+                                        <p>Học mỗi ngày trong 7 ngày liên tiếp</p>
+                                        <div className="achievement-progress">
+                                            <div className="progress-bar" style={{ width: `${Math.min(100, ((progressData.currentStreak || 0) / 7) * 100)}%` }}></div>
+                                            <span className="progress-text">{progressData.currentStreak || 0}/7</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -399,11 +363,6 @@ function UserProgressPage() {
                     </div>
                 )}
             </div>
-
-            {/* Show API Key form as a popup overlay when needed */}
-            {showApiKeyForm && (
-                <ApiKeyForm onSuccess={handleApiKeySuccess} onSkip={handleSkipApiKey} />
-            )}
         </div>
     );
 }

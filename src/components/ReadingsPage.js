@@ -63,6 +63,67 @@ function ReadingsPage() {
         levelDifficulty: 'Difficulty Level'
     });
 
+    // Update translations when language changes
+    useEffect(() => {
+        if (currentLanguage === 'vi') {
+            setTranslations({
+                pageTitle: 'Bài Kiểm Tra Đọc Của Tôi',
+                createButton: 'Tạo Bài Kiểm Tra Mới',
+                generateButton: 'Tạo Bằng AI',
+                filterByLanguage: 'Lọc Theo Ngôn Ngữ:',
+                allLanguages: 'Tất cả ngôn ngữ',
+                noTestsFound: 'Không tìm thấy bài kiểm tra đọc nào.',
+                createFirstTest: 'Tạo bài kiểm tra đầu tiên của bạn',
+                generatingText: 'Đang tạo...',
+                topicPlaceholder: 'Nhập chủ đề (tùy chọn) hoặc để trống để AI chọn chủ đề...',
+                errorEmptyTopic: 'Vui lòng nhập chủ đề để AI tạo!',
+                generatingMsg: '🤖 AI đang tạo nội dung bài kiểm tra của bạn...',
+                successMsg: '✨ Nội dung bài kiểm tra đã được tạo thành công!',
+                takeTest: 'Làm Bài Kiểm Tra',
+                edit: 'Chỉnh Sửa',
+                generateTestsWithAI: 'Tạo Bài Kiểm Tra với AI',
+                beginner: 'Sơ Cấp',
+                intermediate: 'Trung Cấp',
+                advanced: 'Cao Cấp',
+                lessons: 'Bài Học',
+                students: 'Học Viên',
+                aiDescription: 'Nhập chủ đề (tùy chọn) hoặc để trống để AI chọn một chủ đề. Chọn các tùy chọn bên dưới để tùy chỉnh bài kiểm tra đọc của bạn. AI sẽ tự động tạo đoạn văn và câu hỏi trắc nghiệm. Ví dụ chủ đề: "Biến Đổi Khí Hậu", "Khám Phá Không Gian", "Văn Hóa Việt Nam"...',
+                aiHelperText: 'Tạo bài kiểm tra bằng AI yêu cầu khóa API Google Gemini. Nếu bạn chưa có, hệ thống sẽ hướng dẫn bạn thêm vào.',
+                learningLanguage: 'Ngôn Ngữ Học',
+                nativeLanguage: 'Ngôn Ngữ Bản Địa',
+                levelDifficulty: 'Cấp Độ Khó'
+            });
+        } else {
+            setTranslations({
+                pageTitle: 'My Reading Tests',
+                createButton: 'Create New Test',
+                generateButton: 'Generate with AI',
+                filterByLanguage: 'Filter by Language:',
+                allLanguages: 'All languages',
+                noTestsFound: 'No reading tests found.',
+                createFirstTest: 'Create your first test',
+                generatingText: 'Generating...',
+                topicPlaceholder: 'Enter a topic (optional) or leave blank for AI to choose a topic...',
+                errorEmptyTopic: 'Please enter a topic for AI generation!',
+                generatingMsg: '🤖 AI is generating your test content...',
+                successMsg: '✨ Test content generated successfully!',
+                takeTest: 'Take Test',
+                edit: 'Edit',
+                generateTestsWithAI: 'Generate Tests with AI',
+                beginner: 'Beginner',
+                intermediate: 'Intermediate',
+                advanced: 'Advanced',
+                lessons: 'Lessons',
+                students: 'Students',
+                aiDescription: 'Enter a topic (optional) or leave blank for AI to choose one. Select options below to customize your reading test. AI will automatically generate a reading passage and multiple-choice questions. Example topics: "Climate Change", "Space Exploration", "Vietnamese Culture"...',
+                aiHelperText: 'AI test generation requires a Google Gemini API key. If you don\'t have one yet, the system will guide you to add it.',
+                learningLanguage: 'Learning Language',
+                nativeLanguage: 'Native Language',
+                levelDifficulty: 'Difficulty Level'
+            });
+        }
+    }, [currentLanguage]);
+
     const levelOptions = [
         { value: 1, label: 'Level 1 - Beginner' },
         { value: 2, label: 'Level 2 - Elementary' },

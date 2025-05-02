@@ -280,7 +280,20 @@ function FlashcardLearningPage() {
             setIsFlipped(false);
         } else {
             // End of deck, show completion
-            toast.success('You completed all flashcards!');
+            const accuracy = stats.totalViewed === 0 ? 0 : Math.round((stats.correctCount / stats.totalViewed) * 100);
+            let completionMessage;
+            
+            if (accuracy === 100) {
+                completionMessage = "Hay dữ dị bà thơ! Bạn thuộc hết rồi! 🏆";
+            } else if (accuracy >= 80) {
+                completionMessage = "Quá xịn luôn! Học tốt đấy! 🌟";
+            } else if (accuracy >= 50) {
+                completionMessage = "Cố lên nè! Sắp hoàn hảo rồi! 💪";
+            } else {
+                completionMessage = "Cố gắng nhiều hơn nha! Não cần tập luyện thêm! 🧠";
+            }
+            
+            toast.success(`Bạn đã hoàn thành bộ flashcards! ${completionMessage}`);
         }
     };
     
@@ -326,6 +339,39 @@ function FlashcardLearningPage() {
     const getProgressPercentage = () => {
         if (flashcards.length === 0) return 0;
         return (learnedCards.length / flashcards.length) * 100;
+    };
+    
+    // Hàm trả về thông báo hài hước dựa vào độ chính xác
+    const getFunnyMessage = () => {
+        const accuracy = stats.totalViewed === 0 ? 0 : Math.round((stats.correctCount / stats.totalViewed) * 100);
+        
+        if (accuracy === 100 && stats.totalViewed === flashcards.length) {
+            return "Hay dữ dị bà thơ! Chấm 10 điểm cho não của bạn! 🧠✨";
+        } else if (accuracy >= 90) {
+            return "Quá xịn luôn! Não bạn đang on-fire kìa! 🔥🧠";
+        } else if (accuracy >= 80) {
+            return "Ủa trời! Giỏi quá trời quá đất! 😎👏";
+        } else if (accuracy >= 70) {
+            return "Có não hay lắm nè! Tiếp tục phát huy nhé! 💪😊";
+        } else if (accuracy >= 50) {
+            return "Cũng được lắm đó! Não vẫn còn tỉnh táo chán! 👌😄";
+        } else if (accuracy > 0) {
+            return "Chưa hít đủ oxy cho não hay sao đó? Thử lại nè! 😜";
+        } else {
+            return "Não đang offline à? Bấm nút reset não cái! 🤪🔄";
+        }
+    };
+    
+    // Hàm trả về class CSS dựa vào độ chính xác
+    const getMessageClass = () => {
+        const accuracy = stats.totalViewed === 0 ? 0 : Math.round((stats.correctCount / stats.totalViewed) * 100);
+        
+        if (accuracy >= 80) {
+            return "perfect"; // Độ chính xác cao
+        } else if (accuracy < 50) {
+            return "bad"; // Độ chính xác thấp
+        }
+        return ""; // Class mặc định
     };
 
     return (
@@ -436,10 +482,26 @@ function FlashcardLearningPage() {
                                         }}
                                     >
                                         <div className="card-content">
-                                            <h2 className="term">{flashcards[currentCardIndex]?.term}</h2>
-                                            <p className="card-hint">Click to reveal definition</p>
+                                            <h2 className="term" style={{
+                                                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                                                padding: '10px 20px',
+                                                borderRadius: '8px',
+                                                color: '#ffffff',
+                                                textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
+                                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+                                            }}>{flashcards[currentCardIndex]?.term}</h2>
+                                            <p className="card-hint" style={{
+                                                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                                                padding: '5px 10px',
+                                                borderRadius: '5px',
+                                                color: '#ffffff',
+                                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                                fontWeight: '500'
+                                            }}>Click to reveal definition</p>
                                         </div>
                                     </div>
+                                    
                                     <div 
                                         className="flashcard-back"
                                         onClick={() => {
@@ -447,14 +509,39 @@ function FlashcardLearningPage() {
                                         }}
                                     >
                                         <div className="card-content">
-                                            <h3 className="definition">{flashcards[currentCardIndex]?.definition}</h3>
+                                            <h3 className="definition" style={{
+                                                backgroundColor: 'rgba(46, 204, 113, 0.15)',
+                                                padding: '10px 20px',
+                                                borderRadius: '8px',
+                                                color: '#333',
+                                                display: 'inline-block',
+                                                fontWeight: '600',
+                                                border: '1px solid rgba(46, 204, 113, 0.4)',
+                                                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
+                                            }}>{flashcards[currentCardIndex]?.definition}</h3>
                                             
                                             {flashcards[currentCardIndex]?.example && (
-                                                <div className="example">
-                                                    <strong>Example:</strong>
-                                                    <p>{flashcards[currentCardIndex]?.example}</p>
+                                                <div className="example" style={{
+                                                    backgroundColor: 'rgba(52, 152, 219, 0.15)',
+                                                    padding: '15px',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid rgba(52, 152, 219, 0.4)',
+                                                    marginTop: '20px',
+                                                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
+                                                }}>
+                                                    <strong style={{ color: '#2980b9', fontWeight: '600' }}>Example:</strong>
+                                                    <p style={{ color: '#333', fontStyle: 'italic' }}>{flashcards[currentCardIndex]?.example}</p>
                                                 </div>
                                             )}
+                                            <p className="card-hint card-hint-back" style={{
+                                                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                                                padding: '5px 10px',
+                                                borderRadius: '5px',
+                                                color: '#333',
+                                                marginTop: '15px',
+                                                border: '1px solid rgba(0, 0, 0, 0.15)',
+                                                fontWeight: '500'
+                                            }}>Click to flip back</p>
                                         </div>
                                     </div>
                                 </div>
@@ -545,6 +632,14 @@ function FlashcardLearningPage() {
                                     </div>
                                 </div>
                             </div>
+                            
+                            {/* Hiển thị thông báo hài hước dựa trên kết quả */}
+                            {stats.totalViewed > 0 && (
+                                <div className={`funny-message ${getMessageClass()}`}>
+                                    <i className="fas fa-laugh-beam"></i>
+                                    {getFunnyMessage()}
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="no-cards-message">

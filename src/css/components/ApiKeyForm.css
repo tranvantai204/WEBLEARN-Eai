@@ -1,16 +1,8 @@
 .api-key-form-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(3px);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
-  z-index: 1000;
+  width: 100%;
   animation: fadeIn 0.3s ease;
 }
 
@@ -20,7 +12,7 @@
 }
 
 .api-key-form-card {
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.99);
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
   padding: 2rem;
@@ -74,7 +66,7 @@
 }
 
 .api-key-form {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
 
 .form-group {
@@ -101,7 +93,7 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   transition: all 0.3s ease;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: white;
 }
 
 .form-input:focus {
@@ -122,6 +114,7 @@
   cursor: pointer;
   font-size: 1rem;
   padding: 0.25rem;
+  z-index: 2;
 }
 
 .toggle-visibility-btn:hover {
@@ -131,7 +124,7 @@
 .form-text {
   display: block;
   margin-top: 0.75rem;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #64748b;
 }
 
@@ -154,7 +147,7 @@
 .form-button {
   padding: 0.75rem 1.25rem;
   border-radius: 8px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -163,7 +156,8 @@
   transition: all 0.2s ease;
   border: none;
   min-width: 120px;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .form-button:disabled {
@@ -182,7 +176,7 @@
 }
 
 .form-button-secondary {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: white;
   color: #64748b;
   border: 1px solid #e2e8f0;
 }
@@ -190,10 +184,11 @@
 .form-button-secondary:hover:not(:disabled) {
   background-color: #f8fafc;
   color: #4b5563;
+  border-color: #cbd5e1;
 }
 
 .form-button i {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .api-key-info {
@@ -240,6 +235,7 @@
   
   .form-actions {
     flex-direction: column-reverse;
+    gap: 0.75rem;
   }
   
   .form-button {

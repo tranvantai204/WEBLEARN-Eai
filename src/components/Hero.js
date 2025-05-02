@@ -1,42 +1,43 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 
-function Hero() {
+function Hero({ badgeText, title, subtitle, primaryButtonText, primaryButtonLink, secondaryButtonText, secondaryButtonLink }) {
+    const { translateText } = useLanguage();
+    
     return (
         <section className="hero bg-gray-50">
-            <div className="container py-12">
-                <div className="hero-content flex flex-col lg:flex-row items-center justify-between gap-10">
+            <div className="container py-10">
+                <div className="hero-content flex flex-col lg:flex-row items-center justify-between gap-8">
                     <div className="hero-text w-full lg:w-1/2 animate-slide-up">
-                        <h1 className="hero-title text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                            Master Languages with <span className="text-primary">Smart Flashcards</span>
+                        <h1 className="hero-title text-4xl md:text-5xl font-bold text-gray-900 mb-3 text-center lg:text-left">
+                            {translateText('Master Languages with')} <span className="text-primary">{translateText('Smart Flashcards')}</span>
                         </h1>
-                        <p className="hero-subtitle text-lg text-gray-700 mb-8 leading-relaxed">
-                            Transform your language learning journey with AI-powered flashcards, 
-                            personalized study plans, and interactive exercises. 
-                            Start learning smarter, not harder.
+                        <p className="hero-subtitle text-lg text-gray-700 mb-6 leading-relaxed text-center lg:text-left">
+                            {translateText('Transform your language learning journey with AI-powered flashcards, personalized study plans, and interactive exercises. Start learning smarter, not harder.')}
                         </p>
-                        <div className="hero-buttons flex flex-wrap gap-4 mb-10">
+                        <div className="hero-buttons flex flex-wrap gap-4 mb-8 justify-center lg:justify-start">
                             <Link to="/register" className="btn btn-primary animate-pop">
-                                <i className="fas fa-rocket"></i>
-                                Start Free Trial
+                                <i className="fas fa-rocket mr-2"></i>
+                                {translateText('Start Free Trial')}
                             </Link>
                             <Link to="/discover" className="btn btn-outline hover-lift">
-                                <i className="fas fa-compass"></i>
-                                Explore Features
+                                <i className="fas fa-compass mr-2"></i>
+                                {translateText('Explore Features')}
                             </Link>
                         </div>
-                        <div className="hero-stats flex flex-wrap justify-start gap-8 py-4">
-                            <div className="stat-item bg-white p-4 rounded-xl shadow-md pop-shadow">
-                                <span className="stat-number text-2xl font-bold text-primary block">10K+</span>
-                                <span className="stat-label text-gray-600">Active Users</span>
+                        <div className="hero-stats">
+                            <div className="stat-item">
+                                <span className="stat-number text-primary">10K+</span>
+                                <span className="stat-label">{translateText('Active Users')}</span>
                             </div>
-                            <div className="stat-item bg-white p-4 rounded-xl shadow-md pop-shadow">
-                                <span className="stat-number text-2xl font-bold text-secondary block">1M+</span>
-                                <span className="stat-label text-gray-600">Flashcards Created</span>
+                            <div className="stat-item">
+                                <span className="stat-number text-secondary">1M+</span>
+                                <span className="stat-label">{translateText('Flashcards Created')}</span>
                             </div>
-                            <div className="stat-item bg-white p-4 rounded-xl shadow-md pop-shadow">
-                                <span className="stat-number text-2xl font-bold text-accent block">95%</span>
-                                <span className="stat-label text-gray-600">Success Rate</span>
+                            <div className="stat-item">
+                                <span className="stat-number text-accent">95%</span>
+                                <span className="stat-label">{translateText('Success Rate')}</span>
                             </div>
                         </div>
                     </div>
