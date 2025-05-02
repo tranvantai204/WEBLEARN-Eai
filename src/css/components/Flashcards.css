@@ -788,6 +788,8 @@
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
 }
 
 .flashcards-container {
@@ -831,6 +833,8 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .set-card:hover {
@@ -1150,7 +1154,7 @@
     grid-template-columns: 1fr 1fr 2fr 0.5fr;
     gap: 1rem;
     padding: 1rem;
-    background-color: #1c1e4e;
+    background-color: #ffb682;
     color: white;
     font-weight: 600;
     border-bottom: 1px solid #e0e0e0;
@@ -1180,7 +1184,7 @@
     align-items: center;
     font-weight: 600;
     color: #333333;
-    background-color: #e0e7ff;
+    background-color: #f7f7f3;
     padding: 12px;
     border-radius: 6px;
     border: 1px solid rgba(79, 70, 229, 0.3);
@@ -1192,7 +1196,7 @@
     align-items: center;
     font-weight: 500;
     color: #333333;
-    background-color: #bae6fd;
+    background-color: #e8f6fd;
     padding: 12px;
     border-radius: 6px;
     border: 1px solid rgba(14, 165, 233, 0.3);
@@ -1207,7 +1211,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    background-color: #e2e8f0;
+    background-color: #e2f0e8;
     padding: 12px;
     border-radius: 6px;
     border: 1px solid rgba(148, 163, 184, 0.4);

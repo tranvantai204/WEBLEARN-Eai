@@ -187,6 +187,13 @@ const allTranslations = {
     // Other languages can be added here as needed
 };
 
+function    scrollToSection() {
+    const section = document.getElementById('visualFeatures');
+    if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
 function HomePage() {
     const { currentLanguage } = useLanguage();
     const { isAuthenticated } = useAuth();
@@ -288,7 +295,7 @@ function HomePage() {
                     <p className="bottom-description">
                         {translations.noActivity}
                     </p>
-                    <Link to="/discover" className="bottom-button">
+                    <Link to="#" className="bottom-button" onClick={() => scrollToSection()}>
                         {translations.discover}
                     </Link>
                 </section>
@@ -301,7 +308,7 @@ function HomePage() {
         return (
             <div className="home-container">
                 {/* Hero Section */}
-                <section className="hero-wrapper">
+                <section className="hero-wrapper pb-3">
                     <Hero 
                         badgeText={translations.heroBadge}
                         title={translations.heroTitle}
@@ -314,7 +321,7 @@ function HomePage() {
                 </section>
                 
                 {/* Animated Stats Banner - Moved to its own section for better spacing */}
-                <section className="stats-section">
+                <section className="stats-section d-flex" id="visualFeatures">
                     <div className="stats-banner">
                         <div className="stat-item">
                             <div className="stat-number-large">200+</div>

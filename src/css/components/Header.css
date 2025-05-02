@@ -14,7 +14,7 @@
 
 .header-container {
     max-width: 1280px;
-    margin: 0 auto;
+    margin: 0 40px;
     padding: 0 1.5rem;
     display: flex;
     align-items: center;
@@ -67,7 +67,7 @@
 .desktop-menu {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     flex: 1;
     margin-left: 2.5rem;
     min-width: 0;
@@ -75,9 +75,9 @@
 }
 
 .main-nav {
-    margin-left: auto;
-    margin-right: 1.5rem;
-    overflow: visible;
+    /* margin-left: auto;*/
+    margin-right: 1.5rem; 
+    margin-right: 0;
 }
 
 .nav-list {
@@ -148,6 +148,7 @@
     align-items: center;
     gap: 1rem;
     white-space: nowrap;
+    margin-left: auto;
 }
 
 .header-login {
@@ -664,6 +665,8 @@ button.header-logout:hover::before {
     
     .header-container {
         justify-content: space-between;
+        margin: 0 0;
+
     }
     
     /* Mobile menu styling */
@@ -871,12 +874,15 @@ button.header-logout:hover::before {
     justify-content: space-between;
     flex: 1;
     margin-left: 2rem;
+    min-width: 0;
+    overflow: visible;
 }
 
 .header-actions {
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    margin-bottom: 10px;
 }
 
 /* Responsive styles */

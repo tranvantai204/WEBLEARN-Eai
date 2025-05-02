@@ -371,7 +371,7 @@
     align-items: center;
     padding: 1rem 1.25rem;
     border-bottom: 1px solid #e0e0e0;
-    background-color: #0c0d36;
+    background-color: #ffffff;
     color: white;
 }
 
@@ -404,7 +404,7 @@
     padding: 0;
     max-height: 70vh;
     overflow-y: auto;
-    background-color: #0c0d36;
+    background-color: #ffffff;
     color: white;
 }
 

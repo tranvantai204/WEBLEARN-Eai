@@ -256,6 +256,7 @@
     margin-bottom: 25px;
     border-bottom: 2px solid #e1e4e8;
     padding-bottom: 15px;
+    gap: 10px;
 }
 
 .test-info-header .header-actions {

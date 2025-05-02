@@ -190,16 +190,17 @@
     height: 100%;
     backface-visibility: hidden;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     padding: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px 0px;
 }
 
 .flashcard-front {
-    background: linear-gradient(135deg, #2c3e50, #34495e); 
-    color: white;
+    background: white; 
+    color: black;
     z-index: 2;
 }
 

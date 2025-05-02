@@ -285,19 +285,27 @@ function UserProgressPage() {
                         
                         {/* Nút hành động */}
                         <div className="action-buttons">
+                            
                             <button 
-                                className="action-button"
+                                className="action-button secondary p-3"
+                                onClick={() => navigate('/readings')}
+                            >
+                                <i className="fas fa-book"></i>
+                                Đọc Bài Mới
+                            </button>
+                            <button 
+                                className="action-button p-3"
                                 onClick={() => navigate('/flashcards')}
                             >
                                 <i className="fas fa-layer-group"></i>
                                 Học Thẻ Ghi Nhớ
                             </button>
                             <button 
-                                className="action-button secondary"
-                                onClick={() => navigate('/readings')}
+                                className="action-button secondary p-3"
+                                onClick={() => navigate('/writing')}
                             >
-                                <i className="fas fa-book"></i>
-                                Đọc Bài Mới
+                                <i className="fas fa-pen"></i>
+                                Viết Bài Mới
                             </button>
                         </div>
 

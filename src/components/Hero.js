@@ -5,10 +5,17 @@ import { useLanguage } from '../contexts/LanguageContext';
 function Hero({ badgeText, title, subtitle, primaryButtonText, primaryButtonLink, secondaryButtonText, secondaryButtonLink }) {
     const { translateText } = useLanguage();
     
+    function scrollToSection() {
+        const section = document.getElementById('visualFeatures');
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
     return (
-        <section className="hero bg-gray-50">
+        <section className="hero bg-gray-50 pb-5 pt-4">
             <div className="container py-10">
-                <div className="hero-content flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div className="hero-content flex flex-col lg:flex-row items-center justify-between gap-8 m-auto mt-3">
                     <div className="hero-text w-full lg:w-1/2 animate-slide-up">
                         <h1 className="hero-title text-4xl md:text-5xl font-bold text-gray-900 mb-3 text-center lg:text-left">
                             {translateText('Master Languages with')} <span className="text-primary">{translateText('Smart Flashcards')}</span>
@@ -21,12 +28,12 @@ function Hero({ badgeText, title, subtitle, primaryButtonText, primaryButtonLink
                                 <i className="fas fa-rocket mr-2"></i>
                                 {translateText('Start Free Trial')}
                             </Link>
-                            <Link to="/discover" className="btn btn-outline hover-lift">
+                            <Link to="#" className="btn btn-outline hover-lift" onClick={() => scrollToSection()}>
                                 <i className="fas fa-compass mr-2"></i>
                                 {translateText('Explore Features')}
                             </Link>
                         </div>
-                        <div className="hero-stats">
+                        <div className="hero-stats d-flex justify-content-center mt-4">
                             <div className="stat-item">
                                 <span className="stat-number text-primary">10K+</span>
                                 <span className="stat-label">{translateText('Active Users')}</span>

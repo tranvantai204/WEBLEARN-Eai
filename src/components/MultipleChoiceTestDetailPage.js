@@ -521,8 +521,7 @@ function MultipleChoiceTestDetailPage() {
                                 <span className="score-number">{score}%</span>
                             </div>
                             <p className="score-text">
-                                You answered {testData.questions.filter(q => userAnswers[q.questionId] === q.correctAnswer).length} 
-                                out of {testData.questions.length} questions correctly.
+                                You answered {testData.questions.filter(q => userAnswers[q.questionId] === q.correctAnswer).length} out of {testData.questions.length} questions correctly.
                             </p>
                             
                             {score === 100 && (
