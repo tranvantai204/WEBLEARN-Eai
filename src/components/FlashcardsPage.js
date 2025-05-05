@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useFlashcard } from '../contexts/FlashcardContext';
 import { ExploreSection } from './common';
 import '../css/components/Flashcards.css';
+import '../css/components/EnhancedFlashcards.css';
 import { jwtDecode } from 'jwt-decode';
 
 function FlashcardsPage() {

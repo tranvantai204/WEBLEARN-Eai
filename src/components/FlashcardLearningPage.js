@@ -22,6 +22,7 @@ function FlashcardLearningPage() {
     const [learningMode, setLearningMode] = useState('sequential'); // 'sequential' or 'shuffle'
     const [studyStarted, setStudyStarted] = useState(false);
     const [learnedCards, setLearnedCards] = useState([]);
+    const [isFullscreen, setIsFullscreen] = useState(false);
     
     // Check if this is accessed via public route
     const isPublicRoute = window.location.pathname.includes('/public-learn/');
@@ -129,6 +130,16 @@ function FlashcardLearningPage() {
                 timeSpent: Math.floor((new Date() - new Date(prev.timeStarted)) / 1000)
             }));
         }, 1000);
+    };
+    
+    // Function to toggle fullscreen mode
+    const toggleFullscreen = () => {
+        setIsFullscreen(prevState => !prevState);
+        
+        // If entering fullscreen, automatically start the learning session
+        if (!isFullscreen && !studyStarted) {
+            startLearning();
+        }
     };
     
     // Format seconds to minutes
@@ -374,6 +385,18 @@ function FlashcardLearningPage() {
         return ""; // Class mặc định
     };
 
+    // Function to detect if text contains Asian language (Chinese, Japanese, Korean)
+    const isAsianLanguage = (text) => {
+        if (!text) return false;
+        
+        // Regex patterns for Chinese, Japanese, and Korean characters
+        const chinesePattern = /[\u4e00-\u9fff]/; // Chinese characters
+        const japanesePattern = /[\u3040-\u309f\u30a0-\u30ff]/; // Japanese Hiragana and Katakana
+        const koreanPattern = /[\uac00-\ud7af\u1100-\u11ff]/; // Korean Hangul
+        
+        return chinesePattern.test(text) || japanesePattern.test(text) || koreanPattern.test(text);
+    };
+
     return (
         <div className="learning-page">
             {!isAuthenticated && isPublicRoute && (
@@ -410,7 +433,7 @@ function FlashcardLearningPage() {
                         }}
                     >
                         <i className="fas fa-arrow-left"></i>
-                        Back to Set
+                        {translateText('Back to Set')}
                     </button>
                     
                     {flashcardSet && (
@@ -420,20 +443,31 @@ function FlashcardLearningPage() {
                 
                 <div className="header-actions">
                     <div className="mode-toggle">
-                        <span>Mode: </span>
+                        <span>{translateText('Mode')}: </span>
                         <button 
                             className={`mode-btn ${learningMode === 'sequential' ? 'active' : ''}`}
                             onClick={() => setLearningMode('sequential')}
                         >
-                            <i className="fas fa-sort-numeric-down"></i> Sequential
+                            <i className="fas fa-sort-numeric-down"></i> {translateText('Sequential')}
                         </button>
                         <button 
                             className={`mode-btn ${learningMode === 'shuffle' ? 'active' : ''}`}
                             onClick={() => setLearningMode('shuffle')}
                         >
-                            <i className="fas fa-random"></i> Shuffle
+                            <i className="fas fa-random"></i> {translateText('Shuffle')}
                         </button>
                     </div>
+                    
+                    <button 
+                        className="session-btn start"
+                        onClick={toggleFullscreen}
+                        style={{
+                            backgroundColor: '#3498db',
+                            marginRight: '10px'
+                        }}
+                    >
+                        <i className="fas fa-expand"></i> {translateText('Fullscreen Study')}
+                    </button>
                     
                     <button 
                         className={`session-btn ${studyStarted ? 'end' : 'start'}`}
@@ -441,11 +475,11 @@ function FlashcardLearningPage() {
                     >
                         {studyStarted ? (
                             <>
-                                <i className="fas fa-stop"></i> End Session
+                                <i className="fas fa-stop"></i> {translateText('End Session')}
                             </>
                         ) : (
                             <>
-                                <i className="fas fa-play"></i> Start Learning
+                                <i className="fas fa-play"></i> {translateText('Start Learning')}
                             </>
                         )}
                     </button>
@@ -455,7 +489,7 @@ function FlashcardLearningPage() {
             {loading ? (
                 <div className="custom-loading-spinner">
                     <div className="spinner-circle"></div>
-                    <div className="spinner-text">Loading flashcards...</div>
+                    <div className="spinner-text">{translateText('Loading...')}</div>
                 </div>
             ) : (
                 <>
@@ -467,7 +501,7 @@ function FlashcardLearningPage() {
                             ></div>
                         </div>
                         <span className="progress-text">
-                            {learnedCards.length} / {flashcards.length} cards
+                            {learnedCards.length} / {flashcards.length} {translateText('cards')}
                         </span>
                     </div>
                     
@@ -480,6 +514,9 @@ function FlashcardLearningPage() {
                                         onClick={() => {
                                             if (!isFlipped) flipCard();
                                         }}
+                                        style={{
+                                            background: 'linear-gradient(135deg, #3498db, #2980b9)'
+                                        }}
                                     >
                                         <div className="card-content">
                                             <h2 className="term" style={{
@@ -489,7 +526,12 @@ function FlashcardLearningPage() {
                                                 color: '#ffffff',
                                                 textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
                                                 border: '1px solid rgba(255, 255, 255, 0.3)',
-                                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+                                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                                                wordBreak: 'break-word',
+                                                display: 'inline-block',
+                                                maxWidth: '100%',
+                                                width: 'auto',
+                                                overflow: 'hidden'
                                             }}>{flashcards[currentCardIndex]?.term}</h2>
                                             <p className="card-hint" style={{
                                                 backgroundColor: 'rgba(0, 0, 0, 0.4)',
@@ -497,8 +539,10 @@ function FlashcardLearningPage() {
                                                 borderRadius: '5px',
                                                 color: '#ffffff',
                                                 border: '1px solid rgba(255, 255, 255, 0.2)',
-                                                fontWeight: '500'
-                                            }}>Click to reveal definition</p>
+                                                fontWeight: '500',
+                                                marginTop: '20px',
+                                                display: 'inline-block'
+                                            }}>{translateText('Click to reveal definition')}</p>
                                         </div>
                                     </div>
                                     
@@ -517,20 +561,18 @@ function FlashcardLearningPage() {
                                                 display: 'inline-block',
                                                 fontWeight: '600',
                                                 border: '1px solid rgba(46, 204, 113, 0.4)',
-                                                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
+                                                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)',
+                                                wordBreak: 'break-word',
+                                                maxWidth: '100%',
+                                                width: 'auto',
+                                                overflow: 'hidden'
                                             }}>{flashcards[currentCardIndex]?.definition}</h3>
                                             
+                                            {/* Example */}
                                             {flashcards[currentCardIndex]?.example && (
-                                                <div className="example" style={{
-                                                    backgroundColor: 'rgba(52, 152, 219, 0.15)',
-                                                    padding: '15px',
-                                                    borderRadius: '8px',
-                                                    border: '1px solid rgba(52, 152, 219, 0.4)',
-                                                    marginTop: '20px',
-                                                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
-                                                }}>
-                                                    <strong style={{ color: '#2980b9', fontWeight: '600' }}>Example:</strong>
-                                                    <p style={{ color: '#333', fontStyle: 'italic' }}>{flashcards[currentCardIndex]?.example}</p>
+                                                <div className={`enhanced-card-example ${isAsianLanguage(flashcards[currentCardIndex].example) ? 'asian-lang' : ''}`}>
+                                                    <span className="enhanced-card-example-title">{translateText('Example')}:</span>
+                                                    <p className="enhanced-card-example-content">{flashcards[currentCardIndex].example}</p>
                                                 </div>
                                             )}
                                             <p className="card-hint card-hint-back" style={{
@@ -540,8 +582,9 @@ function FlashcardLearningPage() {
                                                 color: '#333',
                                                 marginTop: '15px',
                                                 border: '1px solid rgba(0, 0, 0, 0.15)',
-                                                fontWeight: '500'
-                                            }}>Click to flip back</p>
+                                                fontWeight: '500',
+                                                display: 'inline-block'
+                                            }}>{translateText('Click to flip back')}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -555,7 +598,7 @@ function FlashcardLearningPage() {
                                         }}
                                         disabled={currentCardIndex === 0}
                                     >
-                                        <i className="fas fa-chevron-left"></i> Previous
+                                        <i className="fas fa-chevron-left"></i> {translateText('Previous')}
                                     </button>
                                     <span className="card-counter">
                                         {currentCardIndex + 1} / {flashcards.length}
@@ -568,7 +611,7 @@ function FlashcardLearningPage() {
                                         }}
                                         disabled={currentCardIndex === flashcards.length - 1}
                                     >
-                                        Next <i className="fas fa-chevron-right"></i>
+                                        {translateText('Next')} <i className="fas fa-chevron-right"></i>
                                     </button>
                                 </div>
                                 
@@ -581,7 +624,7 @@ function FlashcardLearningPage() {
                                                 markAsUnknown();
                                             }}
                                         >
-                                            <i className="fas fa-times"></i> I don't know
+                                            <i className="fas fa-times"></i> {translateText('I don\'t know')}
                                         </button>
                                         <button 
                                             className="feedback-btn known"
@@ -590,7 +633,7 @@ function FlashcardLearningPage() {
                                                 markAsKnown();
                                             }}
                                         >
-                                            <i className="fas fa-check"></i> I know
+                                            <i className="fas fa-check"></i> {translateText('I know this')}
                                         </button>
                                     </div>
                                 )}
@@ -601,7 +644,7 @@ function FlashcardLearningPage() {
                                     <i className="fas fa-clock"></i>
                                     <div className="stat-content">
                                         <span className="stat-label">Study Time</span>
-                                        <span className="stat-value">{formatTime(stats.timeSpent)}</span>
+                                        <span className="stat-value" style={{ fontSize: '28px', fontWeight: '900', color: '#000000' }}>{formatTime(stats.timeSpent)}</span>
                                         {!isAuthenticated && <span className="stat-note">Not saved</span>}
                                     </div>
                                 </div>
@@ -609,7 +652,7 @@ function FlashcardLearningPage() {
                                     <i className="fas fa-check-circle"></i>
                                     <div className="stat-content">
                                         <span className="stat-label">Known Cards</span>
-                                        <span className="stat-value">{stats.correctCount}</span>
+                                        <span className="stat-value" style={{ fontSize: '28px', fontWeight: '900', color: '#000000' }}>{stats.correctCount}</span>
                                         {!isAuthenticated && <span className="stat-note">Not saved</span>}
                                     </div>
                                 </div>
@@ -617,7 +660,7 @@ function FlashcardLearningPage() {
                                     <i className="fas fa-eye"></i>
                                     <div className="stat-content">
                                         <span className="stat-label">Cards Viewed</span>
-                                        <span className="stat-value">{stats.totalViewed}</span>
+                                        <span className="stat-value" style={{ fontSize: '28px', fontWeight: '900', color: '#000000' }}>{stats.totalViewed}</span>
                                         {!isAuthenticated && <span className="stat-note">Not saved</span>}
                                     </div>
                                 </div>
@@ -625,7 +668,7 @@ function FlashcardLearningPage() {
                                     <i className="fas fa-percentage"></i>
                                     <div className="stat-content">
                                         <span className="stat-label">Accuracy</span>
-                                        <span className="stat-value">
+                                        <span className="stat-value" style={{ fontSize: '28px', fontWeight: '900', color: '#000000' }}>
                                             {stats.totalViewed === 0 ? '0%' : `${Math.min(100, Math.round((stats.correctCount / stats.totalViewed) * 100))}%`}
                                         </span>
                                         {!isAuthenticated && <span className="stat-note">Not saved</span>}
@@ -655,6 +698,237 @@ function FlashcardLearningPage() {
                         </div>
                     )}
                 </>
+            )}
+            
+            {/* Fullscreen Mode */}
+            {isFullscreen && (
+                <div className="fullscreen-mode">
+                    <div className="fullscreen-header">
+                        <div className="fullscreen-title">
+                            <i className="fas fa-graduation-cap"></i>
+                            {flashcardSet?.title || 'Flashcard Study'}
+                        </div>
+                        <div className="fullscreen-controls">
+                            <span style={{ color: 'white', fontWeight: '500' }}>
+                                Time: {formatTime(stats.timeSpent)}
+                            </span>
+                            <button className="exit-fullscreen" onClick={toggleFullscreen}>
+                                <i className="fas fa-compress"></i> Exit Fullscreen
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div className="fullscreen-progress">
+                        <div 
+                            className="fullscreen-progress-bar" 
+                            style={{ width: `${getProgressPercentage()}%` }}
+                        ></div>
+                    </div>
+                    
+                    <div className="fullscreen-container">
+                        {flashcards.length > 0 ? (
+                            <div className="learning-content" style={{ width: '100%', maxWidth: '900px' }}>
+                                <div className="flashcard-container">
+                                    <div className={`flashcard ${isFlipped ? 'flipped' : ''}`}>
+                                        <div 
+                                            className="flashcard-front" 
+                                            onClick={() => {
+                                                if (!isFlipped) flipCard();
+                                            }}
+                                            style={{
+                                                background: 'linear-gradient(135deg, #3498db, #2980b9)',
+                                                height: '500px'
+                                            }}
+                                        >
+                                            <div className="card-content">
+                                                <h2 className="term">{flashcards[currentCardIndex]?.term}</h2>
+                                                <p className="card-hint">Click to reveal definition</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div 
+                                            className="flashcard-back"
+                                            onClick={() => {
+                                                if (isFlipped) flipCard();
+                                            }}
+                                            style={{
+                                                height: '500px'
+                                            }}
+                                        >
+                                            <div className="card-content">
+                                                <h3 className="definition">{flashcards[currentCardIndex]?.definition}</h3>
+                                                
+                                                {/* Example */}
+                                                {flashcards[currentCardIndex]?.example && (
+                                                    <div className={`enhanced-card-example ${isAsianLanguage(flashcards[currentCardIndex].example) ? 'asian-lang' : ''}`}>
+                                                        <span className="enhanced-card-example-title">{translateText('Example')}:</span>
+                                                        <p className="enhanced-card-example-content">{flashcards[currentCardIndex].example}</p>
+                                                    </div>
+                                                )}
+                                                <p className="card-hint card-hint-back">Click to flip back</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="card-navigation">
+                                        <button 
+                                            className="nav-btn prev-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                prevCard();
+                                            }}
+                                            disabled={currentCardIndex === 0}
+                                            style={{ 
+                                                backgroundColor: 'rgba(255,255,255,0.25)', 
+                                                color: 'white', 
+                                                border: 'none',
+                                                padding: '12px 25px',
+                                                fontSize: '18px',
+                                                borderRadius: '30px'
+                                            }}
+                                        >
+                                            <i className="fas fa-chevron-left"></i> {translateText('Previous')}
+                                        </button>
+                                        <span className="card-counter" style={{ 
+                                            color: 'white',
+                                            backgroundColor: 'rgba(255,255,255,0.2)',
+                                            padding: '10px 20px',
+                                            borderRadius: '20px',
+                                            fontSize: '18px'
+                                        }}>
+                                            {currentCardIndex + 1} / {flashcards.length}
+                                        </span>
+                                        <button 
+                                            className="nav-btn next-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                nextCard();
+                                            }}
+                                            disabled={currentCardIndex === flashcards.length - 1}
+                                            style={{ 
+                                                backgroundColor: 'rgba(255,255,255,0.25)', 
+                                                color: 'white', 
+                                                border: 'none',
+                                                padding: '12px 25px',
+                                                fontSize: '18px',
+                                                borderRadius: '30px'
+                                            }}
+                                        >
+                                            {translateText('Next')} <i className="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    {isFlipped && (
+                                        <div className="feedback-buttons" style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            gap: '20px',
+                                            marginTop: '30px'
+                                        }}>
+                                            <button 
+                                                className="feedback-btn unknown"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    markAsUnknown();
+                                                }}
+                                                style={{
+                                                    fontSize: '18px',
+                                                    padding: '15px 30px',
+                                                    borderRadius: '30px'
+                                                }}
+                                            >
+                                                <i className="fas fa-times"></i> {translateText('I don\'t know')}
+                                            </button>
+                                            <button 
+                                                className="feedback-btn known"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    markAsKnown();
+                                                }}
+                                                style={{
+                                                    fontSize: '18px',
+                                                    padding: '15px 30px',
+                                                    borderRadius: '30px'
+                                                }}
+                                            >
+                                                <i className="fas fa-check"></i> {translateText('I know this')}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                {/* Fullscreen Stats */}
+                                <div className="learning-stats" style={{
+                                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                    borderRadius: '15px',
+                                    maxWidth: '800px',
+                                    padding: '15px 20px',
+                                    marginTop: '30px',
+                                    display: 'flex',
+                                    justifyContent: 'space-around',
+                                    boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)'
+                                }}>
+                                    <div className="stat-item" style={{ textAlign: 'center' }}>
+                                        <i className="fas fa-clock" style={{ color: '#3498db', fontSize: '24px' }}></i>
+                                        <div className="stat-content" style={{ textAlign: 'center' }}>
+                                            <span className="stat-label" style={{ color: '#555', fontWeight: '500', fontSize: '14px' }}>
+                                                {translateText('Study Time')}
+                                            </span>
+                                            <span className="stat-value" style={{ color: '#000000', fontWeight: '900', fontSize: '28px', textShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
+                                                {formatTime(stats.timeSpent)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="stat-item" style={{ textAlign: 'center' }}>
+                                        <i className="fas fa-check-circle" style={{ color: '#3498db', fontSize: '24px' }}></i>
+                                        <div className="stat-content" style={{ textAlign: 'center' }}>
+                                            <span className="stat-label" style={{ color: '#555', fontWeight: '500', fontSize: '14px' }}>
+                                                {translateText('Known Cards')}
+                                            </span>
+                                            <span className="stat-value" style={{ color: '#000000', fontWeight: '900', fontSize: '28px', textShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
+                                                {stats.correctCount}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="stat-item" style={{ textAlign: 'center' }}>
+                                        <i className="fas fa-eye" style={{ color: '#3498db', fontSize: '24px' }}></i>
+                                        <div className="stat-content" style={{ textAlign: 'center' }}>
+                                            <span className="stat-label" style={{ color: '#555', fontWeight: '500', fontSize: '14px' }}>
+                                                {translateText('Cards Viewed')}
+                                            </span>
+                                            <span className="stat-value" style={{ color: '#000000', fontWeight: '900', fontSize: '28px', textShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
+                                                {stats.totalViewed}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="stat-item" style={{ textAlign: 'center' }}>
+                                        <i className="fas fa-chart-line" style={{ color: '#3498db', fontSize: '24px' }}></i>
+                                        <div className="stat-content" style={{ textAlign: 'center' }}>
+                                            <span className="stat-label" style={{ color: '#555', fontWeight: '500', fontSize: '14px' }}>
+                                                {translateText('Accuracy')}
+                                            </span>
+                                            <span className="stat-value" style={{ color: '#000000', fontWeight: '900', fontSize: '28px', textShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
+                                                {stats.totalViewed > 0 ? Math.round((stats.correctCount / stats.totalViewed) * 100) : 0}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div style={{ color: 'white', textAlign: 'center' }}>
+                                <h2>No flashcards found</h2>
+                                <p>This set doesn't have any flashcards yet.</p>
+                                <button 
+                                    className="exit-fullscreen" 
+                                    onClick={toggleFullscreen}
+                                    style={{ marginTop: '20px' }}
+                                >
+                                    <i className="fas fa-arrow-left"></i> Return to Set
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
             )}
         </div>
     );

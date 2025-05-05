@@ -7,7 +7,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { useWritingExercise } from '../contexts/WritingExerciseContext';
 import ApiKeyForm from './ApiKeyForm';
 import Spinner from './common/Spinner';
-import { ExploreSection } from './common';
 import AIWritingTopicForm from './AIWritingTopicForm';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Writing.css';
@@ -464,16 +463,23 @@ function WritingPage() {
         navigate(`/writing/exercise-simple/${exerciseId}`);
     };
     
-    // Handle AI generated topic success
+    // Handle AI topic generation success
     const handleAITopicSuccess = (result) => {
-        // Navigate to the generated exercise if it was successful
-        if (result && result.writingExerciseId) {
-            toast.success(messages.aiTopicSuccess);
-            navigate(`/writing/exercise-simple/${result.writingExerciseId}`);
-        }
-        
-        // Hide the form
         setShowAITopicForm(false);
+        if (result) {
+            toast.success(messages.aiTopicSuccess || 'AI-generated writing topic created successfully!');
+            // Refresh the exercises list
+            if (getAllWritingExercises) {
+                getAllWritingExercises(currentUser?.userId);
+            }
+            
+            // Navigate to the new exercise if ID is available
+            if (result.exerciseId) {
+                navigate(`/writing-exercise/${result.exerciseId}`);
+            }
+        } else {
+            toast.error(messages.aiTopicError || 'Error generating writing topic with AI');
+        }
     };
     
     if (!isAuthenticated) {
@@ -509,7 +515,7 @@ function WritingPage() {
                     </button>
                     
                     <button 
-                        className="btn btn-outline-primary"
+                        className="btn btn-outline-primary ai-topic-button"
                         onClick={() => {
                             setShowAITopicForm(!showAITopicForm);
                             setShowCreateForm(false);
@@ -519,9 +525,6 @@ function WritingPage() {
                         {translations.createTopicWithAI}
                     </button>
                 </div>
-                
-                {/* Thêm section khám phá */}
-                <ExploreSection type="writing" />
                 
                 {/* AI Writing Topic Form */}
                 {showAITopicForm && (
@@ -563,15 +566,16 @@ function WritingPage() {
                                     </div>
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="exerciseTopic" className="form-label">{translations.topic}</label>
+                                    <label htmlFor="exerciseTopic" className="form-label fw-bold">{translations.topic}</label>
                                     <textarea
                                         id="exerciseTopic"
                                         className="form-control"
                                         rows="3"
                                         value={exerciseTopic}
                                         onChange={(e) => setExerciseTopic(e.target.value)}
-                                        placeholder="Nhập chủ đề bài viết..."
+                                        placeholder="Nhập chủ đề bài viết của bạn tại đây..."
                                         required
+                                        style={{ fontSize: '16px', padding: '12px' }}
                                     ></textarea>
                                 </div>
                                 <div className="d-flex justify-content-end gap-2">

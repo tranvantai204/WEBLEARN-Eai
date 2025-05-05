@@ -1,0 +1,220 @@
+/* MainLayout.css - Styles for main layout component */
+
+/* Main container */
+.main-layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+/* Drawer styles */
+.drawer {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.drawer-paper {
+  width: 280px;
+  border-right: none;
+  box-shadow: var(--shadow-sm);
+  background-color: var(--paper);
+}
+
+/* Drawer header */
+.drawer-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  justify-content: space-between;
+  height: 64px;
+  background-color: var(--primary);
+  color: white;
+}
+
+.drawer-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.drawer-logo-text {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: white;
+}
+
+/* Navigation menu */
+.menu-item {
+  margin: 4px 8px;
+  border-radius: var(--border-radius);
+  padding: 8px 16px;
+  transition: all 0.2s ease-in-out;
+}
+
+.menu-item:hover {
+  background-color: var(--hover-color);
+}
+
+.menu-item-active {
+  background-color: var(--active-color);
+}
+
+.menu-item-active:hover {
+  background-color: var(--active-color);
+}
+
+.menu-item-icon {
+  min-width: 40px;
+  color: var(--text-secondary);
+}
+
+.menu-item-text {
+  color: var(--text-primary);
+}
+
+.menu-item-active .menu-item-icon,
+.menu-item-active .menu-item-text {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Dividers and sections */
+.menu-section {
+  padding: 16px 16px 8px;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* App bar styles */
+.app-bar {
+  box-shadow: var(--shadow-sm);
+  background-color: var(--paper);
+  color: var(--text-primary);
+  z-index: 1201;
+}
+
+.app-bar-open {
+  width: calc(100% - 280px);
+  margin-left: 280px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+  min-height: 64px;
+}
+
+/* App bar controls */
+.app-bar-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notification-badge {
+  margin-right: 8px;
+  color: var(--text-secondary);
+}
+
+/* User menu */
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  background-color: var(--primary);
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+}
+
+.user-menu-item {
+  padding: 8px 16px;
+  margin: 4px 8px;
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+}
+
+.user-menu-item:hover {
+  background-color: var(--hover-color);
+}
+
+.user-menu-icon {
+  font-size: 18px;
+  margin-right: 12px;
+  color: var(--primary);
+}
+
+/* Notifications menu */
+.notification-menu {
+  min-width: 320px;
+  background-color: var(--paper);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+}
+
+.notification-header {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.notification-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-unread {
+  background-color: var(--hover-color);
+  border-left: 3px solid var(--primary);
+}
+
+.notification-time {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: block;
+  margin-top: 4px;
+}
+
+/* Main content area */
+.main-content {
+  flex-grow: 1;
+  padding: 24px;
+  transition: margin 0.2s;
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+.main-content-shifted {
+  margin-left: 280px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .drawer-paper {
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .app-bar-open {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .main-content-shifted {
+    margin-left: 0;
+  }
+  
+  .notification-menu {
+    min-width: 280px;
+  }
+} 

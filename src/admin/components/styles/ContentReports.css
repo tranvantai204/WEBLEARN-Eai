@@ -1,0 +1,199 @@
+/* ContentReports.css - Styles for Content Reports component */
+
+/* General layout styles */
+.reports-container {
+  padding: 16px;
+  background-color: var(--background);
+}
+
+.reports-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.reports-title {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Filter section styles */
+.reports-filter-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: var(--paper);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.reports-filter-input {
+  width: 100%;
+  max-width: 250px;
+}
+
+.reports-filter-select {
+  min-width: 200px;
+}
+
+.reports-filter-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Table container styles */
+.reports-table-container {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+  background-color: var(--paper);
+}
+
+.reports-table-header {
+  background-color: var(--background);
+}
+
+.reports-table-cell-header {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.reports-table-row {
+  transition: background-color 0.2s;
+}
+
+.reports-table-row:hover {
+  background-color: var(--hover-color);
+}
+
+/* Status chip styles */
+.report-status-chip {
+  min-width: 90px;
+  font-weight: 500;
+  border-radius: 16px;
+  padding: 4px 8px;
+}
+
+.report-status-pending {
+  background-color: var(--warning);
+  color: white;
+}
+
+.report-status-approved {
+  background-color: var(--success);
+  color: white;
+}
+
+.report-status-rejected {
+  background-color: var(--danger);
+  color: white;
+}
+
+.report-type-chip {
+  min-width: 120px;
+  font-weight: 500;
+  background-color: var(--secondary-light);
+  color: white;
+  border-radius: 16px;
+  padding: 4px 8px;
+}
+
+/* Report detail dialog styles */
+.report-dialog {
+  width: 100%;
+  background-color: var(--paper);
+}
+
+.report-dialog-title {
+  background-color: var(--background);
+  padding: 16px 24px;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.report-dialog-content {
+  padding: 0 24px 16px 24px;
+}
+
+.report-detail-section {
+  margin-bottom: 24px;
+}
+
+.report-detail-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.report-detail-value {
+  background-color: var(--background);
+  padding: 16px;
+  border-radius: var(--border-radius);
+  word-break: break-word;
+  color: var(--text-primary);
+}
+
+.report-dialog-actions {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Action button styles */
+.report-approve-button {
+  background-color: var(--success);
+  color: white;
+}
+
+.report-approve-button:hover {
+  background-color: #43a047;
+}
+
+.report-reject-button {
+  background-color: var(--danger);
+  color: white;
+}
+
+.report-reject-button:hover {
+  background-color: #e53935;
+}
+
+/* Loading and empty states */
+.reports-loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 32px;
+  color: var(--primary);
+}
+
+.reports-empty-state {
+  padding: 32px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .reports-filter-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .reports-filter-input,
+  .reports-filter-select {
+    max-width: 100%;
+  }
+  
+  .report-dialog {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+} 

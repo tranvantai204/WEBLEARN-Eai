@@ -59,16 +59,24 @@ import TermsOfServicePage from './components/TermsOfServicePage.js';
 import CookiesPage from './components/CookiesPage.js';
 import './css/mobile-utils.css'; // Import mobile utilities
 
+// Import Admin components
+import AdminApp from './admin/AdminApp';
 
 // Layout wrapper component
 const AppLayout = () => {
     const location = useLocation();
     
-    // Don't show header and footer on auth pages
+    // Don't show header and footer on auth pages or admin pages
     const isAuthPage = location.pathname === '/login' || 
                       location.pathname === '/register' || 
                       location.pathname === '/forgot-password' || 
                       location.pathname.startsWith('/reset-password');
+    
+    const isAdminPage = location.pathname.startsWith('/admin');
+    
+    if (isAdminPage) {
+        return <AdminApp />;
+    }
     
     return (
         <div className="app">

@@ -33,6 +33,18 @@ function MultipleChoiceTestDetailPage() {
     const [showResults, setShowResults] = useState(false);
     const [score, setScore] = useState(0);
     
+    // Function to format content with paragraphs
+    const formatContentWithParagraphs = (content) => {
+        if (!content) return '';
+        
+        // Split by double newlines or single newlines
+        const paragraphs = content.split(/\n\n|\n/);
+        
+        return paragraphs.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+        ));
+    };
+    
     // Get base URL from environment or use default
     const baseUrl = process.env.REACT_APP_API_URL || 'https://6d2c-115-76-51-131.ngrok-free.app';
     const API_URL = baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`;
@@ -502,9 +514,51 @@ function MultipleChoiceTestDetailPage() {
 
             <div className="test-detail-content">
                 <div className="reading-section">
-                    <h2>Reading Content</h2>
+                    <h2>{translateText('Reading Content')}</h2>
+                    
+                    <div className="reading-level-indicator">
+                        <div className="level-dots">
+                            <div className={`level-dot ${testData.level >= 1 ? 'active' : ''}`}></div>
+                            <div className={`level-dot ${testData.level >= 2 ? 'active' : ''}`}></div>
+                            <div className={`level-dot ${testData.level >= 3 ? 'active intermediate' : ''}`}></div>
+                            <div className={`level-dot ${testData.level >= 4 ? 'active intermediate' : ''}`}></div>
+                            <div className={`level-dot ${testData.level >= 5 ? 'active advanced' : ''}`}></div>
+                        </div>
+                        <span className="level-label">
+                            {testData.level === 0 ? 'Beginner' : 
+                             testData.level === 1 ? 'Elementary' :
+                             testData.level === 2 ? 'Pre-Intermediate' :
+                             testData.level === 3 ? 'Intermediate' :
+                             testData.level === 4 ? 'Upper Intermediate' :
+                             testData.level === 5 ? 'Advanced' : 'Proficient'}
+                        </span>
+                    </div>
+                    
                     <div className="reading-content-box">
-                        <p className="reading-content">{testData.content}</p>
+                        <div className="reading-content">
+                            {formatContentWithParagraphs(testData.content)}
+                        </div>
+                    </div>
+                    
+                    <div className="content-share-buttons">
+                        <button 
+                            className="share-button"
+                            onClick={() => {
+                                navigator.clipboard.writeText(window.location.href);
+                                toast.success(translateText('Link copied to clipboard!'));
+                            }}
+                        >
+                            <FaShare /> {translateText('Share with friends')}
+                        </button>
+                        
+                        {isAuthenticated && !testData.isOwner && (
+                            <button 
+                                className="report-button"
+                                onClick={openReportModal}
+                            >
+                                <FaFlag /> {translateText('Report Content')}
+                            </button>
+                        )}
                     </div>
                 </div>
 

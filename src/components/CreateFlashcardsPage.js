@@ -123,7 +123,7 @@ function CreateFlashcardsPage() {
     ];
 
     return (
-        <div className="dashboard">
+        <div className="flashcards-container">
             {/* Add ToastContainer for notifications */}
             <ToastContainer
                 position="top-right"
@@ -137,56 +137,7 @@ function CreateFlashcardsPage() {
                 pauseOnHover
             />
             
-            <aside className="sidebar">
-                <div className="sidebar-user">
-                    <img
-                        src="/images/avatar.png"
-                        alt="User Avatar"
-                        className="user-avatar"
-                    />
-                    <h3 className="user-name">John Doe</h3>
-                    <p className="user-email">john@example.com</p>
-                </div>
-                <ul className="sidebar-nav">
-                    <li className="sidebar-item">
-                        <Link to="/dashboard" className="sidebar-link">
-                            <i className="fas fa-home sidebar-icon"></i>
-                            Dashboard
-                        </Link>
-                    </li>
-                    <li className="sidebar-item">
-                        <Link to="/flashcards" className="sidebar-link active">
-                            <i className="fas fa-cards sidebar-icon"></i>
-                            Flashcards
-                        </Link>
-                    </li>
-                    <li className="sidebar-item">
-                        <Link to="/readings" className="sidebar-link">
-                            <i className="fas fa-book sidebar-icon"></i>
-                            Readings
-                        </Link>
-                    </li>
-                    <li className="sidebar-item">
-                        <Link to="/writing" className="sidebar-link">
-                            <i className="fas fa-pen sidebar-icon"></i>
-                            Writing
-                        </Link>
-                    </li>
-                    <li className="sidebar-item">
-                        <Link to="/discover" className="sidebar-link">
-                            <i className="fas fa-compass sidebar-icon"></i>
-                            Discover
-                        </Link>
-                    </li>
-                    <li className="sidebar-item">
-                        <Link to="/profile" className="sidebar-link">
-                            <i className="fas fa-user sidebar-icon"></i>
-                            Profile
-                        </Link>
-                    </li>
-                </ul>
-            </aside>
-            <main className="main-content">
+            <div className="create-flashcard-content">
                 <div className="page-header">
                     <h1 className="page-title">Create New Flashcard Set</h1>
                     <div className="page-actions">
@@ -250,82 +201,96 @@ function CreateFlashcardsPage() {
                                 <textarea
                                     className="form-control"
                                     id="setDescription"
-                                    rows="3"
-                                    placeholder="Enter set description"
+                                    placeholder="Enter set description (optional)"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
+                                    rows="3"
                                     maxLength={500}
                                 ></textarea>
                                 <small className="form-text text-muted">
                                     Optional. Maximum 500 characters.
                                 </small>
                             </div>
-                            
-                            <div className="form-row">
-                                <div className="form-group col-md-6">
-                                    <LanguageSelector
-                                        id="nativeLanguage"
-                                        name="nativeLanguage"
-                                        value={nativeLanguage}
-                                        onChange={(e) => setNativeLanguage(e.target.value)}
-                                        label="Native Language"
-                                        required={true}
-                                    />
+                            <div className="row">
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="nativeLanguage">Native Language</label>
+                                        <LanguageSelector
+                                            id="nativeLanguage"
+                                            className="form-control"
+                                            value={nativeLanguage}
+                                            onChange={(e) => setNativeLanguage(e.target.value)}
+                                        />
+                                    </div>
                                 </div>
-                                
-                                <div className="form-group col-md-6">
-                                    <LanguageSelector
-                                        id="learningLanguage"
-                                        name="learningLanguage"
-                                        value={learningLanguage}
-                                        onChange={(e) => setLearningLanguage(e.target.value)}
-                                        label="Learning Language"
-                                        required={true}
-                                    />
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="learningLanguage">Learning Language</label>
+                                        <LanguageSelector
+                                            id="learningLanguage"
+                                            className="form-control"
+                                            value={learningLanguage}
+                                            onChange={(e) => setLearningLanguage(e.target.value)}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <div className="form-group">
-                                <label htmlFor="level">Difficulty Level <span className="text-danger">*</span></label>
-                                <select 
-                                    className="form-control" 
-                                    id="level"
-                                    value={level}
-                                    onChange={(e) => setLevel(Number(e.target.value))}
-                                    required
-                                >
-                                    {levelOptions.map(option => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            
-                            <div className="form-group">
-                                <div className="form-check">
-                                    <input
-                                        type="checkbox"
-                                        className="form-check-input"
-                                        id="isPublic"
-                                        checked={isPublic}
-                                        onChange={(e) => setIsPublic(e.target.checked)}
-                                    />
-                                    <label className="form-check-label" htmlFor="isPublic">
-                                        Make this set public (visible to other users)
-                                    </label>
+                            <div className="row">
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="difficultyLevel">Difficulty Level</label>
+                                        <select
+                                            className="form-control"
+                                            id="difficultyLevel"
+                                            value={level}
+                                            onChange={(e) => setLevel(parseInt(e.target.value))}
+                                        >
+                                            {levelOptions.map(option => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label className="d-block">Visibility</label>
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                id="publicAccess"
+                                                checked={isPublic}
+                                                onChange={() => setIsPublic(true)}
+                                            />
+                                            <label className="form-check-label" htmlFor="publicAccess">
+                                                Public
+                                            </label>
+                                        </div>
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                id="privateAccess"
+                                                checked={!isPublic}
+                                                onChange={() => setIsPublic(false)}
+                                            />
+                                            <label className="form-check-label" htmlFor="privateAccess">
+                                                Private
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </form>
+                        <hr className="my-4" />
+                        <p className="help-text text-muted">
+                            After creating your flashcard set, you will be able to add individual flashcards.
+                        </p>
                     </div>
                 </div>
-                
-                <div className="mt-4 text-center">
-                    <p>
-                        After creating the flashcard set, you'll be able to add cards to it.
-                    </p>
-                </div>
-            </main>
+            </div>
         </div>
     );
 }

@@ -623,27 +623,246 @@ button:disabled {
 
 .reading-section {
     background-color: #f9f9f9;
-    padding: 24px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+    border: 1px solid #eaeaea;
+    margin-bottom: 40px;
 }
 
 .reading-section h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
     margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.4rem;
-    color: #333;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 12px;
+    margin-bottom: 25px;
+    font-weight: 700;
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.reading-section h2:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    border-radius: 3px;
 }
 
 .reading-content-box {
     background-color: white;
-    padding: 24px;
-    border-radius: 8px;
-    max-height: 400px;
+    padding: 35px;
+    border-radius: 12px;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    max-height: 600px;
     overflow-y: auto;
-    border: 1px solid #eee;
+    font-family: 'Georgia', serif;
+    line-height: 1.8;
+    font-size: 18px;
+    color: #333;
+}
+
+.reading-content {
+    white-space: pre-wrap;
+    text-align: justify;
+}
+
+.reading-content p {
+    margin-bottom: 24px;
+}
+
+.reading-content p:first-of-type:first-letter {
+    font-size: 36px;
+    line-height: 1;
+    font-weight: 600;
+    padding-right: 6px;
+    float: left;
+    color: #3498db;
+}
+
+/* Custom scrollbar for reading content */
+.reading-content-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.reading-content-box::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+.reading-content-box::-webkit-scrollbar-thumb {
+    background: #c5c5c5;
+    border-radius: 10px;
+}
+
+.reading-content-box::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0;
+}
+
+/* Content sharing buttons area */
+.header-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.share-button, .report-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.share-button {
+    background-color: #3498db;
+    color: white;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.25);
+}
+
+.share-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
+}
+
+.report-button {
+    background-color: #fff;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+.report-button:hover {
+    background-color: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.25);
+}
+
+.share-button svg, .report-button svg {
+    margin-right: 8px;
+}
+
+/* Enhanced meta information */
+.test-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 25px;
+    align-items: center;
+}
+
+.test-level, .test-language {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.test-level {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.test-language {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Reading level indicator */
+.reading-level-indicator {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.level-dots {
+    display: flex;
+    margin-left: 10px;
+}
+
+.level-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
+    background-color: #e0e0e0;
+}
+
+.level-dot.active {
+    background-color: #3498db;
+}
+
+.level-dot.active.intermediate {
+    background-color: #f39c12;
+}
+
+.level-dot.active.advanced {
+    background-color: #e74c3c;
+}
+
+.level-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 5px;
+    color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .reading-section {
+        padding: 20px;
+    }
+    
+    .reading-content-box {
+        padding: 20px;
+        font-size: 16px;
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .share-button, .report-button {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .test-meta {
+        justify-content: center;
+    }
+}
+
+/* Test header enhancements */
+.test-detail-header {
+    background-color: #f8fafc;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    border: 1px solid #f0f0f0;
+}
+
+.test-detail-title {
+    font-size: 2.2rem;
+    color: #2c3e50;
+    margin: 0 0 15px 0;
+    text-align: center;
+    font-weight: 700;
 }
 
 .questions-section {
@@ -1995,4 +2214,56 @@ select {
 
 .funny-message.zero-score i {
     color: #ff0000;
+}
+
+/* Content sharing buttons in reading section */
+.content-share-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.content-share-buttons .share-button,
+.content-share-buttons .report-button {
+    min-width: 160px;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.content-share-buttons .share-button {
+    background: linear-gradient(to right, #3498db, #2980b9);
+}
+
+.content-share-buttons .share-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(52, 152, 219, 0.35);
+}
+
+.content-share-buttons .report-button {
+    background-color: #fff;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+.content-share-buttons .report-button:hover {
+    background-color: #e74c3c;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
+}
+
+@media (max-width: 768px) {
+    .content-share-buttons {
+        flex-direction: column;
+    }
+    
+    .content-share-buttons .share-button,
+    .content-share-buttons .report-button {
+        width: 100%;
+    }
 } 

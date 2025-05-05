@@ -183,6 +183,10 @@
 /* Page Header Styling */
 .page-header {
   margin-bottom: 2rem;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .page-header .back-link {
@@ -200,8 +204,9 @@
 
 .page-header .page-title {
   font-weight: 800;
-  color: #333;
+  color: #2c3e50;
   margin-bottom: 0.5rem;
+  font-size: 1.8rem;
 }
 
 .page-header .create-btn {
@@ -382,239 +387,361 @@
   align-items: center;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 767.98px) {
-  .exercise-card .card-title {
-    height: auto;
-    max-height: 3.5rem;
-  }
-  
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start !important;
-  }
-  
-  .page-header .create-btn {
-    margin-top: 1rem;
-  }
-  
-  .writing-exercise-card .card-footer.action-area {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .writing-exercise-card .action-buttons {
-    width: 100%;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .writing-exercise-card .save-btn {
-    width: 100%;
-  }
+/* Enhanced Writing Exercise Detail Styling */
+.writing-exercise-detail-container {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-/* EditorJS styles */
-.editor-container {
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  min-height: 300px;
-  padding: 20px;
-  margin-bottom: 20px;
-  background-color: #fff;
-}
-
-.codex-editor {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-}
-
-.codex-editor__redactor {
-  padding-bottom: 100px !important;
-}
-
-/* Ensure the editor container is properly sized */
-#editorjs {
-  width: 100%;
-  position: relative;
-}
-
-/* EditorJS visibility fix */
-.writing-card .card-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 400px;
-}
-
-.editor-container {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-#editorjs {
-  flex-grow: 1;
-  display: block !important;
-  min-height: 300px;
-  margin-bottom: 20px;
-}
-
-/* Thêm các style cho phản hồi AI */
-.ai-feedback-card {
-  margin-top: 2rem;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.ai-feedback-card .card-header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e0e0e0;
-  padding: 1rem;
-}
-
-.ai-feedback-card .card-body {
-  padding: 1.5rem;
-}
-
-.markdown-content h1 {
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #eaeaea;
-}
-
-.markdown-content h2 {
-  font-size: 1.5rem;
-  color: #444;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.markdown-content ul {
-  margin-left: 1rem;
-  margin-bottom: 1rem;
-  padding-left: 1rem;
-}
-
-.markdown-content li {
-  margin-bottom: 0.5rem;
-}
-
-.markdown-content strong {
-  font-weight: 600;
-}
-
-.markdown-content em {
-  font-style: italic;
-}
-
-.feedback-item {
-  margin-bottom: 0.75rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-}
-
-.feedback-item.success {
-  background-color: rgba(40, 167, 69, 0.1);
-}
-
-.feedback-item.highlight {
-  background-color: rgba(255, 193, 7, 0.1);
-}
-
-.feedback-item.improvement {
-  background-color: rgba(13, 110, 253, 0.1);
-}
-
-/* Style cho textarea */
-.writing-textarea {
-  min-height: 250px;
-  font-size: 1rem;
-  line-height: 1.6;
-  border: 1px solid #ced4da;
-  padding: 0.75rem;
-  resize: vertical;
-}
-
-.writing-textarea:focus {
-  border-color: #80bdff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-/* Style cho modal overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
+.language-badge {
+  display: inline-flex;
   align-items: center;
-  z-index: 1000;
-}
-
-.gemini-api-form {
-  width: 90%;
-  max-width: 500px;
-  background-color: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-/* Chỉnh word count */
-.word-count {
-  background: #f1f1f1;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  color: #666;
-}
-
-/* Responsive styling */
-@media (max-width: 768px) {
-  .writing-exercise-detail-container {
-    padding: 1rem;
-  }
-  
-  .page-header h2 {
-    font-size: 1.5rem;
-  }
-  
-  .actions {
-    flex-direction: column;
-  }
-  
-  .actions button {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
+  padding: 8px 16px;
+  border-radius: 30px;
+  background-color: #e3f2fd;
+  color: #1565c0;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  font-size: 14px;
 }
 
 .flag-icon {
-  display: inline-block;
-  margin-right: 5px;
-  font-size: 1.2em;
-  vertical-align: middle;
+  margin-right: 8px;
+  font-size: 16px;
 }
 
-.exercise-card .language-badge {
-  padding: 0.4rem 0.75rem;
-  border-radius: 25px;
+/* Enhanced Topic Card Styling */
+.exercise-topic-card {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+  background-color: #fff;
+  margin-bottom: 24px;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.exercise-topic-card .card-header {
+  background: linear-gradient(135deg, #3498db, #2ecc71);
+  color: white;
+  border: none;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.exercise-topic-card .card-header h5 {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.exercise-topic-card .card-body {
+  padding: 24px;
+}
+
+.exercise-topic h4 {
+  color: #2c3e50;
+  font-weight: 700;
+  margin-bottom: 16px;
+  position: relative;
+  display: inline-block;
+}
+
+.exercise-topic h4:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #3498db, #2ecc71);
+  border-radius: 3px;
+}
+
+.topic-content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #333;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid #3498db;
+  font-family: 'Georgia', serif;
+}
+
+.exercise-metadata {
+  background-color: #f8fafc;
+  padding: 16px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.metadata-item {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.metadata-item i {
+  color: #3498db;
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.metadata-item strong {
   font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
+  margin-right: 8px;
+  color: #2c3e50;
+}
+
+/* Enhanced Writing Content Styling */
+.writing-card {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+  background-color: #fff;
+  margin-bottom: 24px;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.writing-card .card-header {
+  background: linear-gradient(135deg, #3498db, #9b59b6);
+  color: white;
+  border: none;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.writing-card .card-header h5 {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.writing-card .card-body {
+  padding: 24px;
+}
+
+.writing-textarea {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 1rem;
+  line-height: 1.8;
+  resize: vertical;
+  min-height: 300px;
+  font-family: 'Georgia', serif;
+  color: #333;
+  background-color: #ffffff;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.writing-textarea:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  outline: none;
+}
+
+.word-count {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  backdrop-filter: blur(5px);
+}
+
+.word-count i {
+  margin-right: 5px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  justify-content: flex-end;
+}
+
+.action-buttons .btn {
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
-  background-color: rgba(0, 123, 255, 0.15);
-  color: #0056b3;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Cũ, giữ lại để khả năng tương thích */
-.exercise-card .language-badge img {
+.action-buttons .btn-primary {
+  background: linear-gradient(to right, #3498db, #2980b9);
+  border: none;
+}
+
+.action-buttons .btn-primary:hover {
+  background: linear-gradient(to right, #2980b9, #1c6ea4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-buttons .btn-success {
+  background: linear-gradient(to right, #2ecc71, #27ae60);
+  border: none;
+}
+
+.action-buttons .btn-success:hover {
+  background: linear-gradient(to right, #27ae60, #219a52);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-buttons .btn i {
+  margin-right: 8px;
+}
+
+/* AI Feedback Section */
+.ai-feedback-card {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+  background-color: #fff;
+  margin-bottom: 24px;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.ai-feedback-card .card-header {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  color: white;
+  border: none;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-feedback-card .card-header h5 {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.ai-feedback-card .card-header h5 i {
+  margin-right: 10px;
+}
+
+.ai-feedback-card .card-body {
+  padding: 24px;
+}
+
+.feedback-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  border-left: 4px solid #9b59b6;
+}
+
+.feedback-section h6 {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.feedback-section h6 i {
+  margin-right: 8px;
+  color: #9b59b6;
+}
+
+.feedback-content {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #333;
+}
+
+/* Suggestions Section */
+.suggestions-section {
+  background-color: #f0f9ff;
+  border-left: 4px solid #3498db;
+}
+
+.suggestions-section h6 i {
+  color: #3498db;
+}
+
+/* Corrections Section */
+.corrections-section {
+  background-color: #fff5f5;
+  border-left: 4px solid #e74c3c;
+}
+
+.corrections-section h6 i {
+  color: #e74c3c;
+}
+
+/* Score Section */
+.score-section {
+  background-color: #f0fff4;
+  border-left: 4px solid #2ecc71;
+}
+
+.score-section h6 i {
+  color: #2ecc71;
+}
+
+/* Loading States */
+.saving-label, .autosave-label {
+  font-size: 0.9rem;
+  padding: 5px 10px;
+  border-radius: 15px;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.saving-label {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+}
+
+.autosave-label {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+}
+
+.saving-label i, .autosave-label i {
   margin-right: 5px;
-  width: 16px;
-  height: 16px;
+}
+
+/* Custom scrollbar for text areas */
+.writing-textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.writing-textarea::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.writing-textarea::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 10px;
+}
+
+.writing-textarea::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
 }

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useFlashcard } from '../contexts/FlashcardContext';
 import '../css/components/Flashcards.css';
+import '../css/components/EnhancedFlashcards.css';
 
 function ExploreFlashcardsPage() {
     const { translateText } = useLanguage();

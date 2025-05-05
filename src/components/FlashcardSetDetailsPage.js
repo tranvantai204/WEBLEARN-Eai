@@ -2323,13 +2323,15 @@ function FlashcardSetDetailsPage() {
                                 <div className='share'>
                                 {
                                     flashcardSet.isPublic ? 
-                                    <button className='btn' onClick={() => copyToClipboard(window.location.href)}>Share to your friend</button>:
+                                    <button className='btn-action btn-primary' onClick={() => copyToClipboard(window.location.href)}>
+                                        <i className="fas fa-share-alt"></i> Share
+                                    </button>:
                                     <></>
                                 }
                                 {/* Add Report button */}
                                 {isAuthenticated && !isOwner && (
-                                    <button className='btn btn-report' onClick={openReportModal}>
-                                        <i className="fas fa-flag"></i> Report Content
+                                    <button className='btn-action btn-danger' onClick={openReportModal}>
+                                        <i className="fas fa-flag"></i> Report
                                     </button>
                                 )}
                                 </div>
@@ -2339,45 +2341,37 @@ function FlashcardSetDetailsPage() {
                                 {isAuthenticated && isOwner && (
                                     <>
                                         <button 
-                                            className="btn btn-secondary" 
+                                            className="btn btn-action btn-secondary" 
                                             onClick={openEditSetModal}
                                         >
                                             <i className="fas fa-edit"></i> {translateText('Edit Set')}
                                         </button>
                                         <button 
-                                            className="btn btn-primary" 
+                                            className="btn btn-action btn-primary" 
                                             onClick={openAddModal}
                                         >
                                             <i className="fas fa-plus"></i> {translateText('Add Card')}
                                         </button>
                                         <button 
-                                            className="btn btn-success" 
+                                            className="btn btn-action btn-success" 
                                             onClick={openBulkImportModal}
                                         >
                                             <i className="fas fa-file-import"></i> {translateText('Bulk Import')}
                                         </button>
                                         <button 
-                                            className="btn btn-info" 
+                                            className="btn btn-action btn-info" 
                                             onClick={openVisibilityModal}
                                         >
                                             <i className={`fas fa-${flashcardSet?.isPublic ? 'globe' : 'lock'}`}></i> 
                                             {flashcardSet?.isPublic ? translateText('Public') : translateText('Private')}
                                         </button>
                                         <button 
-                                            className="btn btn-danger" 
+                                            className="btn btn-action btn-danger" 
                                             onClick={() => setShowDeleteConfirmation(true)}
                                         >
                                             <i className="fas fa-trash"></i> {translateText('Delete')}
                                         </button>
                                     </>
-                                )}
-                                {isAuthenticated && !isOwner && (
-                                    <button 
-                                        className="btn btn-success" 
-                                        onClick={() => handleStudySet(flashcardSet)}
-                                    >
-                                        <i className="fas fa-graduation-cap"></i> {translateText('Study Set')}
-                                    </button>
                                 )}
                             </div>
                             
@@ -2419,40 +2413,14 @@ function FlashcardSetDetailsPage() {
                                             <div className="example-cell">{card.example}</div>
                                             <div className="actions-cell">
                                                 <button 
-                                                    style={{
-                                                        background: 'none',
-                                                        border: 'none',
-                                                        padding: '0.5rem 0.75rem',
-                                                        cursor: 'pointer',
-                                                        color: '#16a085',
-                                                        borderRadius: '4px',
-                                                        transition: 'all 0.2s',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        minWidth: '36px',
-                                                        minHeight: '36px'
-                                                    }}
+                                                    className="btn-action btn-info"
                                                     title="Edit"
                                                     onClick={() => handleOpenEditModal(card)}
                                                 >
                                                     <i className="fas fa-edit"></i>
                                                 </button>
                                                 <button 
-                                                    style={{
-                                                        background: 'none',
-                                                        border: 'none',
-                                                        padding: '0.5rem 0.75rem',
-                                                        cursor: 'pointer',
-                                                        color: '#dc3545',
-                                                        borderRadius: '4px',
-                                                        transition: 'all 0.2s',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        minWidth: '36px',
-                                                        minHeight: '36px'
-                                                    }}
+                                                    className="btn-action btn-danger"
                                                     title="Delete"
                                                     onClick={() => handleConfirmDeleteFlashcard(card.flashcardId)}
                                                 >
@@ -2467,23 +2435,9 @@ function FlashcardSetDetailsPage() {
                                 <div className="no-cards-message">
                                     <p>This set doesn't have any flashcards yet. Add your first card!</p>
                                     <button 
-                                        className="btn btn-primary mt-3"
+                                        className="btn-action btn-success"
                                         id="addFirstCardButton"
                                         onClick={() => setShowAddModal(true)}
-                                        style={{
-                                            backgroundColor: '#16a085',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '10px 20px',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '16px',
-                                            marginTop: '15px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '8px',
-                                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                                        }}
                                     >
                                         <i className="fas fa-plus mr-2"></i>
                                         Add First Card

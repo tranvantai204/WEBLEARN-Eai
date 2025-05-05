@@ -1,0 +1,119 @@
+/* Login.css - Styles for Login component */
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background);
+}
+
+.login-paper {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  background-color: var(--paper);
+}
+
+.login-avatar {
+  margin: 16px 0; 
+  width: 60px;
+  height: 60px;
+  background-color: var(--primary);
+  box-shadow: 0 0 15px rgba(58, 134, 255, 0.3);
+}
+
+.login-title {
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.login-subtitle {
+  margin-bottom: 24px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.login-form {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.login-button {
+  margin: 24px 0 16px;
+  padding: 12px;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  text-transform: none;
+  font-size: 16px;
+  background-color: var(--primary);
+  color: white;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.login-button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.login-alert {
+  width: 100%;
+  margin-bottom: 16px;
+  border-radius: var(--border-radius);
+}
+
+.login-bottom-text {
+  margin-top: 16px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.login-divider {
+  margin: 24px 0;
+  width: 100%;
+  background-color: var(--border-color);
+}
+
+.login-gradient-text {
+  background: linear-gradient(45deg, var(--primary), var(--primary-light) 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Input fields */
+.login-textfield {
+  margin-bottom: 16px;
+}
+
+.login-textfield label {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.login-textfield input {
+  padding: 14px;
+  border-radius: var(--border-radius);
+  border-color: var(--border-color);
+}
+
+.login-textfield input:focus {
+  border-color: var(--primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .login-paper {
+    padding: 24px 16px;
+  }
+  
+  .login-avatar {
+    width: 50px;
+    height: 50px;
+  }
+} 

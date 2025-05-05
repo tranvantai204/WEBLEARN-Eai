@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/UserProgress.css';
 import { useAuth } from '../contexts/AuthContext';      
 import { useFlashcard } from '../contexts/FlashcardContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 function UserProgressPage() {
     const [progressData, setProgressData] = useState(null);
@@ -13,6 +14,7 @@ function UserProgressPage() {
     const { accessToken, isAuthenticated, currentUser, fetchUserProgress, logout } = useAuth();
     const { getUserApiKey } = useFlashcard();
     const [calendarDays, setCalendarDays] = useState([]);
+    const { translateText } = useLanguage();
 
     // API URL
     const baseUrl = process.env.REACT_APP_API_URL || 'https://6d2c-115-76-51-131.ngrok-free.app';
@@ -48,6 +50,12 @@ function UserProgressPage() {
 
                 const data = await response.json();
                 console.log('Learning statistics data:', data);
+                
+                // Ensure data has the correct structure
+                if (!data) {
+                    throw new Error('API returned empty data');
+                }
+                
                 setProgressData(data);
 
                 const generatedDays = generateCalendarDays(data.lastLearningDate, data.currentStreak);
@@ -207,14 +215,14 @@ function UserProgressPage() {
             <ToastContainer position="top-right" autoClose={3000} />
             <div className="user-progress-container">
                 <div className="user-progress-header">
-                    <h1 className="user-progress-title">Tiến Độ Học Tập</h1>
-                    <p className="user-progress-subtitle">Theo dõi sự phát triển của bạn</p>
+                    <h1 className="user-progress-title">{translateText('Your Learning Progress')}</h1>
+                    <p className="user-progress-subtitle">{translateText('Track your development')}</p>
                 </div>
 
                 {loading ? (
                     <div className="loading-container">
                         <div className="loading-spinner"></div>
-                        <p>Đang tải dữ liệu...</p>
+                        <p>{translateText('Loading data...')}</p>
                     </div>
                 ) : progressData ? (
                     <div className="user-progress-content">
@@ -225,9 +233,9 @@ function UserProgressPage() {
                                     <i className="fas fa-fire"></i>
                                 </div>
                                 <div className="stat-info">
-                                    <h3 className="stat-title">Streak Hiện Tại</h3>
-                                    <div className="stat-value">{progressData?.currentStreak || 1} ngày</div>
-                                    <p className="stat-desc">Giữ vững động lực mỗi ngày!</p>
+                                    <h3 className="stat-title">{translateText('Current Streak')}</h3>
+                                    <div className="stat-value">{progressData.currentStreak || 0} {translateText('days')}</div>
+                                    <p className="stat-desc">{translateText('Keep your motivation every day!')}</p>
                                 </div>
                             </div>
                             
@@ -236,9 +244,9 @@ function UserProgressPage() {
                                     <i className="fas fa-trophy"></i>
                                 </div>
                                 <div className="stat-info">
-                                    <h3 className="stat-title">Streak Dài Nhất</h3>
-                                    <div className="stat-value">{progressData?.longestStreak || 101} ngày</div>
-                                    <p className="stat-desc">Kỷ lục của bạn cho đến nay!</p>
+                                    <h3 className="stat-title">{translateText('Longest Streak')}</h3>
+                                    <div className="stat-value">{progressData.longestStreak || 0} {translateText('days')}</div>
+                                    <p className="stat-desc">{translateText('Your record so far!')}</p>
                                 </div>
                             </div>
                             
@@ -247,9 +255,9 @@ function UserProgressPage() {
                                     <i className="fas fa-clock"></i>
                                 </div>
                                 <div className="stat-info">
-                                    <h3 className="stat-title">Tổng Thời Gian Học</h3>
-                                    <div className="stat-value">{formatLearningTime(progressData?.totalLearningTime || 134.53)}</div>
-                                    <p className="stat-desc">Thời gian đầu tư cho việc học của bạn</p>
+                                    <h3 className="stat-title">{translateText('Total Learning Time')}</h3>
+                                    <div className="stat-value">{formatLearningTime(progressData.totalLearningMinutes || 0)}</div>
+                                    <p className="stat-desc">{translateText('Time invested in your learning')}</p>
                                 </div>
                             </div>
                             
@@ -258,16 +266,16 @@ function UserProgressPage() {
                                     <i className="fas fa-calendar-check"></i>
                                 </div>
                                 <div className="stat-info">
-                                    <h3 className="stat-title">Buổi Học Gần Đây</h3>
+                                    <h3 className="stat-title">{translateText('Recent Session')}</h3>
                                     <div className="stat-value">{formatDate(progressData.lastLearningDate)}</div>
-                                    <p className="stat-desc">Tiếp tục duy trì thói quen học tập!</p>
+                                    <p className="stat-desc">{translateText('Continue maintaining your learning habits!')}</p>
                                 </div>
                             </div>
                         </div>
                         
                         {/* Lịch học 7 ngày gần đây */}
                         <div className="learning-calendar">
-                            <h3 className="calendar-title">Lịch Học 7 Ngày Gần Đây</h3>
+                            <h3 className="calendar-title">{translateText('Learning Calendar')}</h3>
                             <div className="calendar-days">
                                 {calendarDays.map(day => (
                                     <div
@@ -280,7 +288,7 @@ function UserProgressPage() {
                                     </div>
                                 ))}
                             </div>
-                            <p className="calendar-note">Lưu ý: Lịch chỉ hiển thị chuỗi ngày học liên tục gần nhất.</p>
+                            <p className="calendar-note">{translateText('Note: Calendar only shows your most recent continuous learning streak.')}</p>
                         </div>
                         
                         {/* Nút hành động */}
@@ -291,34 +299,34 @@ function UserProgressPage() {
                                 onClick={() => navigate('/readings')}
                             >
                                 <i className="fas fa-book"></i>
-                                Đọc Bài Mới
+                                {translateText('New Reading')}
                             </button>
                             <button 
                                 className="action-button p-3"
                                 onClick={() => navigate('/flashcards')}
                             >
                                 <i className="fas fa-layer-group"></i>
-                                Học Thẻ Ghi Nhớ
+                                {translateText('Study Flashcards')}
                             </button>
                             <button 
                                 className="action-button secondary p-3"
                                 onClick={() => navigate('/writing')}
                             >
                                 <i className="fas fa-pen"></i>
-                                Viết Bài Mới
+                                {translateText('New Writing')}
                             </button>
                         </div>
 
                         <div className="achievement-section">
-                            <h2 className="section-title">Thành Tựu Của Bạn</h2>
+                            <h2 className="section-title">{translateText('Your Achievements')}</h2>
                             <div className="achievements-grid">
                                 <div className={`achievement-card ${progressData.currentStreak >= 3 ? 'unlocked' : 'locked'}`}>
                                     <div className="achievement-icon">
                                         <i className="fas fa-award"></i>
                                     </div>
                                     <div className="achievement-content">
-                                        <h3>Học Liên Tục 3 Ngày</h3>
-                                        <p>Học mỗi ngày trong 3 ngày liên tiếp</p>
+                                        <h3>{translateText('3-Day Streak')}</h3>
+                                        <p>{translateText('Study every day for 3 consecutive days')}</p>
                                         <div className="achievement-progress">
                                             <div className="progress-bar" style={{ width: `${Math.min(100, ((progressData.currentStreak || 0) / 3) * 100)}%` }}></div>
                                             <span className="progress-text">{progressData.currentStreak || 0}/3</span>
@@ -331,8 +339,8 @@ function UserProgressPage() {
                                         <i className="fas fa-stopwatch"></i>
                                     </div>
                                     <div className="achievement-content">
-                                        <h3>10 Phút Học Tập</h3>
-                                        <p>Học tổng cộng 10 phút</p>
+                                        <h3>{translateText('10 Minutes of Learning')}</h3>
+                                        <p>{translateText('Study for a total of 10 minutes')}</p>
                                         <div className="achievement-progress">
                                             <div className="progress-bar" style={{ width: `${Math.min(100, ((progressData.totalLearningMinutes || 0) / 10) * 100)}%` }}></div>
                                             <span className="progress-text">{(progressData.totalLearningMinutes || 0).toFixed(2)}/10</span>
@@ -345,8 +353,8 @@ function UserProgressPage() {
                                         <i className="fas fa-fire-alt"></i>
                                     </div>
                                     <div className="achievement-content">
-                                        <h3>Học Liên Tục 7 Ngày</h3>
-                                        <p>Học mỗi ngày trong 7 ngày liên tiếp</p>
+                                        <h3>{translateText('7-Day Streak')}</h3>
+                                        <p>{translateText('Study every day for 7 consecutive days')}</p>
                                         <div className="achievement-progress">
                                             <div className="progress-bar" style={{ width: `${Math.min(100, ((progressData.currentStreak || 0) / 7) * 100)}%` }}></div>
                                             <span className="progress-text">{progressData.currentStreak || 0}/7</span>
@@ -359,14 +367,14 @@ function UserProgressPage() {
                 ) : (
                     <div className="no-data-message">
                         <i className="fas fa-exclamation-circle"></i>
-                        <h2>Không tìm thấy dữ liệu</h2>
-                        <p>Bạn chưa có dữ liệu học tập. Hãy bắt đầu học để theo dõi tiến độ!</p>
+                        <h2>{translateText('No data found')}</h2>
+                        <p>{translateText('You have no learning data yet. Start learning to track your progress!')}</p>
                         <button 
                             className="action-button primary-button"
                             onClick={() => navigate('/flashcards')}
                         >
                             <i className="fas fa-play"></i>
-                            <span>Bắt đầu học ngay</span>
+                            <span>{translateText('Start learning now')}</span>
                         </button>
                     </div>
                 )}

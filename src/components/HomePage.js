@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useFlashcard } from '../contexts/FlashcardContext';
 import '../css/components/Home.css';
+import '../css/components/EnhancedFlashcards.css';
 import Features from './Features';
 import Hero from './Hero';
 
@@ -197,9 +199,133 @@ function    scrollToSection() {
 function HomePage() {
     const { currentLanguage } = useLanguage();
     const { isAuthenticated } = useAuth();
+    const { exploreFlashcardSets } = useFlashcard();
+    
+    const [featuredSets, setFeaturedSets] = useState([]);
+    const [loading, setLoading] = useState(true);
     
     // Get translations for current language or fallback to English
     const translations = allTranslations[currentLanguage] || allTranslations.en;
+
+    // Fetch featured flashcard sets on component mount
+    useEffect(() => {
+        const fetchFeaturedSets = async () => {
+            try {
+                setLoading(true);
+                // Using the existing explore function to get popular sets 
+                const result = await exploreFlashcardSets({
+                    page: 1,
+                    itemPerPage: 4,
+                    // You can add filters here if needed
+                });
+                
+                if (result && result.flashcardSets) {
+                    setFeaturedSets(result.flashcardSets);
+                } else {
+                    // Fallback to default sets if API call fails
+                    setFeaturedSets([
+                        {
+                            flashcardSetId: '99d0dfac-3a96-4eaf-99cd-08dd7b155952',
+                            title: 'English - Basic Vocabulary',
+                            description: 'Essential vocabulary for beginner English learners focusing on everyday language.',
+                            totalVocabulary: 50,
+                            learningLanguage: 'ENG',
+                            nativeLanguage: 'VIE',
+                            level: 1,
+                            learnerCount: 238,
+                            badge: 'Popular'
+                        },
+                        {
+                            flashcardSetId: '85c4e174-2f2d-4073-99ce-08dd7b155952',
+                            title: 'Mobile Games Vocabulary',
+                            description: 'Learn common terms used in mobile gaming and technology in Vietnamese.',
+                            totalVocabulary: 46,
+                            learningLanguage: 'VN',
+                            nativeLanguage: 'AO',
+                            level: 3,
+                            learnerCount: 140,
+                            badge: 'Trending'
+                        },
+                        {
+                            flashcardSetId: '73a6f7bc-d4f9-4ce7-99cf-08dd7b155952',
+                            title: 'Kitchen & Household',
+                            description: 'Learn vocabulary related to household items and kitchen utensils.',
+                            totalVocabulary: 50,
+                            learningLanguage: 'ENG',
+                            nativeLanguage: 'VIE',
+                            level: 3,
+                            learnerCount: 30,
+                            badge: 'New'
+                        },
+                        {
+                            flashcardSetId: '67d4c822-0c5d-4fa3-99d0-08dd7b155952',
+                            title: 'Family Members',
+                            description: 'Learn vocabulary related to family relationships and kinship terms.',
+                            totalVocabulary: 50,
+                            learningLanguage: 'ENG',
+                            nativeLanguage: 'VIE',
+                            level: 2,
+                            learnerCount: 125,
+                            badge: 'Popular'
+                        }
+                    ]);
+                }
+            } catch (error) {
+                console.error('Failed to fetch featured flashcard sets', error);
+                // Use fallback data if fetch fails
+                setFeaturedSets([
+                    {
+                        flashcardSetId: '99d0dfac-3a96-4eaf-99cd-08dd7b155952',
+                        title: 'English - Basic Vocabulary',
+                        description: 'Essential vocabulary for beginner English learners focusing on everyday language.',
+                        totalVocabulary: 50,
+                        learningLanguage: 'ENG',
+                        nativeLanguage: 'VIE',
+                        level: 1,
+                        learnerCount: 238,
+                        badge: 'Popular'
+                    },
+                    {
+                        flashcardSetId: '85c4e174-2f2d-4073-99ce-08dd7b155952',
+                        title: 'Mobile Games Vocabulary',
+                        description: 'Learn common terms used in mobile gaming and technology in Vietnamese.',
+                        totalVocabulary: 46,
+                        learningLanguage: 'VN',
+                        nativeLanguage: 'AO',
+                        level: 3,
+                        learnerCount: 140,
+                        badge: 'Trending'
+                    },
+                    {
+                        flashcardSetId: '73a6f7bc-d4f9-4ce7-99cf-08dd7b155952',
+                        title: 'Kitchen & Household',
+                        description: 'Learn vocabulary related to household items and kitchen utensils.',
+                        totalVocabulary: 50,
+                        learningLanguage: 'ENG',
+                        nativeLanguage: 'VIE',
+                        level: 3,
+                        learnerCount: 30,
+                        badge: 'New'
+                    },
+                    {
+                        flashcardSetId: '67d4c822-0c5d-4fa3-99d0-08dd7b155952',
+                        title: 'Family Members',
+                        description: 'Learn vocabulary related to family relationships and kinship terms.',
+                        totalVocabulary: 50,
+                        learningLanguage: 'ENG',
+                        nativeLanguage: 'VIE',
+                        level: 2,
+                        learnerCount: 125,
+                        badge: 'Popular'
+                    }
+                ]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchFeaturedSets();
+    }, [exploreFlashcardSets]);
 
     // Render different content based on authentication status
     const renderAuthenticatedContent = () => {
@@ -268,6 +394,38 @@ function HomePage() {
                     </div>
                 </section>
 
+                {/* Featured Flashcards Section - Dynamic */}
+                <section className="featured-flashcards">
+                    <div className="featured-flashcards-header">
+                        <h2>Featured Flashcards</h2>
+                        <Link to="/flashcards" className="btn-primary">
+                            {translations.viewAll}
+                        </Link>
+                    </div>
+                    <div className="featured-cards-grid">
+                        {loading ? (
+                            <div className="loading-indicator">Loading flashcard sets...</div>
+                        ) : (
+                            featuredSets.map((set, index) => (
+                                <div className="featured-card" key={set.flashcardSetId || index}>
+                                    <div className="featured-badge">{set.badge || 'Featured'}</div>
+                                    <h3 className="set-title">{set.title}</h3>
+                                    <p className="set-description">{set.description}</p>
+                                    <div className="set-stats">
+                                        <span>{set.totalVocabulary || 0} cards</span>
+                                        <span className="set-language">{set.learningLanguage} → {set.nativeLanguage}</span>
+                                        <span className="set-level">Level: {set.level || 'N/A'}</span>
+                                        <span className="set-learner-count">Learners: {set.learnerCount || 0}</span>
+                                    </div>
+                                    <Link to={`/flashcard-set/${set.flashcardSetId}`} className="study-now-btn">
+                                        <i className="fas fa-graduation-cap"></i> Study Now
+                                    </Link>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </section>
+
                 <Features 
                     title={translations.recentActivity}
                     subtitle={translations.noActivity}
@@ -295,7 +453,7 @@ function HomePage() {
                     <p className="bottom-description">
                         {translations.noActivity}
                     </p>
-                    <Link to="#" className="bottom-button" onClick={() => scrollToSection()}>
+                    <Link to="/progress" className="bottom-button">
                         {translations.discover}
                     </Link>
                 </section>
@@ -388,6 +546,38 @@ function HomePage() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </section>
+                
+                {/* Featured Flashcards Section for public users - Dynamic */}
+                <section className="featured-flashcards">
+                    <div className="featured-flashcards-header">
+                        <h2>Popular Flashcard Sets</h2>
+                        <Link to="/explore" className="btn-primary">
+                            Explore All
+                        </Link>
+                    </div>
+                    <div className="featured-cards-grid">
+                        {loading ? (
+                            <div className="loading-indicator">Loading flashcard sets...</div>
+                        ) : (
+                            featuredSets.map((set, index) => (
+                                <div className="featured-card" key={set.flashcardSetId || index}>
+                                    <div className="featured-badge">{set.badge || 'Featured'}</div>
+                                    <h3 className="set-title">{set.title}</h3>
+                                    <p className="set-description">{set.description}</p>
+                                    <div className="set-stats">
+                                        <span>{set.totalVocabulary || 0} cards</span>
+                                        <span className="set-language">{set.learningLanguage} → {set.nativeLanguage}</span>
+                                        <span className="set-level">Level: {set.level || 'N/A'}</span>
+                                        <span className="set-learner-count">Learners: {set.learnerCount || 0}</span>
+                                    </div>
+                                    <Link to={`/register?redirect=/flashcard-set/${set.flashcardSetId}`} className="study-now-btn">
+                                        <i className="fas fa-user-plus"></i> Sign Up to Study
+                                    </Link>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </section>
                 

@@ -1,0 +1,124 @@
+/* Global styles for WordWise Admin */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Some common utility classes */
+.text-center {
+  text-align: center;
+}
+
+.text-primary {
+  color: #1976d2;
+}
+
+.text-success {
+  color: #4caf50;
+}
+
+.text-warning {
+  color: #ff9800;
+}
+
+.text-danger {
+  color: #f44336;
+}
+
+/* Card styling enhancements */
+.MuiCard-root {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  border-radius: 12px !important;
+}
+
+.MuiCard-root:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Button enhancements */
+.MuiButton-containedPrimary {
+  background-image: linear-gradient(to right, #1976d2, #2196f3) !important;
+  box-shadow: 0 4px 6px rgba(25, 118, 210, 0.25) !important;
+  transition: all 0.3s ease !important;
+}
+
+.MuiButton-containedPrimary:hover {
+  box-shadow: 0 6px 10px rgba(25, 118, 210, 0.4) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Table enhancements */
+.MuiTableRow-root:hover {
+  background-color: rgba(25, 118, 210, 0.05) !important;
+}
+
+/* Dialog enhancements */
+.MuiDialog-paper {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Remove default focus outline and use custom ones */
+:focus {
+  outline: none;
+}
+
+/* Global links */
+a {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+} 

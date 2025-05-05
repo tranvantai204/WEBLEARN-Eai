@@ -359,7 +359,7 @@ function ReadingsPage() {
                 <div className="readings-wrapper">
                     <div className="custom-loading-spinner">
                         <div className="spinner-circle"></div>
-                        <div className="spinner-text">Loading reading tests...</div>
+                        <div className="spinner-text">{translateText('Loading...')}</div>
                     </div>
                 </div>
             </div>
@@ -370,14 +370,14 @@ function ReadingsPage() {
         <div className="main-content">
             <div className="readings-wrapper">
                 <div className="ai-section">
-                    <h2 className="ai-section-title">{translations.generateTestsWithAI}</h2>
+                    <h2 className="ai-section-title">{translateText('Tạo bài kiểm tra bằng AI')}</h2>
                     <p className="ai-description">
-                        {translations.aiDescription}
+                        {translateText('Enter a topic (optional) or leave blank for AI to choose one. Select options below to customize your reading test. AI will automatically generate a reading passage and multiple-choice questions. Example topics: "Climate Change", "Space Exploration", "Vietnamese Culture"...')}
                     </p>
                     <div className="ai-input-container">
                         <input
                             type="text"
-                            placeholder={translations.topicPlaceholder}
+                            placeholder={translateText('Enter a topic (optional) or leave blank for AI to choose a topic...')}
                             value={aiParams.title}
                             onChange={(e) => setAiParams({ ...aiParams, title: e.target.value })}
                             className="ai-input"
@@ -392,11 +392,11 @@ function ReadingsPage() {
                         >
                             {isGenerating ? (
                                 <>
-                                    <div className="button-progress-bar"></div> {translations.generatingText}
+                                    <div className="button-progress-bar"></div> {translateText('Generating...')}
                                 </>
                             ) : (
                                 <>
-                                    <i className="fas fa-robot"></i> {translations.generateButton}
+                                    <i className="fas fa-robot"></i> {translateText('Generate with AI')}
                                 </>
                             )}
                         </button>
@@ -405,64 +405,64 @@ function ReadingsPage() {
                     <div className="ai-options-container">
                         <div className="ai-option-row">
                             <div className="ai-option-group">
-                                <label htmlFor="learningLanguage">{translations.learningLanguage || 'Learning Language'}:</label>
+                                <label htmlFor="learningLanguage">{translateText('Learning Language')}:</label>
                                 <select
                                     id="learningLanguage"
                                     value={aiParams.learningLanguage}
                                     onChange={(e) => setAiParams({ ...aiParams, learningLanguage: e.target.value })}
                                     className="ai-select"
                                 >
-                                    <option value="ENG">English</option>
-                                    <option value="ESP">Spanish</option>
-                                    <option value="FRA">French</option>
-                                    <option value="DEU">German</option>
-                                    <option value="JPN">Japanese</option>
-                                    <option value="KOR">Korean</option>
-                                    <option value="CHN">Chinese</option>
-                                    <option value="VIE">Vietnamese</option>
+                                    <option value="ENG">{translateText('English')}</option>
+                                    <option value="ESP">{translateText('Spanish')}</option>
+                                    <option value="FRA">{translateText('French')}</option>
+                                    <option value="DEU">{translateText('German')}</option>
+                                    <option value="JPN">{translateText('Japanese')}</option>
+                                    <option value="KOR">{translateText('Korean')}</option>
+                                    <option value="CHN">{translateText('Chinese')}</option>
+                                    <option value="VIE">{translateText('Vietnamese')}</option>
                                 </select>
                             </div>
                             
                             <div className="ai-option-group">
-                                <label htmlFor="nativeLanguage">{translations.nativeLanguage || 'Native Language'}:</label>
+                                <label htmlFor="nativeLanguage">{translateText('Native Language')}:</label>
                                 <select
                                     id="nativeLanguage"
                                     value={aiParams.nativeLanguage}
                                     onChange={(e) => setAiParams({ ...aiParams, nativeLanguage: e.target.value })}
                                     className="ai-select"
                                 >
-                                    <option value="VIE">Vietnamese</option>
-                                    <option value="ENG">English</option>
-                                    <option value="ESP">Spanish</option>
-                                    <option value="FRA">French</option>
-                                    <option value="DEU">German</option>
-                                    <option value="JPN">Japanese</option>
-                                    <option value="KOR">Korean</option>
-                                    <option value="CHN">Chinese</option>
+                                    <option value="VIE">{translateText('Vietnamese')}</option>
+                                    <option value="ENG">{translateText('English')}</option>
+                                    <option value="ESP">{translateText('Spanish')}</option>
+                                    <option value="FRA">{translateText('French')}</option>
+                                    <option value="DEU">{translateText('German')}</option>
+                                    <option value="JPN">{translateText('Japanese')}</option>
+                                    <option value="KOR">{translateText('Korean')}</option>
+                                    <option value="CHN">{translateText('Chinese')}</option>
                                 </select>
                             </div>
                             
                             <div className="ai-option-group">
-                                <label htmlFor="level">{translations.levelDifficulty || 'Difficulty Level'}:</label>
+                                <label htmlFor="level">{translateText('Difficulty Level')}:</label>
                                 <select
                                     id="level"
                                     value={aiParams.level}
                                     onChange={(e) => setAiParams({ ...aiParams, level: parseInt(e.target.value) })}
                                     className="ai-select"
                                 >
-                                    <option value={1}>Level 1 - Beginner</option>
-                                    <option value={2}>Level 2 - Elementary</option>
-                                    <option value={3}>Level 3 - Intermediate</option>
-                                    <option value={4}>Level 4 - Upper Intermediate</option>
-                                    <option value={5}>Level 5 - Advanced</option>
-                                    <option value={6}>Level 6 - Proficient</option>
+                                    <option value={1}>{translateText('Level 1 - Beginner')}</option>
+                                    <option value={2}>{translateText('Level 2 - Elementary')}</option>
+                                    <option value={3}>{translateText('Level 3 - Intermediate')}</option>
+                                    <option value={4}>{translateText('Level 4 - Upper Intermediate')}</option>
+                                    <option value={5}>{translateText('Level 5 - Advanced')}</option>
+                                    <option value={6}>{translateText('Level 6 - Proficient')}</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     
                     <div className="ai-helper-text">
-                        <i className="fas fa-info-circle"></i> {translations.aiHelperText}
+                        <i className="fas fa-info-circle"></i> {translateText('AI test generation requires a Google Gemini API key. If you don\'t have one yet, the system will guide you to add it.')}
                     </div>
                 </div>
 
@@ -471,7 +471,7 @@ function ReadingsPage() {
                         <h1 className="tests-title">{translations.pageTitle}</h1>
                         <div className="tests-actions">
                             <Link to="/readings/multiple-choice/tests" className="view-tests-btn">
-                                <i className="fas fa-list"></i> My Multiple Choice Tests
+                                <i className="fas fa-list"></i> {translateText('My Multiple Choice Tests')}
                             </Link>
                             <Link to="/readings/multiple-choice/create" className="create-new-test-btn">
                                 <i className="fas fa-plus"></i> {translations.createButton}

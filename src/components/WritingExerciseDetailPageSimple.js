@@ -72,9 +72,9 @@ const WritingExerciseDetailPageSimple = () => {
             return;
           }
           
-          // Gọi API SaveWriting thay vì UpdateContent
-          console.log("Auto-saving to API:", `${API_URL}/api/WritingExercise/SaveWriting/${exerciseId}`);
-          const response = await fetch(`${API_URL}/api/WritingExercise/SaveWriting/${exerciseId}`, {
+          // Gọi API SaveWriting để lưu nội dung mà không yêu cầu phản hồi AI
+          console.log("Auto-saving to API:", `${API_URL}/WritingExercise/SaveWriting/${exerciseId}`);
+          const response = await fetch(`${API_URL}/WritingExercise/SaveWriting/${exerciseId}`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -165,7 +165,21 @@ const WritingExerciseDetailPageSimple = () => {
           // Load AI feedback if available and automatically show it
           if (result.aiFeedback && result.aiFeedback.trim() !== '') {
             console.log("Found feedback, setting aiFeedback:", result.aiFeedback.substring(0, 100) + "...");
-            setAiFeedback(result.aiFeedback);
+            
+            // Try to parse the feedback as JSON if it looks like a JSON object
+            try {
+              if (result.aiFeedback.startsWith('{') && result.aiFeedback.endsWith('}')) {
+                const parsedFeedback = JSON.parse(result.aiFeedback);
+                setAiFeedback(parsedFeedback);
+              } else {
+                // Otherwise, just use the string as-is
+                setAiFeedback(result.aiFeedback);
+              }
+            } catch (error) {
+              console.log("Feedback is not in JSON format, using as plain text", error);
+              setAiFeedback(result.aiFeedback);
+            }
+            
             setShowAiFeedback(true);
             
             // Thêm thông báo đã tải đánh giá AI sau khi trang đã tải xong hoàn toàn
@@ -220,11 +234,24 @@ const WritingExerciseDetailPageSimple = () => {
     });
   };
   
+  // Format time for display
+  const formatTime = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+  
   // Get language name from code
   const getLanguageName = (code) => {
     switch (code) {
       case 'ENG': return 'English';
-      case 'VIE': return 'Vietnamese';
+      case 'US': return 'English';
+      case 'VIE': 
+      case 'VN': return 'Vietnamese';
       case 'KOR': return 'Korean';
       case 'JPN': return 'Japanese';
       case 'CN': return 'Chinese';
@@ -239,8 +266,10 @@ const WritingExerciseDetailPageSimple = () => {
   // Get language flag from code
   const getLanguageFlag = (code) => {
     switch (code) {
-      case 'ENG': return <span className="flag-icon">🇬🇧</span>;
-      case 'VIE': return <span className="flag-icon">🇻🇳</span>;
+      case 'ENG': 
+      case 'US': return <span className="flag-icon">🇬🇧</span>;
+      case 'VIE':
+      case 'VN': return <span className="flag-icon">🇻🇳</span>;
       case 'KOR': return <span className="flag-icon">🇰🇷</span>;
       case 'JPN': return <span className="flag-icon">🇯🇵</span>;
       case 'CN': return <span className="flag-icon">🇨🇳</span>;
@@ -256,11 +285,11 @@ const WritingExerciseDetailPageSimple = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'Not Started':
-        return <span className="badge status-badge badge-not-started">Chưa bắt đầu</span>;
+        return <span className="badge status-badge badge-not-started">Not Started</span>;
       case 'In Progress':
-        return <span className="badge status-badge badge-in-progress">Đang thực hiện</span>;
+        return <span className="badge status-badge badge-in-progress">In Progress</span>;
       case 'Completed':
-        return <span className="badge status-badge badge-completed">Đã hoàn thành</span>;
+        return <span className="badge status-badge badge-completed">Completed</span>;
       default:
         return <span className="badge status-badge">{status}</span>;
     }
@@ -311,9 +340,9 @@ const WritingExerciseDetailPageSimple = () => {
         toastId: "saving-toast"
       });
       
-      console.log("Saving to API:", `${API_URL}/api/WritingExercise/SaveWriting/${exerciseId}`);
+      console.log("Saving to API:", `${API_URL}/WritingExercise/SaveWriting/${exerciseId}`);
       
-      // Sử dụng API SaveWriting thay vì UpdateContent do UpdateContent bị lỗi 404
+      // Sử dụng API SaveWriting để lưu nội dung mà không yêu cầu phản hồi AI
       const response = await fetch(`${API_URL}/api/WritingExercise/SaveWriting/${exerciseId}`, {
         method: 'POST',
         headers: {
@@ -455,6 +484,9 @@ const WritingExerciseDetailPageSimple = () => {
         return 15;
       case 'KOR': // Tiếng Hàn
         return 15;
+      case 'US': // Tiếng Anh (US)
+      case 'ENG': // Tiếng Anh (UK/International)
+        return 50;
       default: // Các ngôn ngữ khác
         return 50;
     }
@@ -515,7 +547,7 @@ const WritingExerciseDetailPageSimple = () => {
         const minimumWords = getMinimumWordCount();
         
         if (currentWordCount < minimumWords) {
-          toast.warning(`Bài viết cần có ít nhất ${minimumWords} từ để có thể nhận phản hồi từ AI.`);
+          toast.warning(`Your writing needs at least ${minimumWords} words to receive AI feedback. Current: ${wordCount} words.`);
           return;
         }
       }
@@ -593,7 +625,7 @@ const WritingExerciseDetailPageSimple = () => {
 
       console.log("Sending content to API:", content);
       
-      // Call the AI feedback API
+      // Call the AI feedback API - WriteAndGetFeedback là endpoint lưu bài viết và nhận phản hồi AI
       const response = await fetch(`${API_URL}/api/WritingExercise/WriteAndGetFeedback/${exerciseId}`, {
         method: 'POST',
         headers: {
@@ -639,47 +671,36 @@ const WritingExerciseDetailPageSimple = () => {
       }
       
       // Get feedback text from response
-      const feedbackContent = await response.text();
-      console.log("Received feedback:", feedbackContent.substring(0, 100) + "...");
+      const feedbackData = await response.text();
       
-      // Lưu phản hồi và hiển thị
-      setAiFeedback(feedbackContent);
-      setShowAiFeedback(true);
-      
-      // Lưu nội dung và cập nhật trạng thái bài tập
-      // Format content as EditorJS JSON for saving
-      const formattedContent = JSON.stringify({
-        time: new Date().getTime(),
-        blocks: content.split('\n\n').filter(p => p.trim()).map(p => ({
-          type: 'paragraph',
-          data: { text: p }
-        }))
-      });
-      
-      const saveResponse = await fetch(`${API_URL}/api/WritingExercise/UpdateContent/${exerciseId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        },
-        body: JSON.stringify({
-          content: formattedContent,
-          status: 'Completed',
-          feedback: feedbackContent
-        })
-      });
-      
-      if (!saveResponse.ok) {
-        console.error("Error saving feedback:", saveResponse.status);
-        // Không hiển thị lỗi này cho người dùng vì phản hồi AI đã được hiển thị
+      if (!feedbackData || feedbackData.trim() === '') {
+        toast.warning("Bài viết này chưa có phản hồi AI. Hãy sử dụng nút 'Submit' để nhận phản hồi.");
+        return;
       }
+      
+      console.log("Loaded AI feedback:", feedbackData.substring(0, 100) + "...");
+      
+      // Try to parse the feedback as JSON if it looks like a JSON object
+      try {
+        if (feedbackData.startsWith('{') && feedbackData.endsWith('}')) {
+          const parsedFeedback = JSON.parse(feedbackData);
+          setAiFeedback(parsedFeedback);
+        } else {
+          // Otherwise, just use the string as-is
+          setAiFeedback(feedbackData);
+        }
+      } catch (error) {
+        console.log("Feedback is not in JSON format, using as plain text", error);
+        setAiFeedback(feedbackData);
+      }
+      
+      setShowAiFeedback(true);
       
       // Cập nhật exercise trong state
       setExercise({
         ...exercise,
         status: 'Completed',
-        feedback: feedbackContent
+        feedback: feedbackData
       });
       
       toast.success("Đã nhận phản hồi từ AI cho bài viết của bạn!");
@@ -706,9 +727,28 @@ const WritingExerciseDetailPageSimple = () => {
       .replace(/- (.*?)(?:<br\/>|$)/g, '<li>$1</li>')
       .replace(/<li>(.*?)<\/li>(?:<br\/>)*/g, '<li>$1</li>')
       .replace(/(?:<li>.*?<\/li>)+/g, '<ul>$&</ul>')
+      // Special emoji-based formatting
       .replace(/✅ (.*?)(?:<br\/>|$)/g, '<div class="feedback-item success"><i class="fas fa-check-circle text-success me-2"></i>$1</div>')
       .replace(/🌟 (.*?)(?:<br\/>|$)/g, '<div class="feedback-item highlight"><i class="fas fa-star text-warning me-2"></i>$1</div>')
-      .replace(/🔧 (.*?)(?:<br\/>|$)/g, '<div class="feedback-item improvement"><i class="fas fa-tools text-primary me-2"></i>$1</div>');
+      .replace(/🔧 (.*?)(?:<br\/>|$)/g, '<div class="feedback-item improvement"><i class="fas fa-tools text-primary me-2"></i>$1</div>')
+      // Additional formatting for section headers with emoji
+      .replace(/🎯(.*?)(?:<br\/>|$)/g, '<div class="feedback-item target"><i class="fas fa-bullseye text-primary me-2"></i>$1</div>')
+      .replace(/🏗️(.*?)(?:<br\/>|$)/g, '<div class="feedback-item structure"><i class="fas fa-drafting-compass text-info me-2"></i>$1</div>')
+      .replace(/✍️(.*?)(?:<br\/>|$)/g, '<div class="feedback-item writing"><i class="fas fa-pen-fancy text-secondary me-2"></i>$1</div>')
+      .replace(/🎭(.*?)(?:<br\/>|$)/g, '<div class="feedback-item style"><i class="fas fa-theater-masks text-warning me-2"></i>$1</div>')
+      .replace(/💡(.*?)(?:<br\/>|$)/g, '<div class="feedback-item idea"><i class="fas fa-lightbulb text-warning me-2"></i>$1</div>')
+      // Warning/alert emoji
+      .replace(/🚨(.*?)(?:<br\/>|$)/g, '<div class="feedback-item alert alert-danger"><i class="fas fa-exclamation-triangle text-danger me-2"></i>$1</div>');
+  };
+  
+  // Format feedback content for display
+  const formatFeedbackContent = (content) => {
+    if (!content) return '';
+    
+    // Simple formatting - replace newlines with break tags
+    return content.split('\n').map((line, index) => (
+      <p key={index}>{line}</p>
+    ));
   };
   
   // Tooltip giải thích cách đếm từ
@@ -719,13 +759,16 @@ const WritingExerciseDetailPageSimple = () => {
     switch (language) {
       case 'CN':
       case 'CHN':
-        return 'Đối với tiếng Trung, mỗi ký tự Hán tự được tính là một từ';
+        return 'For Chinese, each character is counted as one word';
       case 'JPN':
-        return 'Đối với tiếng Nhật, mỗi ký tự Kanji/Hiragana/Katakana được tính là một từ';
+        return 'For Japanese, each Kanji/Hiragana/Katakana character is counted as one word';
       case 'KOR':
-        return 'Đối với tiếng Hàn, mỗi ký tự Hangul được tính là một từ';
+        return 'For Korean, each Hangul character is counted as one word';
+      case 'US':
+      case 'ENG':
+        return 'Word count is based on spaces between words';
       default:
-        return 'Số từ được tính dựa trên khoảng trắng giữa các từ';
+        return 'Word count is based on spaces between words';
     }
   };
   
@@ -740,6 +783,73 @@ const WritingExerciseDetailPageSimple = () => {
     .highlight-feedback {
       animation: highlightFeedback 1s ease-in-out infinite;
       border: 1px solid rgba(0, 123, 255, 0.5) !important;
+    }
+    
+    .formatted-feedback {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .feedback-item {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background-color: #f8f9fa;
+    }
+    
+    .feedback-item.success {
+      background-color: #e8f5e9;
+      border-left: 3px solid #4caf50;
+    }
+    
+    .feedback-item.highlight {
+      background-color: #fff8e1;
+      border-left: 3px solid #ffc107;
+    }
+    
+    .feedback-item.improvement {
+      background-color: #e3f2fd;
+      border-left: 3px solid #2196f3;
+    }
+    
+    .feedback-item.target {
+      background-color: #e8eaf6;
+      border-left: 3px solid #3f51b5;
+    }
+    
+    .feedback-item.structure {
+      background-color: #e0f7fa;
+      border-left: 3px solid #00bcd4;
+    }
+    
+    .feedback-item.writing {
+      background-color: #f3e5f5;
+      border-left: 3px solid #9c27b0;
+    }
+    
+    .feedback-item.style {
+      background-color: #fff3e0;
+      border-left: 3px solid #ff9800;
+    }
+    
+    .feedback-item.idea {
+      background-color: #fffde7;
+      border-left: 3px solid #ffeb3b;
+    }
+    
+    .ai-feedback-card h1, .ai-feedback-card h2 {
+      font-size: 18px;
+      margin-top: 16px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .ai-feedback-card ul {
+      padding-left: 20px;
+    }
+    
+    .ai-feedback-card p {
+      margin-bottom: 10px;
     }
   `;
   
@@ -864,7 +974,9 @@ const WritingExerciseDetailPageSimple = () => {
   // Các ngôn ngữ hỗ trợ để hiển thị trong form
   const supportedLanguages = [
     { code: 'ENG', name: 'English' },
+    { code: 'US', name: 'English (US)' },
     { code: 'VIE', name: 'Vietnamese' },
+    { code: 'VN', name: 'Vietnamese' },
     { code: 'KOR', name: 'Korean' },
     { code: 'JPN', name: 'Japanese' },
     { code: 'CN', name: 'Chinese' },
@@ -1057,6 +1169,114 @@ const WritingExerciseDetailPageSimple = () => {
     }
   `;
   
+  // Handle submit to get AI feedback for an existing exercise with feedback
+  const handleGetAIFeedback = async () => {
+    if (!isAuthenticated) {
+      toast.error('Vui lòng đăng nhập để sử dụng tính năng này.');
+      return;
+    }
+    
+    try {
+      setAiLoading(true);
+      
+      // Save content first if there are changes
+      if (content.trim() !== '' && content !== exercise.content) {
+        await handleSave();
+      }
+      
+      // Hiển thị toast thông báo đang tải phản hồi AI
+      toast.info("🤖 Đang tải phản hồi AI...", {
+        autoClose: false,
+        toastId: "loading-ai-feedback"
+      });
+      
+      const baseUrl = API_BASE_URL;
+      const API_URL = baseUrl.endsWith('/api') ? baseUrl.slice(0, -4) : baseUrl;
+      const token = localStorage.getItem('accessToken');
+      
+      // Gọi API GetFeedback để lấy phản hồi AI đã có trước đó
+      console.log("Getting existing AI feedback from:", `${API_URL}/WritingExercise/GetFeedback/${exerciseId}`);
+      const response = await fetch(`${API_URL}/api/WritingExercise/GetFeedback/${exerciseId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
+        }
+      });
+      
+      // Đóng toast thông báo đang tải
+      toast.dismiss("loading-ai-feedback");
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          toast.error("Bài viết không tìm thấy hoặc chưa có phản hồi AI.");
+        } else if (response.status === 401) {
+          toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        } else {
+          toast.error(`Không thể tải phản hồi AI: ${response.status}`);
+        }
+        throw new Error('Failed to get AI feedback');
+      }
+      
+      // Xử lý phản hồi và hiển thị
+      const feedbackData = await response.text();
+      
+      if (!feedbackData || feedbackData.trim() === '') {
+        toast.warning("Bài viết này chưa có phản hồi AI. Hãy sử dụng nút 'Submit' để nhận phản hồi.");
+        return;
+      }
+      
+      console.log("Loaded AI feedback:", feedbackData.substring(0, 100) + "...");
+      
+      // Try to parse the feedback as JSON if it looks like a JSON object
+      try {
+        if (feedbackData.startsWith('{') && feedbackData.endsWith('}')) {
+          const parsedFeedback = JSON.parse(feedbackData);
+          setAiFeedback(parsedFeedback);
+        } else {
+          // Otherwise, just use the string as-is
+          setAiFeedback(feedbackData);
+        }
+      } catch (error) {
+        console.log("Feedback is not in JSON format, using as plain text", error);
+        setAiFeedback(feedbackData);
+      }
+      
+      setShowAiFeedback(true);
+      
+      toast.success("Đã tải phản hồi AI cho bài viết của bạn!");
+      
+      // Cuộn đến phần đánh giá AI
+      setTimeout(() => {
+        const feedbackElement = document.querySelector('.ai-feedback-card');
+        if (feedbackElement) {
+          feedbackElement.classList.add('highlight-feedback');
+          feedbackElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          
+          setTimeout(() => {
+            feedbackElement.classList.remove('highlight-feedback');
+          }, 3000);
+        }
+      }, 500);
+      
+      // Reload the page after successfully loading feedback
+      toast.info("Tải lại trang để cập nhật dữ liệu mới nhất...", {
+        autoClose: 0,
+        onClose: () => {
+          window.location.reload();
+        }
+      });
+      
+    } catch (error) {
+      console.error('Error getting AI feedback:', error);
+      toast.error('Không thể nhận phản hồi AI. Vui lòng thử lại sau.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+  
   if (loading) {
     return (
       <div className="main-content">
@@ -1130,40 +1350,40 @@ const WritingExerciseDetailPageSimple = () => {
           </div>
         </div>
         
-        <div className="card exercise-info-card mb-4">
+        <div className="exercise-topic-card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="card-title mb-0">Thông tin bài tập</h5>
+            <h5 className="card-title mb-0">Exercise Information</h5>
             {getStatusBadge(exercise.status)}
           </div>
           <div className="card-body">
             <div className="exercise-topic">
-              <h4>Chủ đề:</h4>
+              <h4>Topic:</h4>
               <p className="topic-content">{exercise.topic}</p>
             </div>
             
             <div className="exercise-metadata mt-3">
               <div className="metadata-item">
                 <i className="far fa-calendar-alt me-2"></i>
-                <strong>Ngày tạo:</strong> {formatDate(exercise.createAt)}
+                <strong>Created on:</strong> {formatDate(exercise.createAt)}
               </div>
               <div className="metadata-item">
                 <i className="fas fa-language me-2"></i>
-                <strong>Ngôn ngữ viết:</strong> {getLanguageName(exercise.learningLanguage)}
+                <strong>Learning Language:</strong> {getLanguageName(exercise.learningLanguage)}
               </div>
               <div className="metadata-item">
                 <i className="fas fa-globe me-2"></i>
-                <strong>Ngôn ngữ mẹ đẻ:</strong> {getLanguageName(exercise.nativeLanguage)}
+                <strong>Native Language:</strong> {getLanguageName(exercise.nativeLanguage)}
               </div>
             </div>
           </div>
         </div>
         
-        <div className="card writing-card mb-4">
+        <div className="writing-card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="card-title mb-0">Nội dung bài viết</h5>
+            <h5 className="card-title mb-0">Writing Content</h5>
             <div className="word-count">
               <i className="fas fa-font me-1"></i>
-              <span title={getWordCountTooltip()}>{wordCount} từ</span>
+              <span title={getWordCountTooltip()}>{wordCount} words</span>
             </div>
           </div>
           <div className="card-body">
@@ -1171,100 +1391,142 @@ const WritingExerciseDetailPageSimple = () => {
               className="form-control writing-textarea"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Bắt đầu viết bài của bạn tại đây..."
+              placeholder="Start writing your text here..."
               rows={10}
             ></textarea>
             
             {shouldShowWordCountWarning() && (
               <div className="alert alert-warning mt-2">
                 <i className="fas fa-exclamation-circle me-2"></i>
-                Bài viết cần có ít nhất {getMinimumWordCount()} từ để nhận phản hồi AI. Hiện tại: {wordCount} từ.
+                Your writing needs at least {getMinimumWordCount()} words to receive AI feedback. Current: {wordCount} words.
               </div>
             )}
             
-            <div className="actions mt-3 d-flex justify-content-between gap-2">
-              <div className="autosave-status small text-muted">
-                {autoSaving ? (
-                  <span><i className="fas fa-sync fa-spin me-1"></i> Đang tự động lưu...</span>
-                ) : lastSaved ? (
-                  <span><i className="fas fa-check-circle me-1 text-success"></i> Đã lưu tự động lúc {new Date().toLocaleTimeString()}</span>
-                ) : null}
-              </div>
+            <div className="action-buttons">
+              <button
+                className="btn btn-primary"
+                onClick={handleSave}
+                disabled={saving || submitting}
+              >
+                {saving ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-save me-1"></i>
+                    Save Only
+                  </>
+                )}
+              </button>
               
-              <div>
-                <button 
-                  className="btn btn-outline-primary me-2"
-                  onClick={handleSave}
-                  disabled={saving || autoSaving}
-                >
-                  {saving ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Đang lưu...
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-save me-2"></i>
-                      Lưu bài viết
-                    </>
-                  )}
-                </button>
-                
-                <button 
-                  className="btn btn-primary"
-                  onClick={handleSubmitForAiFeedback}
-                  disabled={submitting || exercise.status === 'Completed' || !hasEnoughWords()}
-                  title={!hasEnoughWords() && exercise.learningLanguage !== 'CN' && exercise.learningLanguage !== 'CHN' && exercise.learningLanguage !== 'JPN' && exercise.learningLanguage !== 'KOR' ? 
-                    `Bài viết cần có ít nhất ${getMinimumWordCount()} từ để nhận phản hồi AI` : 
-                    ""}
-                >
-                  {submitting ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Đang gửi...
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-robot me-2"></i>
-                      {exercise.status === 'Completed' ? 'Đã nộp bài' : 'Nộp bài & Nhận phản hồi AI'}
-                    </>
-                  )}
-                </button>
-              </div>
+              <button
+                className="btn btn-success"
+                onClick={handleSubmitForAiFeedback}
+                disabled={submitting || saving || wordCount < getMinimumWordCount()}
+              >
+                {submitting ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-check-circle me-1"></i>
+                    Save & Get AI Feedback
+                  </>
+                )}
+              </button>
+              
+              <button
+                className="btn btn-info"
+                onClick={handleGetAIFeedback}
+                disabled={aiLoading || submitting || saving}
+              >
+                {aiLoading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Loading Feedback...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-robot me-1"></i>
+                    Load Existing Feedback
+                  </>
+                )}
+              </button>
             </div>
             
-            {!showAiFeedback && exercise.status !== 'Completed' && (
-              <div className="mt-3 small text-muted">
-                <i className="fas fa-info-circle me-2"></i>
-                <strong>Lưu ý:</strong> Khi bạn nộp bài, hệ thống sẽ sử dụng AI để phân tích và đưa ra phản hồi chi tiết về bài viết của bạn. 
-                Bạn cần có API key Gemini hợp lệ để sử dụng tính năng này.
+            {lastSaved && !saving && !autoSaving && (
+              <div className="autosave-label mt-2">
+                <i className="fas fa-check-circle"></i>
+                Saved at {formatTime(lastSaved)}
+              </div>
+            )}
+            
+            {autoSaving && (
+              <div className="saving-label mt-2">
+                <i className="fas fa-sync fa-spin"></i>
+                Auto-saving...
               </div>
             )}
           </div>
         </div>
         
-        {/* AI Feedback Display - chỉ hiển thị khi có feedback */}
-        {showAiFeedback && aiFeedback && aiFeedback.trim() !== '' && (
-          <div className="card ai-feedback-card mb-4">
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h5 className="card-title mb-0">
-                <i className="fas fa-robot me-2"></i>
-                Phản hồi từ AI
-              </h5>
-              {aiLoading && (
-                <div className="spinner-border spinner-border-sm text-primary" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
-              )}
+        {aiFeedback && showAiFeedback && (
+          <div className="ai-feedback-card">
+            <div className="card-header">
+              <h5><i className="fas fa-robot me-2"></i>AI Feedback</h5>
+              <button
+                className="btn btn-sm btn-outline-light"
+                onClick={() => setShowAiFeedback(false)}
+              >
+                <i className="fas fa-times"></i>
+              </button>
             </div>
             <div className="card-body">
-              <div className="feedback-content markdown-content">
-                <div 
-                  dangerouslySetInnerHTML={{ 
-                    __html: renderMarkdown(aiFeedback)
-                  }} 
-                />
-              </div>
+              {/* Handle structured feedback format with suggestions, corrections, and score */}
+              {typeof aiFeedback === 'object' && (
+                <>
+                  {aiFeedback.suggestions && (
+                    <div className="feedback-section suggestions-section">
+                      <h6><i className="fas fa-lightbulb me-2"></i>Improvement Suggestions</h6>
+                      <div className="feedback-content">
+                        {formatFeedbackContent(aiFeedback.suggestions)}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {aiFeedback.corrections && (
+                    <div className="feedback-section corrections-section">
+                      <h6><i className="fas fa-check-circle me-2"></i>Spelling and Grammar Corrections</h6>
+                      <div className="feedback-content">
+                        {formatFeedbackContent(aiFeedback.corrections)}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {aiFeedback.score && (
+                    <div className="feedback-section score-section">
+                      <h6><i className="fas fa-star me-2"></i>Overall Assessment</h6>
+                      <div className="feedback-content">
+                        {formatFeedbackContent(aiFeedback.score)}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+              
+              {/* Handle plain text feedback format */}
+              {typeof aiFeedback === 'string' && (
+                <div className="feedback-section full-feedback-section">
+                  <h6><i className="fas fa-star me-2"></i>AI Assessment</h6>
+                  <div className="feedback-content formatted-feedback" 
+                       dangerouslySetInnerHTML={{ __html: renderMarkdown(aiFeedback) }}>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1276,16 +1538,16 @@ const WritingExerciseDetailPageSimple = () => {
           <div className="delete-confirm-content">
             <h4 className="delete-confirm-title">
               <i className="fas fa-exclamation-triangle me-2"></i>
-              Xác nhận xóa
+              Confirm Deletion
             </h4>
-            <p>Bạn có chắc chắn muốn xóa bài tập viết này? Hành động này không thể hoàn tác.</p>
+            <p>Are you sure you want to delete this writing exercise? This action cannot be undone.</p>
             <div className="delete-confirm-buttons">
               <button 
                 className="btn btn-outline-secondary" 
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleting}
               >
-                Hủy
+                Cancel
               </button>
               <button 
                 className="btn btn-danger"
@@ -1295,10 +1557,10 @@ const WritingExerciseDetailPageSimple = () => {
                 {deleting ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    Đang xóa...
+                    Deleting...
                   </>
                 ) : (
-                  'Xóa bài tập'
+                  'Delete Exercise'
                 )}
               </button>
             </div>
@@ -1321,13 +1583,13 @@ const WritingExerciseDetailPageSimple = () => {
           <div className="edit-form-content">
             <h4 className="edit-form-title">
               <i className="fas fa-edit me-2"></i>
-              Chỉnh sửa thông tin bài tập
+              Edit Exercise Information
             </h4>
             
             <form onSubmit={handleUpdateExercise}>
               <div className="edit-form-body">
                 <div className="form-group">
-                  <label htmlFor="topic" className="form-label">Chủ đề</label>
+                  <label htmlFor="topic" className="form-label">Topic</label>
                   <textarea
                     id="topic"
                     name="topic"
@@ -1340,7 +1602,7 @@ const WritingExerciseDetailPageSimple = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="learningLanguage" className="form-label">Ngôn ngữ học</label>
+                  <label htmlFor="learningLanguage" className="form-label">Learning Language</label>
                   <select
                     id="learningLanguage"
                     name="learningLanguage"
@@ -1358,7 +1620,7 @@ const WritingExerciseDetailPageSimple = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="nativeLanguage" className="form-label">Ngôn ngữ mẹ đẻ</label>
+                  <label htmlFor="nativeLanguage" className="form-label">Native Language</label>
                   <select
                     id="nativeLanguage"
                     name="nativeLanguage"
@@ -1383,7 +1645,7 @@ const WritingExerciseDetailPageSimple = () => {
                   onClick={() => setShowEditForm(false)}
                   disabled={editing}
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button 
                   type="submit"
@@ -1393,10 +1655,10 @@ const WritingExerciseDetailPageSimple = () => {
                   {editing ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Đang cập nhật...
+                      Updating...
                     </>
                   ) : (
-                    'Lưu thay đổi'
+                    'Save Changes'
                   )}
                 </button>
               </div>

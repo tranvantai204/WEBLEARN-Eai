@@ -1,0 +1,475 @@
+/* Enhanced Flashcards CSS for more attractive display */
+
+/* Flashcard Set Card */
+.set-card {
+  background: linear-gradient(135deg, #ffffff, #f5f8ff);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  padding: 1.5rem;
+  border: 1px solid rgba(230, 236, 255, 0.8);
+  margin-bottom: 1.5rem;
+}
+
+.set-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+  border-color: rgba(189, 224, 255, 0.9);
+}
+
+/* Cool hover effect with glow */
+.set-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.set-card:hover::before {
+  opacity: 0.8;
+  animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+/* Flashcard top banner */
+.set-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #4776E6, #8E54E9);
+}
+
+/* Card Title */
+.set-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.8rem;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  transition: color 0.3s ease;
+}
+
+.set-card:hover .set-title {
+  color: #4776E6;
+  text-shadow: 0 0 1px rgba(71, 118, 230, 0.2);
+}
+
+/* Card Description */
+.set-description {
+  font-size: 0.95rem;
+  color: #607d8b;
+  margin-bottom: 1.2rem;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  position: relative;
+  z-index: 2;
+}
+
+/* Card Stats */
+.set-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.set-stats span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  background-color: rgba(235, 242, 255, 0.7);
+  color: #4a6fa5;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.set-stats span:hover {
+  background-color: rgba(71, 118, 230, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Card Actions */
+.set-actions {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(-5px);
+}
+
+.set-card:hover .set-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Study Button */
+.study-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  border: none;
+  background: linear-gradient(135deg, #4776E6, #8E54E9);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(71, 118, 230, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.study-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(71, 118, 230, 0.4);
+  background: linear-gradient(135deg, #5d8cf7, #a254eb);
+}
+
+/* Language Flag Icons */
+.set-language {
+  position: relative;
+  padding-left: 1.5rem !important;
+}
+
+.set-language::before {
+  content: "🔄";
+  position: absolute;
+  left: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+}
+
+/* Level Indicator */
+.set-level {
+  position: relative;
+  padding-left: 1.5rem !important;
+}
+
+.set-level::before {
+  content: "📊";
+  position: absolute;
+  left: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+}
+
+/* Learners Count */
+.set-learner-count {
+  position: relative;
+  padding-left: 1.5rem !important;
+}
+
+.set-learner-count::before {
+  content: "👨‍🎓";
+  position: absolute;
+  left: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+}
+
+/* Card Count */
+.set-stats span:first-child {
+  position: relative;
+  padding-left: 1.5rem !important;
+}
+
+.set-stats span:first-child::before {
+  content: "🃏";
+  position: absolute;
+  left: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+}
+
+/* Grid Layout */
+.sets-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 1.5rem;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+
+.page-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #f5f7fa, #e6edf5);
+  color: #4776E6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.page-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #4776E6, #8E54E9);
+  color: white;
+  box-shadow: 0 5px 12px rgba(71, 118, 230, 0.3);
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #607d8b;
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+  .sets-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  
+  .set-card {
+    padding: 1.25rem;
+  }
+  
+  .set-title {
+    font-size: 1.25rem;
+  }
+  
+  .set-description {
+    font-size: 0.9rem;
+    -webkit-line-clamp: 2;
+  }
+  
+  .set-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .set-stats span {
+    font-size: 0.8rem;
+  }
+}
+
+/* Animation for cards when they appear */
+.set-card {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger animation for cards */
+.sets-list .set-card:nth-child(1) { animation-delay: 0.1s; }
+.sets-list .set-card:nth-child(2) { animation-delay: 0.2s; }
+.sets-list .set-card:nth-child(3) { animation-delay: 0.3s; }
+.sets-list .set-card:nth-child(4) { animation-delay: 0.4s; }
+.sets-list .set-card:nth-child(5) { animation-delay: 0.5s; }
+.sets-list .set-card:nth-child(6) { animation-delay: 0.6s; }
+.sets-list .set-card:nth-child(7) { animation-delay: 0.7s; }
+.sets-list .set-card:nth-child(8) { animation-delay: 0.8s; }
+
+/* FEATURED FLASHCARDS ON HOMEPAGE */
+.featured-flashcards {
+  margin-top: 3rem;
+}
+
+.featured-flashcards-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.featured-flashcards-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4776E6, #8E54E9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.featured-flashcards-header h2::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #4776E6, #8E54E9);
+  border-radius: 3px;
+}
+
+.featured-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Special styling for featured cards */
+.featured-card {
+  background: linear-gradient(135deg, #ffffff, #f0f7ff);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  padding: 1.5rem;
+  border: 1px solid rgba(189, 224, 255, 0.6);
+  margin-bottom: 1rem;
+  /* Special gold edge */
+  border-left: 4px solid #ffd700;
+}
+
+.featured-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(71, 118, 230, 0.15);
+}
+
+/* Special badge for featured cards */
+.featured-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #ff9500, #ff5e3a);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(255, 94, 58, 0.3);
+  z-index: 3;
+}
+
+/* Special hover effects for featured cards */
+.featured-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.9), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.featured-card:hover::before {
+  opacity: 1;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+}
+
+/* Study Now Button for featured cards */
+.study-now-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  border: none;
+  background: linear-gradient(135deg, #ff9500, #ff5e3a);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(255, 94, 58, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.study-now-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 94, 58, 0.4);
+  background: linear-gradient(135deg, #ffaa33, #ff7857);
+}
+
+/* Staggered animation for featured cards */
+.featured-cards-grid .featured-card {
+  animation: fadeInUp 0.8s ease forwards;
+  opacity: 0;
+}
+
+.featured-cards-grid .featured-card:nth-child(1) { animation-delay: 0.1s; }
+.featured-cards-grid .featured-card:nth-child(2) { animation-delay: 0.25s; }
+.featured-cards-grid .featured-card:nth-child(3) { animation-delay: 0.4s; }
+.featured-cards-grid .featured-card:nth-child(4) { animation-delay: 0.55s; } 

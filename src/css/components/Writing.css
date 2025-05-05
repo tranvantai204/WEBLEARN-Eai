@@ -5,6 +5,37 @@
     margin: 0 auto;
 }
 
+/* Create Topic with AI button enhancement */
+.writing-actions .btn-outline-primary {
+    background-color: #ffffff;
+    border-color: #0d6efd;
+    color: #0d6efd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+}
+
+.writing-actions .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.ai-topic-button {
+    background-color: #e6f0ff !important;
+    border: 2px solid #0d6efd !important;
+    color: #0953c3 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 6px rgba(0, 70, 192, 0.18) !important;
+    transition: all 0.3s ease !important;
+}
+
+.ai-topic-button:hover {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25) !important;
+    transform: translateY(-2px) !important;
+}
+
 .writing-editor {
     background: var(--white);
     border-radius: var(--radius-lg);

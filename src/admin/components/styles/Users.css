@@ -1,0 +1,137 @@
+/* Users.css - Styles for User management component */
+
+/* Table container styles */
+.users-table-container {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+  background-color: var(--paper);
+}
+
+.users-table-header {
+  background-color: var(--background);
+}
+
+.users-table-cell-header {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.users-table-row {
+  transition: background-color 0.2s;
+}
+
+.users-table-row:hover {
+  background-color: var(--hover-color);
+}
+
+/* Filter section styles */
+.users-filter-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: var(--paper);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.users-filter-input {
+  width: 100%;
+  max-width: 300px;
+}
+
+.users-filter-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Role chip styles */
+.role-chip {
+  font-weight: 500;
+  border-radius: 16px;
+  padding: 4px 8px;
+}
+
+.role-chip-admin {
+  background-color: var(--warning);
+  color: white;
+}
+
+.role-chip-super-admin {
+  background-color: var(--danger);
+  color: white;
+}
+
+.role-chip-user {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Add/Edit dialog styles */
+.users-dialog-title {
+  background-color: var(--background);
+  padding: 16px 24px;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.users-dialog-content {
+  padding: 0 24px 16px 24px;
+}
+
+.users-form-field {
+  margin-bottom: 16px;
+}
+
+.users-dialog-actions {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Action buttons styles */
+.users-action-button {
+  margin-right: 8px;
+}
+
+/* Loading and empty states */
+.users-loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 32px;
+  color: var(--primary);
+}
+
+.users-empty-state {
+  padding: 32px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+/* Header section */
+.users-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.users-title {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .users-filter-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .users-filter-input {
+    max-width: 100%;
+  }
+} 

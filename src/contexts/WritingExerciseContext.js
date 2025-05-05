@@ -405,9 +405,9 @@ export const WritingExerciseProvider = ({ children }) => {
   };
 
   // Auto generate writing exercise topic with AI
-  const autoGenerateWritingExercise = useCallback(async (learningLanguage, nativeLanguage) => {
+  const autoGenerateWritingExercise = useCallback(async (learningLanguage, nativeLanguage, title) => {
     try {
-      console.log(`Attempting to auto-generate writing exercise with languages: ${learningLanguage}, ${nativeLanguage}`);
+      console.log(`Attempting to auto-generate writing exercise with languages: ${learningLanguage}, ${nativeLanguage}, title: ${title}`);
       
       const requestUrl = `${API_URL}/api/WritingExercise/AutoGenerate`;
       console.log(`Making request to: ${requestUrl}`);
@@ -419,7 +419,8 @@ export const WritingExerciseProvider = ({ children }) => {
         },
         body: JSON.stringify({
           learningLanguage,
-          nativeLanguage
+          nativeLanguage,
+          title: title || undefined // Only include if provided
         })
       };
       

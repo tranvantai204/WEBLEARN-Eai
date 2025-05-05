@@ -11,10 +11,12 @@ import '../css/components/WritingExercises.css';
 function AIWritingTopicForm({ onSuccess, onCancel }) {
   const [learningLanguage, setLearningLanguage] = useState('ENG');
   const [nativeLanguage, setNativeLanguage] = useState('VIE');
+  const [title, setTitle] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [showApiKeyForm, setShowApiKeyForm] = useState(false);
   const [learningLanguageError, setLearningLanguageError] = useState('');
   const [nativeLanguageError, setNativeLanguageError] = useState('');
+  const [titleError, setTitleError] = useState('');
   
   const { getUserApiKey } = useFlashcard();
   const { autoGenerateWritingExercise } = useWritingExercise();
@@ -27,6 +29,13 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
     // Reset errors
     setLearningLanguageError('');
     setNativeLanguageError('');
+    setTitleError('');
+    
+    // Validate title
+    if (!title.trim()) {
+      setTitleError('Please enter a title for your writing topic');
+      isValid = false;
+    }
     
     // Validate learning language
     if (!learningLanguage) {
@@ -73,7 +82,7 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
     toast.info('🤖 Generating writing topic...');
     
     try {
-      const result = await autoGenerateWritingExercise(learningLanguage, nativeLanguage);
+      const result = await autoGenerateWritingExercise(learningLanguage, nativeLanguage, title);
       
       toast.success('✨ Generated writing topic successfully!');
       console.log('Generated writing exercise:', result);
@@ -194,12 +203,32 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
         
         <form>
           <div className="mb-3">
-            <label htmlFor="learningLanguage" className="form-label">Learning Language</label>
+            <label htmlFor="topicTitle" className="form-label fw-bold">Topic Title</label>
+            <input 
+              type="text"
+              id="topicTitle"
+              className={`form-control ${titleError ? 'is-invalid' : ''}`}
+              placeholder="Enter a title for your writing topic"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              style={{ fontSize: '16px', padding: '10px 12px', height: 'auto' }}
+            />
+            {titleError && (
+              <div className="invalid-feedback">{titleError}</div>
+            )}
+            <small className="form-text text-muted">
+              For example: "Daily Routine", "Travel Experience", "My Favorite Food", etc.
+            </small>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="learningLanguage" className="form-label fw-bold">Learning Language</label>
             <LanguageSelector
               id="learningLanguage"
               value={learningLanguage}
               onChange={(e) => setLearningLanguage(e.target.value)}
               className={`form-select ${learningLanguageError ? 'is-invalid' : ''}`}
+              style={{ fontSize: '16px', padding: '10px 12px', height: 'auto' }}
             />
             {learningLanguageError && (
               <div className="invalid-feedback">{learningLanguageError}</div>
@@ -207,12 +236,13 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
           </div>
           
           <div className="mb-3">
-            <label htmlFor="nativeLanguage" className="form-label">Native Language</label>
+            <label htmlFor="nativeLanguage" className="form-label fw-bold">Native Language</label>
             <LanguageSelector
               id="nativeLanguage"
               value={nativeLanguage}
               onChange={(e) => setNativeLanguage(e.target.value)}
               className={`form-select ${nativeLanguageError ? 'is-invalid' : ''}`}
+              style={{ fontSize: '16px', padding: '10px 12px', height: 'auto' }}
             />
             {nativeLanguageError && (
               <div className="invalid-feedback">{nativeLanguageError}</div>
@@ -225,14 +255,21 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
               className="btn btn-outline-secondary me-2"
               onClick={onCancel}
               disabled={isGenerating}
+              style={{ padding: '10px 20px', fontSize: '15px' }}
             >
               Cancel
             </button>
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-primary ai-generate-button"
               onClick={handleGenerateTopic}
               disabled={isGenerating}
+              style={{ 
+                padding: '10px 20px', 
+                fontSize: '15px',
+                fontWeight: '600',
+                boxShadow: '0 2px 8px rgba(11, 94, 215, 0.3)'
+              }}
             >
               {isGenerating ? (
                 <>
@@ -248,19 +285,20 @@ function AIWritingTopicForm({ onSuccess, onCancel }) {
             </button>
           </div>
         </form>
-      </div>
-      
-      {/* API Key form modal */}
-      {showApiKeyForm && (
-        <div className="modal-overlay">
-          <div className="gemini-key-form-container">
-            <ApiKeyForm 
-              onSuccess={handleApiKeySuccess} 
-              onSkip={handleSkipApiKey}
-            />
+        
+        {/* API Key Form Modal */}
+        {showApiKeyForm && (
+          <div className="api-key-modal">
+            <div className="api-key-overlay" onClick={() => setShowApiKeyForm(false)}></div>
+            <div className="api-key-modal-content">
+              <ApiKeyForm 
+                onSuccess={handleApiKeySuccess} 
+                onSkip={handleSkipApiKey} 
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

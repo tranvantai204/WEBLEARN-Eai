@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function Home() {
   return (
@@ -15,7 +16,7 @@ function Home() {
           and unlock new opportunities. Whether you're a beginner or an experienced developer, 
           we have the resources you need to succeed.
         </p>
-        <button className="bottom-button">Explore All Courses</button>
+        <Link to="/progress" className="bottom-button">Explore All Courses</Link>
       </div>
     </div>
   );
