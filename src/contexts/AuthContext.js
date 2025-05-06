@@ -1,8 +1,14 @@
+import { jwtDecode } from 'jwt-decode';
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { toast } from 'react-toastify';
 
 // Tạo Context
 const AuthContext = createContext();
+
+const userIdClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+const emailClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+const nameClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+const roleClaim = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
 // Custom Hook để sử dụng Auth Context dễ dàng hơn
 export const useAuth = () => useContext(AuthContext);
@@ -14,6 +20,7 @@ export const AuthProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || null);
   const [loading, setLoading] = useState(true);
   const [isUpdateStreek, setIsUpdateStreek] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   
   // Lấy API URL từ biến môi trường
   const baseUrl = process.env.REACT_APP_API_URL || 'https://3599-115-76-51-131.ngrok-free.app';
@@ -33,6 +40,15 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('accessToken', newAccessToken);
     localStorage.setItem('refreshToken', newRefreshToken);
     
+
+    const decodedToken = jwtDecode(newAccessToken);
+    const user = {
+      userId: decodedToken[userIdClaim],
+      email: decodedToken[emailClaim],
+      name: decodedToken[nameClaim],
+      role: decodedToken[roleClaim],
+    };
+    setCurrentUser(user);
     // Trả về true để component cha có thể xử lý điều hướng
     return true;
   };
@@ -444,6 +460,7 @@ export const AuthProvider = ({ children }) => {
     checkTokenExpiration,
     isAuthenticated: !!accessToken,
     loading,
+    currentUser,
   };
 
   return (

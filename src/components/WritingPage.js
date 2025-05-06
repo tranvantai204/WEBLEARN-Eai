@@ -31,6 +31,10 @@ function WritingPage() {
     
     // Auth and writing exercises
     const { isAuthenticated, currentUser } = useAuth();
+
+    useEffect(()=> {
+        console.log("sdffdsgdf",currentUser)
+    }, [])
     
     // Try to use WritingExerciseContext, but provide fallback
     const { 

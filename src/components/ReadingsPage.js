@@ -8,6 +8,7 @@ import { ExploreSection } from './common';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Reading.css';
 import ApiKeyForm from './ApiKeyForm';
+import { jwtDecode } from 'jwt-decode';
 import { makeAuthenticatedRequest } from '../utils/apiUtils';
 const bookIcon = '/images/book-icon.svg';
 
@@ -154,6 +155,13 @@ function ReadingsPage() {
                 let userId = null;
                 try {
                     // First try to get directly from userId key
+                    const accessToken = localStorage.getItem('accessToken');
+
+                    const decodedToken = jwtDecode(accessToken);
+                    const nameIdentifierClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+
+                    userId = decodedToken[nameIdentifierClaim];
+                    
                     const directUserId = localStorage.getItem('userId');
                     if (directUserId) {
                         userId = directUserId;
