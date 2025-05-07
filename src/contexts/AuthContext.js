@@ -32,6 +32,65 @@ export const AuthProvider = ({ children }) => {
     console.log('AuthContext using API URL:', API_URL);
   }, [API_URL]);
 
+  useEffect(() => {
+    const initializeAuth = async () => {
+      setLoading(true); // Bắt đầu loading
+      const storedAccessToken = localStorage.getItem('accessToken');
+      const storedRefreshToken = localStorage.getItem('refreshToken');
+
+      if (storedAccessToken) {
+        setAccessToken(storedAccessToken); // Cập nhật state từ localStorage
+        if (storedRefreshToken) {
+          setRefreshToken(storedRefreshToken); // Cập nhật state từ localStorage
+        }
+
+        // Bước 1: Kiểm tra và có thể làm mới token
+        const isTokenValidOrRefreshed = await checkTokenExpiration(); // Hàm này đã bao gồm refresh nếu cần
+
+        if (isTokenValidOrRefreshed) {
+          // Bước 2: Nếu token hợp lệ (hoặc vừa được làm mới), LẤY LẠI token MỚI NHẤT từ state hoặc localStorage
+          const currentValidToken = accessToken || localStorage.getItem('accessToken'); // Ưu tiên state nếu đã được refresh
+
+          if (currentValidToken) {
+            try {
+              // Bước 3: Giải mã token để lấy thông tin người dùng
+              const decodedToken = jwtDecode(currentValidToken);
+              const userData = {
+                userId: decodedToken[userIdClaim],
+                email: decodedToken[emailClaim],
+                name: decodedToken[nameClaim],
+                role: decodedToken[roleClaim],
+              };
+              // Bước 4: Cập nhật state user và currentUser
+              setUser(userData);
+              setCurrentUser(userData);
+              console.log('AuthProvider: Auth state initialized from stored token.', userData);
+            } catch (error) {
+              console.error("AuthProvider: Failed to decode token during initialization:", error);
+              // Nếu giải mã lỗi -> token không hợp lệ -> đăng xuất
+              await logout();
+            }
+          } else {
+             console.log("AuthProvider: No valid token found after check/refresh during init.");
+             await logout(); // Đăng xuất nếu không có token hợp lệ sau khi kiểm tra/refresh
+          }
+        } else {
+          // Nếu checkTokenExpiration trả về false (token không hợp lệ VÀ refresh thất bại)
+          console.log('AuthProvider: Stored token invalid and refresh failed during init.');
+          await logout(); // Đăng xuất
+        }
+      }
+      // Dù có token hay không, cuối cùng cũng kết thúc loading
+      setLoading(false);
+    };
+
+    initializeAuth();
+
+    
+  }, []);
+
+
+
   // Hàm đăng nhập
   const login = async (userData, newAccessToken, newRefreshToken) => {
     setUser(userData);
