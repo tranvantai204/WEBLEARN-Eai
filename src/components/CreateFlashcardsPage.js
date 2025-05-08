@@ -1,10 +1,208 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFlashcard } from '../contexts/FlashcardContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Flashcards.css';
 import LanguageSelector from './LanguageSelector';
+
+// CSS animation for pulse effect
+const pulseAnimation = `
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(240, 173, 78, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(240, 173, 78, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(240, 173, 78, 0);
+    }
+}
+`;
+
+// Custom Modal Component for limit reached
+const LimitReachedModal = ({ isOpen, onClose, onConfirm }) => {
+    if (!isOpen) return null;
+    
+    return (
+        <div className="modal-overlay">
+            <div className="custom-modal limit-modal">
+                <div className="modal-header">
+                    <h4 className="modal-title">Giới hạn đã đạt</h4>
+                </div>
+                <div className="modal-body">
+                    <div className="modal-icon">
+                        <i className="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <p>Bạn đã đạt đến giới hạn tối đa 5 bộ thẻ ghi nhớ. Bạn có muốn xem các bộ hiện có để xóa không?</p>
+                </div>
+                <div className="modal-footer">
+                    <button 
+                        className="btn btn-secondary" 
+                        onClick={onClose}
+                    >
+                        Hủy
+                    </button>
+                    <button 
+                        className="btn btn-primary" 
+                        onClick={onConfirm}
+                    >
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Custom styles for the max limit alert
+const maxLimitAlertStyles = {
+    border: '2px solid #f0ad4e',
+    background: '#fcf8e3',
+    padding: '15px',
+    borderRadius: '5px',
+    marginBottom: '20px',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+    animation: 'pulse 2s infinite'
+};
+
+// Debug helper function
+const logErrorDetails = (err) => {
+    console.group('Error Details:');
+    console.error('Error object:', err);
+    console.error('Error message:', err.message);
+    console.error('Error name:', err.name);
+    console.error('Response status:', err.response?.status);
+    console.error('Response status text:', err.response?.statusText);
+    console.error('Response URL:', err.response?.url);
+    console.error('Error stack:', err.stack);
+    console.groupEnd();
+};
+
+// Add more styles
+const additionalStyles = `
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.custom-modal {
+    background: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    background-color: #6200ea;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.modal-body {
+    padding: 20px;
+    text-align: center;
+}
+
+.modal-icon {
+    font-size: 36px;
+    color: #f0ad4e;
+    margin-bottom: 15px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.limit-modal .btn-primary {
+    background-color: #6200ea;
+    border-color: #6200ea;
+}
+
+.limit-modal .btn-primary:hover {
+    background-color: #5000c8;
+    border-color: #5000c8;
+}
+
+.limit-modal .btn-secondary {
+    background-color: #e0e0e0;
+    color: #333;
+    border-color: #d0d0d0;
+}
+
+.limit-modal .btn-secondary:hover {
+    background-color: #d0d0d0;
+    border-color: #c0c0c0;
+}
+
+/* Alert styling */
+.limit-alert-content {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.limit-alert-icon {
+    font-size: 24px;
+    color: #f0ad4e;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.limit-alert-text {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.limit-alert-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.max-limit-alert {
+    border: 2px solid #f0ad4e !important;
+    background-color: #fcf8e3 !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+}
+`;
+
+// Add style tag to add the animation and modal styles
+const StyleTag = () => (
+    <style>
+        {pulseAnimation}
+        {additionalStyles}
+    </style>
+);
 
 function CreateFlashcardsPage() {
     const [title, setTitle] = useState('');
@@ -16,9 +214,23 @@ function CreateFlashcardsPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [titleError, setTitleError] = useState('');
+    const [isLimitReached, setIsLimitReached] = useState(false);
+    const [showLimitModal, setShowLimitModal] = useState(false);
     
-    const { createFlashcardSet } = useFlashcard();
+    const { createFlashcardSet, getFlashcardSets } = useFlashcard();
     const navigate = useNavigate();
+    
+    // Check if user has reached the limit of 5 flashcard sets
+    const checkFlashcardSetLimit = useCallback(async () => {
+        try {
+            const result = await getFlashcardSets(1, 100); // Get all flashcard sets
+            const userSets = result.items || [];
+            return userSets.length >= 5;
+        } catch (err) {
+            console.error('Error checking flashcard set limit:', err);
+            return false; // Assume limit not reached if error occurs
+        }
+    }, [getFlashcardSets]);
     
     // Validate title on change
     const handleTitleChange = (e) => {
@@ -47,6 +259,24 @@ function CreateFlashcardsPage() {
         setError('');
         
         try {
+            // First check if user has reached the limit
+            const limitReached = await checkFlashcardSetLimit();
+            if (limitReached) {
+                setIsLimitReached(true);
+                setError('Bạn đã đạt đến giới hạn tối đa 5 bộ thẻ ghi nhớ. Vui lòng xóa một số bộ hiện có trước khi tạo mới.');
+                toast.error('Bạn đã đạt đến giới hạn tối đa 5 bộ thẻ ghi nhớ!', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    toastId: "max-limit-error"
+                });
+                setLoading(false); // Clear loading state
+                return;
+            }
+            
             // Create flashcard set data object
             const flashcardSetData = {
                 title,
@@ -79,22 +309,46 @@ function CreateFlashcardsPage() {
             
         } catch (err) {
             console.error('Error creating flashcard set:', err);
+            // Log detailed error information
+            logErrorDetails(err);
             
-            // Check for specific error about maximum limit
-            if (err.message && err.message.includes('maximum limit of 5 flashcard sets')) {
-                setError('You have reached the maximum limit of 5 flashcard sets.');
-                toast.error('You have reached the maximum limit of 5 flashcard sets.', {
-                    position: "top-right",
+            // Checking for specific error messages related to maximum limit
+            const errorMessage = err.message || '';
+            const statusCode = err.response?.status;
+            
+            // Check for maximum limit error in response or error message
+            if (
+                (errorMessage.includes('maximum limit') || errorMessage.includes('limit of 5 flashcard')) ||
+                // Specific check for HTTP 400 Bad Request which often indicates validation errors like limits
+                (statusCode === 400) ||
+                // Generic errors that might be related to limits
+                (errorMessage === 'An error occurred' || errorMessage === 'Bad Request')
+            ) {
+                console.log('Detected maximum flashcard limit error. Showing limit reached message.');
+                // Set a more user-friendly error message in Vietnamese
+                setError('Bạn đã đạt đến giới hạn tối đa 5 bộ thẻ ghi nhớ. Vui lòng xóa một số bộ hiện có trước khi tạo mới.');
+                
+                // Show error toast
+                toast.error('Bạn đã đạt đến giới hạn tối đa 5 bộ thẻ ghi nhớ!', {
+                    position: "top-center",
                     autoClose: 5000,
                     hideProgressBar: false,
                     closeOnClick: true,
                     pauseOnHover: true,
                     draggable: true,
+                    toastId: "max-limit-error"
                 });
+                
+                // Show custom modal instead of window.confirm
+                setTimeout(() => {
+                    setShowLimitModal(true);
+                }, 500);
             } else {
-                setError(err.message || 'Failed to create flashcard set');
+                // For other types of errors
+                setError(errorMessage || 'Failed to create flashcard set');
+                
                 // Show error toast
-                toast.error(err.message || 'Failed to create flashcard set', {
+                toast.error(errorMessage || 'Failed to create flashcard set', {
                     position: "top-right",
                     autoClose: 5000,
                     hideProgressBar: false,
@@ -122,8 +376,33 @@ function CreateFlashcardsPage() {
         { value: 6, label: 'Level 6 - Advanced' }
     ];
 
+    // Check if limit is reached on component mount
+    useEffect(() => {
+        const checkLimit = async () => {
+            const reached = await checkFlashcardSetLimit();
+            setIsLimitReached(reached);
+            if (reached) {
+                setError('Bạn đã đạt đến giới hạn tối đa 5 bộ thẻ ghi nhớ. Vui lòng xóa một số bộ hiện có trước khi tạo mới.');
+                // Show toast notification for limit reached
+                toast.warn('Bạn đã đạt đến giới hạn tối đa 5 bộ thẻ ghi nhớ!', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    toastId: "max-limit-error-init"
+                });
+            }
+        };
+        checkLimit();
+    }, [checkFlashcardSetLimit]);
+
     return (
         <div className="flashcards-container">
+            {/* Add StyleTag for animations */}
+            <StyleTag />
+            
             {/* Add ToastContainer for notifications */}
             <ToastContainer
                 position="top-right"
@@ -135,6 +414,16 @@ function CreateFlashcardsPage() {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
+            />
+            
+            {/* Custom Modal for Limit Reached */}
+            <LimitReachedModal 
+                isOpen={showLimitModal}
+                onClose={() => setShowLimitModal(false)}
+                onConfirm={() => {
+                    navigate('/flashcards');
+                    setShowLimitModal(false);
+                }}
             />
             
             <div className="create-flashcard-content">
@@ -151,7 +440,7 @@ function CreateFlashcardsPage() {
                         <button 
                             className="btn btn-primary"
                             onClick={handleSubmit}
-                            disabled={loading || titleError || !title.trim()}
+                            disabled={loading || titleError || !title.trim() || isLimitReached}
                         >
                             {loading ? (
                                 <>
@@ -166,9 +455,30 @@ function CreateFlashcardsPage() {
                     </div>
                 </div>
                 
-                {error && (
-                    <div className="alert alert-danger">
-                        <i className="fas fa-exclamation-circle"></i> {error}
+                {(error || isLimitReached) && (
+                    <div 
+                        className={`alert ${error.includes('giới hạn tối đa 5 bộ') || isLimitReached ? 'alert-warning max-limit-alert' : 'alert-danger'}`}
+                        style={error.includes('giới hạn tối đa 5 bộ') || isLimitReached ? maxLimitAlertStyles : {}}
+                    >
+                        <div className="limit-alert-content">
+                            <div className="limit-alert-icon">
+                                <i className={`fas ${error.includes('giới hạn tối đa 5 bộ') || isLimitReached ? 'fa-exclamation-triangle' : 'fa-exclamation-circle'}`}></i>
+                            </div>
+                            <div className="limit-alert-text">
+                                {error || 'Bạn đã đạt đến giới hạn tối đa 5 bộ thẻ ghi nhớ. Vui lòng xóa một số bộ hiện có trước khi tạo mới.'}
+                            </div>
+                        </div>
+                        
+                        {(error.includes('giới hạn tối đa 5 bộ') || isLimitReached) && (
+                            <div className="mt-3 limit-alert-actions">
+                                <button 
+                                    className="btn btn-primary" 
+                                    onClick={() => navigate('/flashcards')}
+                                >
+                                    <i className="fas fa-list-ul"></i> Quản lý bộ thẻ ghi nhớ hiện có
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
                 

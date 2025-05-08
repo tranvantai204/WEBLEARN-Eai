@@ -117,7 +117,7 @@ const MultipleChoiceTestsPage = () => {
         <div className="header-buttons">
           <button 
             className="done-button"
-            onClick={() => navigate('/readings')}
+            onClick={() => window.location.href = '/readings'}
           >
             {translateText('Done')}
           </button>

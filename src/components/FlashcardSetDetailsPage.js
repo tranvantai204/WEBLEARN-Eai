@@ -160,6 +160,10 @@ function FlashcardSetDetailsPage() {
     // New state for bulk import modal
     const [showBulkImportModal, setShowBulkImportModal] = useState(false);
 
+    // Add a new state for the delete set confirmation
+    const [showDeleteSetConfirmation, setShowDeleteSetConfirmation] = useState(false);
+    const [deletingSet, setDeletingSet] = useState(false);
+
     // Fetch flashcard set details on component mount
     useEffect(() => {
         const fetchFlashcardSetDetails = async () => {
@@ -286,18 +290,56 @@ function FlashcardSetDetailsPage() {
             return 0;
         });
 
+        // Handles the actual deletion of a flashcard set
         const handleDeleteFlashCardSet = async (flashcardSetId) => {
             try {
-                // Call the deleteFlashcardSet function and wait for the result
-                const result = await deleteFlashcardSet(flashcardSetId);
-        
-                // Check if the deletion was successful
-                if (result) {
-                    navigate('/flashcards'); // Redirect to the /flashcards page
+                setDeletingSet(true);
+                
+                // Get access token from localStorage
+                const accessToken = localStorage.getItem('accessToken');
+                
+                if (!accessToken) {
+                    toast.error('Authentication required. Please log in again.');
+                    return;
                 }
+                
+                // Prepare the URL
+                const deleteUrl = `${baseUrl}/FlashCardSet/Delete/${flashcardSetId}`;
+                
+                console.log('Deleting flashcard set at:', deleteUrl);
+                
+                // Make direct API call with proper authentication
+                const response = await fetch(deleteUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                console.log('Delete set response status:', response.status);
+                
+                if (!response.ok) {
+                    let errorMessage;
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.title || `Error ${response.status}`;
+                    } catch (e) {
+                        errorMessage = `Request failed with status: ${response.status}`;
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+                
+                toast.success('Flashcard set deleted successfully');
+                navigate('/flashcards'); // Redirect to the /flashcards page
             } catch (err) {
                 console.error('Error while deleting flashcard set:', err);
-                alert('Failed to delete flashcard set. Please try again.');
+                toast.error(`Failed to delete flashcard set: ${err.message || 'Please try again.'}`);
+            } finally {
+                setDeletingSet(false);
+                setShowDeleteSetConfirmation(false);
             }
         };
         
@@ -1360,6 +1402,11 @@ function FlashcardSetDetailsPage() {
         fetchFlashcardsForSet(flashcardSetId);
     };
 
+    // Close delete set confirmation modal
+    const closeDeleteSetConfirmation = () => {
+        setShowDeleteSetConfirmation(false);
+    };
+
     return (
         <div className="flashcard-details-page">
             {/* Thêm style cho animations */}
@@ -2367,7 +2414,7 @@ function FlashcardSetDetailsPage() {
                                         </button>
                                         <button 
                                             className="btn btn-action btn-danger" 
-                                            onClick={() => setShowDeleteConfirmation(true)}
+                                            onClick={() => setShowDeleteSetConfirmation(true)}
                                         >
                                             <i className="fas fa-trash"></i> {translateText('Delete')}
                                         </button>
@@ -2509,6 +2556,85 @@ function FlashcardSetDetailsPage() {
                     flashcardSetId={flashcardSetId}
                     onImportSuccess={handleBulkImportSuccess}
                 />
+            </Modal>
+
+            {/* Delete Flashcard Set Confirmation Modal */}
+            <Modal show={showDeleteSetConfirmation} onClose={closeDeleteSetConfirmation}>
+                <div className="modal-header" style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '1.5rem',
+                    borderBottom: '1px solid #e0e0e0'
+                }}>
+                    <h3 style={{
+                        margin: 0,
+                        fontSize: '1.25rem',
+                        fontWeight: '600'
+                    }}>Delete Flashcard Set</h3>
+                    <button 
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '1.25rem',
+                            color: '#6c757d',
+                            cursor: 'pointer',
+                            padding: '0.5rem'
+                        }}
+                        onClick={closeDeleteSetConfirmation}
+                    >
+                        <i className="fas fa-times"></i>
+                    </button>
+                </div>
+                <div className="modal-body" style={{
+                    padding: '1.5rem'
+                }}>
+                    <p style={{ marginBottom: '1.5rem' }}>Are you sure you want to delete this entire flashcard set? This will delete all flashcards in this set. This action cannot be undone.</p>
+                    
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        gap: '1rem'
+                    }}>
+                        <button 
+                            style={{
+                                padding: '0.5rem 1rem',
+                                borderRadius: '6px',
+                                backgroundColor: '#f8f9fa',
+                                border: '1px solid #ced4da',
+                                color: '#212529',
+                                cursor: 'pointer'
+                            }}
+                            onClick={closeDeleteSetConfirmation}
+                            disabled={deletingSet}
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            style={{
+                                padding: '0.5rem 1rem',
+                                borderRadius: '6px',
+                                backgroundColor: '#dc3545',
+                                border: 'none',
+                                color: 'white',
+                                cursor: 'pointer',
+                                opacity: deletingSet ? 0.7 : 1
+                            }}
+                            onClick={() => handleDeleteFlashCardSet(flashcardSetId)}
+                            disabled={deletingSet}
+                        >
+                            {deletingSet ? (
+                                <>
+                                    <i className="fas fa-spinner fa-spin"></i> Deleting...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-trash"></i> Delete Set
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
             </Modal>
         </div>
     );

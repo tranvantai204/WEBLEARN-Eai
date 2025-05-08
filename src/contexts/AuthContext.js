@@ -231,13 +231,27 @@ export const AuthProvider = ({ children }) => {
       const expiry = payload.exp * 1000; // Convert to milliseconds
       const currentTime = Date.now();
       
-      // If token is expired or close to expiry (within 5 minutes)
-      if (expiry - currentTime < 300000) {
-        console.log('Token expired or about to expire, refreshing...');
+      console.log('Token expiry time:', new Date(expiry).toLocaleString());
+      console.log('Current time:', new Date(currentTime).toLocaleString());
+      console.log('Time until expiry:', Math.floor((expiry - currentTime) / 60000), 'minutes');
+      
+      // Check if token is actually expired (no buffer time)
+      if (expiry <= currentTime) {
+        console.log('Token is expired, attempting to refresh...');
         const newToken = await refreshAccessToken();
         return !!newToken;
       }
       
+      // If token expires soon (within 1 minute) but isn't expired yet,
+      // refresh in background but still report it as valid
+      if (expiry - currentTime < 60000) {
+        console.log('Token expires soon, refreshing in background...');
+        refreshAccessToken().catch(err => {
+          console.error('Background token refresh failed:', err);
+        });
+      }
+      
+      // Token is still valid
       return true;
     } catch (error) {
       console.error('Failed to parse token:', error);

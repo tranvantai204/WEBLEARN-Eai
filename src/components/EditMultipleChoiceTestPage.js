@@ -44,6 +44,9 @@ function EditMultipleChoiceTestPage() {
     // Thêm state để theo dõi chế độ chỉnh sửa cho phần nội dung bài đọc
     const [isEditingContent, setIsEditingContent] = useState(false);
 
+    // Add state for limit error message
+    const [limitErrorMessage, setLimitErrorMessage] = useState('');
+
     // Fetch test data when component mounts
     useEffect(() => {
         fetchTestData();
@@ -250,6 +253,8 @@ function EditMultipleChoiceTestPage() {
                                      `Validation error: ${response.data.errors.CorrectAnswer[0]}`);
                                      
                 if (response.data?.message?.includes('maximum limit of 5 questions')) {
+                    // Set the limit error message state
+                    setLimitErrorMessage('Đã đạt giới hạn tối đa 5 câu hỏi cho mỗi bài kiểm tra!');
                     toast.error('This test has reached the maximum limit of 5 questions');
                 } else {
                     toast.error(errorMessage || 'Invalid question data');
@@ -504,6 +509,34 @@ function EditMultipleChoiceTestPage() {
                     </button>
                 </div>
             </div>
+
+            {/* Display limit error message if present */}
+            {limitErrorMessage && (
+                <div className="error-banner" style={{
+                    backgroundColor: '#f8d7da',
+                    color: '#721c24',
+                    padding: '12px 20px',
+                    margin: '10px 0',
+                    borderRadius: '4px',
+                    border: '1px solid #f5c6cb',
+                    fontWeight: 'bold'
+                }}>
+                    {limitErrorMessage}
+                    <button 
+                        onClick={() => setLimitErrorMessage('')}
+                        style={{ 
+                            background: 'transparent', 
+                            border: 'none', 
+                            color: '#721c24',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                            float: 'right'
+                        }}
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
 
             <div className="edit-test-tabs">
                 <button 
@@ -800,31 +833,33 @@ function EditMultipleChoiceTestPage() {
                                 </div>
                             </div>
 
-                            <div className="question-form-actions">
+                            <div className="form-actions">
                                 {editingQuestionIndex >= 0 ? (
                                     <>
                                         <button 
-                                            className="update-question-btn"
+                                            className="update-question-btn" 
                                             onClick={handleUpdateQuestion}
                                             disabled={loading}
                                         >
                                             <i className="fas fa-check"></i> Cập nhật câu hỏi
                                         </button>
                                         <button 
-                                            className="cancel-edit-btn"
+                                            className="cancel-edit-btn" 
                                             onClick={resetQuestionForm}
                                             disabled={loading}
                                         >
-                                            <i className="fas fa-times"></i> Hủy chỉnh sửa
+                                            <i className="fas fa-times"></i> Hủy
                                         </button>
                                     </>
                                 ) : (
                                     <button 
-                                        className="add-question-btn"
+                                        className={`add-question-btn ${questions.length >= 5 ? 'disabled' : ''}`}
                                         onClick={handleAddQuestion}
                                         disabled={loading || questions.length >= 5}
+                                        title={questions.length >= 5 ? "Đã đạt giới hạn tối đa 5 câu hỏi" : ""}
                                     >
-                                        <i className="fas fa-plus"></i> Thêm câu hỏi
+                                        <i className="fas fa-plus"></i> 
+                                        {questions.length >= 5 ? 'Đã đạt giới hạn tối đa 5 câu hỏi' : 'Thêm câu hỏi'}
                                     </button>
                                 )}
                             </div>

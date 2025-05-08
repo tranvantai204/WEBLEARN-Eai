@@ -47,14 +47,8 @@ export const FlashcardProvider = ({ children }) => {
       options.headers['ngrok-skip-browser-warning'] = 'true';
       options.headers['Accept'] = 'application/json';
       
-      // Check token validity before making request
-      const isTokenValid = await checkTokenExpiration();
-      if (!isTokenValid) {
-        console.log('Token invalid or expired before API request');
-        throw new Error('Authentication required');
-      }
-      
-      // Try to use current token from localStorage
+      // Try to use current token from localStorage first - don't validate it here
+      // as that's causing false rejections
       const currentToken = localStorage.getItem('accessToken');
       if (currentToken) {
         console.log('Using token from localStorage');
@@ -63,26 +57,61 @@ export const FlashcardProvider = ({ children }) => {
           'Authorization': `Bearer ${currentToken}`
         };
       } else {
-        console.log('No token in localStorage, using Postman token');
-        const postmanToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjZiNGU5YTcyLWJkMTUtNDAzMy1iYzk1LWI4M2Q1ZDI4ODJhYyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IjIyNTExMjAzMzlAdXQuZWR1LnZuIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6IlBodWNEYWkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNzQyMzIwOTI1LCJpc3MiOiJXb3JkV2lzZSIsImF1ZCI6IldvcmRXaXNlIn0.J7S79y1QY0e0QQL1TydQeOGYI3I06AjY-Xdj2f8yrdM";
+        console.log('No token in localStorage, using fallback token');
+        // Use a fallback token for public access - this will be rejected for protected endpoints
+        const fallbackToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjZiNGU5YTcyLWJkMTUtNDAzMy1iYzk1LWI4M2Q1ZDI4ODJhYyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IjIyNTExMjAzMzlAdXQuZWR1LnZuIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6IlBodWNEYWkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNzQyMzIwOTI1LCJpc3MiOiJXb3JkV2lzZSIsImF1ZCI6IldvcmRXaXNlIn0.J7S79y1QY0e0QQL1TydQeOGYI3I06AjY-Xdj2f8yrdM";
         options.headers = {
           ...options.headers,
-          'Authorization': `Bearer ${postmanToken}`
+          'Authorization': `Bearer ${fallbackToken}`
         };
       }
       
       console.log(`Making request to: ${url}`);
-      console.log('Request options:', JSON.stringify(options, null, 2));
+      console.log('Request options:', JSON.stringify({
+        ...options,
+        headers: {
+          ...options.headers,
+          'Authorization': options.headers.Authorization ? 'Bearer ***TOKEN***' : 'None'
+        }
+      }, null, 2));
       
       // Make the request
       let response = await fetch(url, options);
       
-      // Handle auth errors
+      // If we get a 401 or 403, try a token refresh once and retry the request
       if (response.status === 401 || response.status === 403) {
-        console.log(`Auth error ${response.status} from ${url}`);
-        // Try to refresh the token
-        await handleAuthError(response.status);
-        throw new Error('Authentication error');
+        console.log(`Auth error ${response.status} from ${url}, attempting token refresh`);
+        
+        try {
+          // Try to refresh the token
+          const success = await refreshAccessToken();
+          
+          if (success) {
+            // If refresh succeeded, get the new token and retry
+            const newToken = localStorage.getItem('accessToken');
+            if (newToken) {
+              console.log('Token refreshed successfully, retrying request with new token');
+              
+              // Update the Authorization header with the new token
+              options.headers['Authorization'] = `Bearer ${newToken}`;
+              
+              // Retry the request
+              response = await fetch(url, options);
+              
+              // If we still get an auth error, we're really unauthorized
+              if (response.status === 401 || response.status === 403) {
+                console.log('Still unauthorized after token refresh');
+                throw new Error('Authentication required. Please login again.');
+              }
+            }
+          } else {
+            console.log('Token refresh failed');
+            throw new Error('Authentication required. Please login again.');
+          }
+        } catch (refreshError) {
+          console.error('Error during token refresh:', refreshError);
+          throw new Error('Session expired. Please login again.');
+        }
       }
       
       // Check for non-JSON responses
@@ -142,7 +171,7 @@ export const FlashcardProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [refreshAccessToken]);
 
   // CREATE a new flashcard set
   const createFlashcardSet = useCallback(async (flashcardSetData) => {

@@ -8,30 +8,110 @@ import '../css/components/Flashcards.css';
 import ApiKeyForm from './ApiKeyForm';
 import LanguageSelector from './LanguageSelector';
 
-// Add LoadingPopup component
-const LoadingPopup = ({ message }) => (
-    <div className="loading-popup-overlay">
-        <div className="loading-popup-container">
-            <h3>{message}</h3>
-            <div className="loading-bar"></div>
-            <p>Vui lòng đợi trong khi AI đang tạo flashcards của bạn...</p>
-            <div className="loading-steps">
-                <div className="loading-step">
-                    <i className="fas fa-robot"></i> Kết nối với API
+// Update LoadingPopup component with more dynamic animations
+const LoadingPopup = ({ message }) => {
+    // Add states to track the current step
+    const [currentStep, setCurrentStep] = React.useState(0);
+    const [dots, setDots] = React.useState('.');
+
+    // Add animation effect for the dots
+    React.useEffect(() => {
+        const dotsInterval = setInterval(() => {
+            setDots(prevDots => {
+                if (prevDots.length >= 3) return '.';
+                return prevDots + '.';
+            });
+        }, 500);
+
+        return () => clearInterval(dotsInterval);
+    }, []);
+
+    // Add animation effect for steps
+    React.useEffect(() => {
+        const steps = [0, 1, 2];
+        let currentIndex = 0;
+
+        const stepInterval = setInterval(() => {
+            setCurrentStep(steps[currentIndex]);
+            currentIndex = (currentIndex + 1) % steps.length;
+        }, 3000);
+
+        return () => clearInterval(stepInterval);
+    }, []);
+
+    return (
+        <div className="loading-popup-overlay">
+            <div className="loading-popup-container">
+                <h3>{message}{dots}</h3>
+                <div className="loading-progress">
+                    <div className="loading-progress-bar"></div>
                 </div>
-                <div className="loading-step">
-                    <i className="fas fa-brain"></i> Tạo nội dung bằng AI
+                <p>Vui lòng đợi trong khi AI đang tạo flashcards của bạn...</p>
+                <div className="loading-steps">
+                    <div className={`loading-step ${currentStep === 0 ? 'active' : currentStep > 0 ? 'completed' : ''}`}>
+                        <div className="step-icon">
+                            <i className="fas fa-robot"></i>
+                        </div>
+                        <div className="step-content">
+                            <span className="step-label">Kết nối với API</span>
+                            {currentStep === 0 && <span className="step-animation"></span>}
+                        </div>
+                    </div>
+                    <div className={`loading-step ${currentStep === 1 ? 'active' : currentStep > 1 ? 'completed' : ''}`}>
+                        <div className="step-icon">
+                            <i className="fas fa-brain"></i>
+                        </div>
+                        <div className="step-content">
+                            <span className="step-label">Tạo nội dung bằng AI</span>
+                            {currentStep === 1 && <span className="step-animation"></span>}
+                        </div>
+                    </div>
+                    <div className={`loading-step ${currentStep === 2 ? 'active' : ''}`}>
+                        <div className="step-icon">
+                            <i className="fas fa-layer-group"></i>
+                        </div>
+                        <div className="step-content">
+                            <span className="step-label">Tạo bộ flashcard</span>
+                            {currentStep === 2 && <span className="step-animation"></span>}
+                        </div>
+                    </div>
                 </div>
-                <div className="loading-step">
-                    <i className="fas fa-layer-group"></i> Tạo bộ flashcard
+                <div className="loading-tips">
+                    <i className="fas fa-lightbulb tip-icon"></i>
+                    <small>Quá trình này có thể mất từ 10-30 giây tùy thuộc vào số lượng thẻ</small>
                 </div>
-            </div>
-            <div className="loading-tips">
-                <small>Quá trình này có thể mất từ 10-30 giây tùy thuộc vào số lượng thẻ</small>
             </div>
         </div>
-    </div>
-);
+    );
+};
+
+// Helper function to check for API key in localStorage
+const checkApiKeyInLocalStorage = () => {
+    // Kiểm tra API key trong localStorage
+    const localApiKey = localStorage.getItem('gemini_api_key');
+    const timestamp = localStorage.getItem('gemini_api_key_timestamp');
+    
+    // Nếu có API key trong localStorage và còn hiệu lực
+    if (localApiKey && timestamp) {
+        const now = Date.now();
+        const saved = parseInt(timestamp, 10);
+        const twoHoursMs = 2 * 60 * 60 * 1000;
+        
+        if (now - saved <= twoHoursMs) {
+            console.log('Valid API key found in localStorage');
+            return true;
+        } else {
+            // API key đã hết hạn, xóa khỏi localStorage
+            console.log('API key in localStorage has expired');
+            localStorage.removeItem('gemini_api_key');
+            localStorage.removeItem('gemini_api_key_timestamp');
+        }
+    }
+    
+    // Không tìm thấy API key hợp lệ trong localStorage
+    console.log('No valid API key in localStorage');
+    return false;
+};
 
 function CreateAIFlashcardsPage() {
     const [title, setTitle] = useState('');
@@ -52,26 +132,60 @@ function CreateAIFlashcardsPage() {
     const [isSubmitting, setIsSubmitting] = useState(false); // Thêm state để theo dõi việc đang submit form
     const [showLoadingPopup, setShowLoadingPopup] = useState(false); // Add state for loading popup
     
+    // Add state for server API key check
+    const [serverApiKeyChecked, setServerApiKeyChecked] = useState(false);
+    const [hasServerApiKey, setHasServerApiKey] = useState(false);
+    
     const { generateFlashcardSetWithAI, updateUserApiKey, getUserApiKey } = useFlashcard();
     const { accessToken, currentUser, isAuthenticated } = useAuth();
     const navigate = useNavigate();
     
-    // Kiểm tra và hiển thị form API key khi cần thiết
+    // Kiểm tra API key từ server khi component mount
     useEffect(() => {
-        const checkApiKey = async () => {
+        const checkServerApiKey = async () => {
             try {
-                // Nếu đang tạo flashcard AI và đã đăng nhập nhưng chưa có API key
-                if (isSubmitting && currentUser) {
-                    console.log('Hiển thị form API key cho tạo flashcard AI');
-                    setShowApiKeyForm(true);
+                if (isAuthenticated && !serverApiKeyChecked) {
+                    console.log('Checking API key from server...');
+                    // Kiểm tra API key từ server
+                    const apiKeyFromServer = await getUserApiKey();
+                    
+                    if (apiKeyFromServer) {
+                        console.log('API key found on server');
+                        setHasServerApiKey(true);
+                    } else {
+                        console.log('No API key found on server');
+                        setHasServerApiKey(false);
+                    }
+                    
+                    setServerApiKeyChecked(true);
                 }
             } catch (error) {
-                console.error('Lỗi khi kiểm tra API key:', error);
+                console.error('Error checking server API key:', error);
+                setHasServerApiKey(false);
+                setServerApiKeyChecked(true);
             }
         };
-
-        checkApiKey();
-    }, [isSubmitting, currentUser]);
+        
+        checkServerApiKey();
+    }, [isAuthenticated, getUserApiKey, serverApiKeyChecked]);
+    
+    // Kiểm tra API key tổng hợp (localStorage + server)
+    const hasValidApiKey = () => {
+        // Nếu có API key trong localStorage, sử dụng nó
+        if (checkApiKeyInLocalStorage()) {
+            console.log("Using valid API key from localStorage");
+            return true;
+        }
+        
+        // Nếu không có trong localStorage, kiểm tra xem server có không
+        if (hasServerApiKey) {
+            console.log("Using valid API key from server");
+            return true;
+        }
+        
+        console.log("No valid API key found in either localStorage or server");
+        return false;
+    };
     
     // Validate title on change
     const handleTitleChange = (e) => {
@@ -102,7 +216,7 @@ function CreateAIFlashcardsPage() {
     // Handle API key submission
     const handleApiKeySubmit = async (e) => {
         e.preventDefault();
-        
+      
         if (!apiKey.trim()) {
             toast.error('API key is required');
             return;
@@ -116,6 +230,8 @@ function CreateAIFlashcardsPage() {
             if (success) {
                 toast.success('API key saved successfully!');
                 setShowApiKeyForm(false);
+                // Set the server API key flag to true since we just saved it
+                setHasServerApiKey(true);
                 // Clear input field
                 setApiKey('');
             } else {
@@ -143,58 +259,33 @@ function CreateAIFlashcardsPage() {
             return;
         }
         
-        setIsSubmitting(true); // Thiết lập trạng thái đang submit
-        
-        // Check if API key is set
-        try {
-            // Kiểm tra API key trong localStorage
-            const localApiKey = localStorage.getItem('gemini_api_key');
-            const timestamp = localStorage.getItem('gemini_api_key_timestamp');
-            
-            if (localApiKey && timestamp) {
-                // Kiểm tra xem API key có còn hiệu lực không (2 giờ)
-                const now = Date.now();
-                const saved = parseInt(timestamp, 10);
-                const twoHoursMs = 2 * 60 * 60 * 1000;
-                
-                if (now - saved <= twoHoursMs) {
-                    console.log('Sử dụng API key từ localStorage');
-                    // Bỏ qua kiểm tra API key server, tiếp tục tạo flashcard
-                } else {
-                    // API key đã hết hạn, xóa khỏi localStorage
-                    console.log('API key trong localStorage đã hết hạn');
-                    localStorage.removeItem('gemini_api_key');
-                    localStorage.removeItem('gemini_api_key_timestamp');
-                    
-                    // Kiểm tra API key từ server
-                    const key = await getUserApiKey();
-                    if (!key) {
-                        setShowApiKeyForm(true);
-                        toast.error('AI features require a valid API key');
-                        setIsSubmitting(false);
-                        return;
-                    }
-                }
-            } else {
-                // Nếu không có trong localStorage, kiểm tra từ server
-                const key = await getUserApiKey();
-                if (!key) {
-                    setShowApiKeyForm(true);
-                    toast.error('AI features require a valid API key');
-                    setIsSubmitting(false);
-                    return;
-                }
-            }
-        } catch (error) {
-            console.error('Error checking API key:', error);
-            setIsSubmitting(false);
+        // Simplified authentication check - just confirm we have a token
+        // Don't try to validate it here as that's causing false rejections
+        if (!localStorage.getItem('accessToken')) {
+            toast.error('Bạn cần đăng nhập để sử dụng tính năng này');
+            navigate('/login');
+            return;
         }
         
-        setLoading(true);
-        setError('');
-        setShowLoadingPopup(true); // Show loading popup when starting generation
+        setIsSubmitting(true); // Thiết lập trạng thái đang submit
         
+        // Kiểm tra API key tổng hợp (localStorage + server)
+        if (!hasValidApiKey()) {
+            // Nếu không có API key hợp lệ, hiển thị form nhập API key
+            console.log('No valid API key found in both localStorage and server, showing form');
+            setShowApiKeyForm(true);
+            setIsSubmitting(false);
+            return;
+        }
+        
+        console.log('Valid API key found, proceeding with flashcard creation');
+        
+        // Nếu có API key hợp lệ (từ localStorage hoặc server), tiếp tục tạo flashcard set
         try {
+            setLoading(true);
+            setError('');
+            setShowLoadingPopup(true); // Show loading popup when starting generation
+            
             // Create the flashcard set with the AI-generated data
             const generationData = {
                 title: title + (topic ? ` - ${topic}` : ''),
@@ -207,18 +298,21 @@ function CreateAIFlashcardsPage() {
                 cardCount: Math.min(Math.max(1, cardCount), 20) // Limit between 1-20
             };
             
-            // Add API key directly to generationData
+            // Add API key directly to generationData if available in localStorage
             const geminiApiKey = localStorage.getItem('gemini_api_key');
-            console.log('Gemini API key present before request:', !!geminiApiKey);
+            console.log('Gemini API key present in localStorage:', !!geminiApiKey);
             
             if (geminiApiKey) {
                 generationData.geminiApiKey = geminiApiKey;
-                console.log('Added API key to generationData');
+                console.log('Added API key from localStorage to generationData');
+            } else if (hasServerApiKey) {
+                console.log('Using API key from server');
+                // The server will use its stored API key, we don't need to explicitly add it
             }
             
             console.log('Sending flashcard generation request with data:', JSON.stringify({
                 ...generationData,
-                geminiApiKey: geminiApiKey ? '***HIDDEN***' : 'not found'
+                geminiApiKey: geminiApiKey ? '***HIDDEN***' : 'using server API key'
             }, null, 2));
             
             // Call the direct function to generate and create the set
@@ -238,61 +332,259 @@ function CreateAIFlashcardsPage() {
             setTimeout(() => {
                 navigate(`/flashcard-set/${result.flashcardSetId}`);
             }, 1500);
-            
         } catch (error) {
             console.error('Error creating AI flashcard set:', error);
-            console.error('Error stack:', error.stack);
             
-            // Check for specific errors
-            const errorMsg = error.message || 'Failed to create AI flashcard set';
+            // Kiểm tra xem có lỗi gốc không được chuyển tiếp đúng cách không
+            // Trong console log thường có dạng "FlashcardContext.js:129 Error response: [message thực sự]"
             
-            // Common error patterns for API key issues
-            const apiKeyErrors = [
-                'API key is invalid', 
-                'API key is expired',
-                'API key',
-                'apiKey',
-                'missing API key'
-            ];
+            // Tìm thông tin lỗi trong console.log hiện tại
+            const originalConsoleLogs = [];
+            const originalConsoleLog = console.log;
+            const originalConsoleError = console.error;
             
-            const has400Error = errorMsg.includes('400') || errorMsg.includes('Error 400');
-            const hasApiKeyError = apiKeyErrors.some(err => errorMsg.toLowerCase().includes(err.toLowerCase()));
+            // Ghi lại tất cả log để tìm lỗi gốc
+            console.log = function() {
+                const args = Array.from(arguments).join(' ');
+                originalConsoleLogs.push(args);
+                originalConsoleLog.apply(console, arguments);
+            };
             
-            if (hasApiKeyError || has400Error) {
-                console.log('API key error detected');
+            console.error = function() {
+                const args = Array.from(arguments).join(' ');
+                originalConsoleLogs.push(args);
+                originalConsoleError.apply(console, arguments);
+            };
+            
+            // Log thông tin để debug
+            console.log('Checking for original error in console logs');
+            
+            // Khôi phục console.log và console.error ban đầu
+            console.log = originalConsoleLog;
+            console.error = originalConsoleError;
+            
+            // Tìm lỗi trong console logs
+            // Ưu tiên tìm lỗi từ "Error response:" vì đó thường là lỗi gốc
+            const errorResponseLog = originalConsoleLogs.find(log => 
+                log.includes('Error response:')
+            );
+            
+            console.log('Found error response log:', errorResponseLog);
+            
+            // Lấy message lỗi thực sự từ log
+            let originalErrorMessage = '';
+            if (errorResponseLog) {
+                const match = errorResponseLog.match(/Error response: (.*)/);
+                if (match && match[1]) {
+                    originalErrorMessage = match[1].trim();
+                }
+            }
+            
+            console.log('Extracted original error message:', originalErrorMessage);
+            
+            // Xử lý dựa trên thông báo lỗi gốc
+            if (originalErrorMessage.includes('You have reached the maximum limit of 5 flashcard sets')) {
+                console.log('DETECTED: Maximum flashcard limit reached from original error');
                 
-                // Clear any saved invalid API key
+                // Xử lý lỗi giới hạn tối đa
+                setError('Bạn đã đạt đến giới hạn tối đa 5 bộ thẻ ghi nhớ. Vui lòng xóa một số bộ hiện có trước khi tạo mới.');
+                
+                toast.error(
+                    <div>
+                        <strong>Đã đạt giới hạn tối đa!</strong> Bạn cần xóa bớt bộ flashcard để tạo mới.
+                        <div style={{ marginTop: '8px' }}>
+                            <button 
+                                onClick={() => navigate('/flashcards')}
+                                style={{ 
+                                    background: '#6c757d', 
+                                    border: 'none', 
+                                    color: 'white',
+                                    padding: '4px 8px',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontSize: '12px'
+                                }}
+                            >
+                                Quản lý Flashcards
+                            </button>
+                        </div>
+                    </div>,
+                    {
+                        position: "top-center",
+                        autoClose: 7000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        toastId: "flashcard-limit-error"
+                    }
+                );
+                return;
+            } 
+            else if (originalErrorMessage.includes('API Key not found for this user')) {
+                console.log('DETECTED: API Key not found from original error');
+                
+                // Hiển thị form để nhập API key - KHÔNG xóa API key đã lưu
+                setShowApiKeyForm(true);
+                
+                toast.error(
+                    <div>
+                        <strong>API Key chưa được thiết lập.</strong> Vui lòng nhập API key Gemini để sử dụng tính năng AI.
+                    </div>,
+                    {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        toastId: "api-key-not-found"
+                    }
+                );
+                return;
+            }
+            else if (originalErrorMessage.includes('API key is invalid') || originalErrorMessage.includes('expired')) {
+                console.log('DETECTED: Invalid API key from original error');
+                
+                // Xóa API key không hợp lệ
                 localStorage.removeItem('gemini_api_key');
                 localStorage.removeItem('gemini_api_key_timestamp');
                 
+                // Hiển thị form để nhập API key mới
                 setShowApiKeyForm(true);
                 
-                // Show custom toast with clear message
                 toast.error(
                     <div>
-                        A valid Gemini API key is required. Please add your API key.
-                        <button 
-                            onClick={() => setShowApiKeyForm(true)} 
-                            style={{
-                                display: 'block',
-                                marginTop: '10px',
-                                padding: '5px 10px',
-                                background: '#0284c7',
-                                color: '#fff',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            Add API Key Now
-                        </button>
-                    </div>
+                        <strong>API key không hợp lệ hoặc đã hết hạn.</strong> Vui lòng nhập API key Gemini hợp lệ.
+                    </div>,
+                    {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        toastId: "invalid-api-key"
+                    }
                 );
-            } else if (errorMsg.includes('maximum limit of 5 flashcard sets')) {
-                setError('You have reached the maximum limit of 5 flashcard sets.');
-                toast.error('You have reached the maximum limit of 5 flashcard sets.');
+                return;
+            }
+            
+            // Nếu không tìm thấy thông báo lỗi cụ thể từ console logs, thì dùng phương pháp kiểm tra trong stack
+            let errorMsg = error.message || 'Failed to create AI flashcard set';
+            
+            // Kiểm tra response
+            if (error.response) {
+                if (error.response.data && typeof error.response.data === 'string') {
+                    errorMsg = error.response.data;
+                } else if (error.response.data && error.response.data.message) {
+                    errorMsg = error.response.data.message;
+                }
+            }
+            
+            console.log('Fallback error message:', errorMsg);
+            
+            // Kiểm tra trong toàn bộ logs đã thu thập để tìm API Key not found nếu còn sót
+            const hasApiKeyNotFoundInLogs = originalConsoleLogs.some(log => 
+                log.includes('API Key not found') || 
+                log.includes('API key not found')
+            );
+            
+            if (hasApiKeyNotFoundInLogs) {
+                console.log('DETECTED: API Key not found from logs collection');
+                
+                // Hiển thị form để nhập API key
+                setShowApiKeyForm(true);
+                
+                toast.error(
+                    <div>
+                        <strong>API Key chưa được thiết lập.</strong> Vui lòng nhập API key Gemini để sử dụng tính năng AI.
+                    </div>,
+                    {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        toastId: "api-key-not-found"
+                    }
+                );
+                return;
+            }
+            
+            // Nếu không phát hiện API Key not found nhưng gặp lỗi An error occurred với status 400
+            // Chỉ xem là lỗi giới hạn tối đa khi logs KHÔNG có bất kỳ dấu hiệu nào của API Key not found
+            if (errorMsg === 'An error occurred' && error.response && error.response.status === 400) {
+                console.log('Got status 400 with generic message - checking if this is limit error');
+                
+                const hasApiKeyIssueInLogs = originalConsoleLogs.some(log => 
+                    log.includes('API Key') || 
+                    log.includes('api key') ||
+                    log.includes('API key')
+                );
+                
+                if (hasApiKeyIssueInLogs) {
+                    console.log('Found API key issues in logs, showing API key form');
+                    
+                    // Hiển thị form để nhập API key
+                    setShowApiKeyForm(true);
+                    
+                    toast.error(
+                        <div>
+                            <strong>API Key chưa được thiết lập.</strong> Vui lòng nhập API key Gemini để sử dụng tính năng AI.
+                        </div>,
+                        {
+                            position: "top-center",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            toastId: "api-key-not-found"
+                        }
+                    );
+                } else {
+                    // Nếu không tìm thấy bất kỳ thông tin nào về API Key, xem là lỗi giới hạn tối đa
+                    console.log('No API key issues found in logs, treating as maximum limit error');
+                    
+                    // Xử lý như lỗi giới hạn tối đa
+                    setError('Bạn đã đạt đến giới hạn tối đa 5 bộ thẻ ghi nhớ. Vui lòng xóa một số bộ hiện có trước khi tạo mới.');
+                    
+                    toast.error(
+                        <div>
+                            <strong>Đã đạt giới hạn tối đa!</strong> Bạn cần xóa bớt bộ flashcard để tạo mới.
+                            <div style={{ marginTop: '8px' }}>
+                                <button 
+                                    onClick={() => navigate('/flashcards')}
+                                    style={{ 
+                                        background: '#6c757d', 
+                                        border: 'none', 
+                                        color: 'white',
+                                        padding: '4px 8px',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px'
+                                    }}
+                                >
+                                    Quản lý Flashcards
+                                </button>
+                            </div>
+                        </div>,
+                        {
+                            position: "top-center",
+                            autoClose: 7000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            toastId: "flashcard-limit-error"
+                        }
+                    );
+                }
             } else {
-                setError(`${errorMsg} (${error.stack ? error.stack.split('\n')[1] : 'Unknown location'})`);
+                // Các lỗi khác không xác định
+                setError(`${errorMsg}`);
                 toast.error(errorMsg);
             }
         } finally {
@@ -344,17 +636,20 @@ function CreateAIFlashcardsPage() {
         { value: 6, label: 'Level 6 - Advanced' }
     ];
     
-    // ApiKeyForm is now imported, so we don't need to define it here
-    // Instead we'll use a handler to communicate with the imported component
+    // Handler for API key success from the form
     const handleApiKeySuccess = () => {
         setShowApiKeyForm(false);
         toast.success('API key đã được lưu thành công!');
         
-        // Tự động tiếp tục tạo flashcard nếu đó là hành động ban đầu
+        // Mark the server API key as available
+        setHasServerApiKey(true);
+        setServerApiKeyChecked(true);
+        
+        // Automatically continue flashcard creation if that was the original action
         if (isSubmitting && title && topic) {
-            setIsSubmitting(false); // Đặt lại trạng thái
+            setIsSubmitting(false); // Reset state
             setTimeout(() => {
-                // Gọi lại handleSubmit sau một khoảng thời gian ngắn
+                // Call handleSubmit after a short delay
                 handleSubmit({ preventDefault: () => {} });
             }, 500);
         } else {
@@ -362,7 +657,7 @@ function CreateAIFlashcardsPage() {
         }
     };
     
-    // Skip API key for now - don't automatically submit the form
+    // Skip API key for now
     const handleSkipApiKey = () => {
         setShowApiKeyForm(false);
         toast.info('Bạn có thể thêm API key sau trong phần cài đặt. Lưu ý rằng các tính năng AI sẽ không hoạt động nếu không có API key.');
@@ -384,10 +679,14 @@ function CreateAIFlashcardsPage() {
             
             {/* Hiển thị form nhập API key khi cần */}
             {showApiKeyForm && (
-                <ApiKeyForm 
-                    onSuccess={handleApiKeySuccess} 
-                    onSkip={handleSkipApiKey} 
-                />
+                <div className="api-key-form-overlay">
+                    <div className="api-key-form-container">
+                        <ApiKeyForm 
+                            onSuccess={handleApiKeySuccess} 
+                            onSkip={handleSkipApiKey} 
+                        />
+                    </div>
+                </div>
             )}
             
             {/* Loading Popup */}
@@ -405,6 +704,244 @@ function CreateAIFlashcardsPage() {
                         opacity: 1;
                         transform: translateY(0);
                     }
+                }
+                
+                .api-key-form-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: rgba(0, 0, 0, 0.6);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                    animation: fadeIn 0.3s ease;
+                }
+                
+                .api-key-form-container {
+                    background: white;
+                    border-radius: 16px;
+                    padding: 20px;
+                    width: 90%;
+                    max-width: 500px;
+                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                    animation: fadeInUp 0.4s ease;
+                }
+                
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                /* Loading popup styles */
+                .loading-popup-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1100;
+                    backdrop-filter: blur(3px);
+                }
+                
+                .loading-popup-container {
+                    background: white;
+                    border-radius: 16px;
+                    padding: 30px;
+                    width: 90%;
+                    max-width: 500px;
+                    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+                    text-align: center;
+                    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                }
+                
+                @keyframes popIn {
+                    0% {
+                        opacity: 0;
+                        transform: scale(0.8);
+                    }
+                    80% {
+                        transform: scale(1.05);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+                
+                .loading-popup-container h3 {
+                    color: #4285f4;
+                    margin-bottom: 16px;
+                    font-size: 24px;
+                    font-weight: 600;
+                }
+                
+                .loading-progress {
+                    height: 6px;
+                    background-color: #e2e8f0;
+                    border-radius: 6px;
+                    margin: 20px 0;
+                    overflow: hidden;
+                    position: relative;
+                }
+                
+                .loading-progress-bar {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    width: 30%;
+                    background: linear-gradient(90deg, #4285f4, #0d47a1);
+                    border-radius: 6px;
+                    animation: progressAnimate 2s ease-in-out infinite;
+                }
+                
+                @keyframes progressAnimate {
+                    0% { left: -30%; width: 30%; }
+                    50% { width: 60%; }
+                    100% { left: 100%; width: 30%; }
+                }
+                
+                .loading-popup-container p {
+                    color: #475569;
+                    margin-bottom: 20px;
+                    font-size: 16px;
+                }
+                
+                .loading-steps {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                    margin-bottom: 25px;
+                    text-align: left;
+                }
+                
+                .loading-step {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    background-color: #f8fafc;
+                    transition: all 0.3s ease;
+                }
+                
+                .loading-step.active {
+                    background-color: rgba(66, 133, 244, 0.1);
+                    box-shadow: 0 2px 8px rgba(66, 133, 244, 0.2);
+                    transform: translateY(-2px) scale(1.01);
+                }
+                
+                .loading-step.completed {
+                    background-color: rgba(74, 222, 128, 0.1);
+                    color: #166534;
+                }
+                
+                .step-icon {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 20px;
+                    background-color: #e2e8f0;
+                    color: #64748b;
+                    font-size: 16px;
+                    transition: all 0.3s ease;
+                }
+                
+                .loading-step.active .step-icon {
+                    background-color: #4285f4;
+                    color: white;
+                    box-shadow: 0 0 0 5px rgba(66, 133, 244, 0.2);
+                }
+                
+                .loading-step.completed .step-icon {
+                    background-color: #4ade80;
+                    color: white;
+                }
+                
+                .step-content {
+                    flex: 1;
+                    position: relative;
+                }
+                
+                .step-label {
+                    font-weight: 500;
+                    color: #1e293b;
+                    transition: all 0.3s ease;
+                }
+                
+                .loading-step.active .step-label {
+                    color: #1e40af;
+                    font-weight: 600;
+                }
+                
+                .loading-step.completed .step-label {
+                    color: #166534;
+                }
+                
+                .step-animation {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    height: 2px;
+                    width: 40%;
+                    background: linear-gradient(90deg, #4285f4, transparent);
+                    animation: pulseStep 2s ease-in-out infinite;
+                }
+                
+                @keyframes pulseStep {
+                    0% { width: 0; opacity: 1; }
+                    50% { width: 80%; opacity: 0.5; }
+                    100% { width: 0; opacity: 1; }
+                }
+                
+                .loading-tips {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    background-color: rgba(250, 204, 21, 0.1);
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    color: #854d0e;
+                }
+                
+                .tip-icon {
+                    color: #facc15;
+                }
+                
+                /* Button progress animation */
+                .button-progress-bar {
+                    position: relative;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    border: 2px solid rgba(255, 255, 255, 0.3);
+                    border-left-color: #fff;
+                    animation: spin 1s linear infinite;
+                }
+                
+                @keyframes spin {
+                    100% { transform: rotate(360deg); }
                 }
             `}</style>
             

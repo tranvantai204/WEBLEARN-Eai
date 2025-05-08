@@ -28,6 +28,8 @@ function WritingPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [learningLanguageError, setLearningLanguageError] = useState('');
     const [nativeLanguageError, setNativeLanguageError] = useState('');
+    const [showLimitModal, setShowLimitModal] = useState(false);
+    const [limitModalMessage, setLimitModalMessage] = useState('');
     
     // Auth and writing exercises
     const { isAuthenticated, currentUser } = useAuth();
@@ -99,6 +101,10 @@ function WritingPage() {
         aiTopicSuccess: 'Đã tạo chủ đề bài viết bằng AI thành công!',
         aiTopicError: 'Lỗi khi tạo chủ đề bài viết bằng AI. Vui lòng thử lại sau.',
         apiKeyRequired: 'Tính năng AI yêu cầu API key Gemini. Vui lòng thêm API key của bạn.',
+        apiKeyMissing: 'API key không tìm thấy. Vui lòng thêm API key Gemini của bạn.',
+        apiKeyInvalid: 'API key không hợp lệ hoặc đã hết hạn. Vui lòng cập nhật API key của bạn.',
+        maxExercisesLimit: 'Bạn đã đạt đến giới hạn tối đa 5 bài tập viết. Vui lòng xóa một số bài tập trước khi tạo mới.',
+        rateLimitExceeded: 'Đã vượt quá giới hạn tốc độ. Vui lòng thử lại sau.',
     });
     
     // Update translations when language changes
@@ -398,17 +404,45 @@ function WritingPage() {
                     toast.error('Bạn cần đăng nhập lại để tạo bài tập viết');
                     throw new Error('User is not authenticated.');
                 } else if (response.status === 400) {
-                    const errorData = await response.json();
-                    // Kiểm tra lỗi giới hạn số lượng bài tập
-                    if (errorData.message && errorData.message.includes('maximum limit')) {
-                        toast.error('Bạn đã đạt đến giới hạn tối đa 5 bài tập viết cùng lúc.');
-                    } else if (errorData.title && errorData.errors) {
-                        // Xử lý lỗi validation
-                        const errorMessages = Object.values(errorData.errors).flat();
-                        toast.error(errorMessages[0] || 'Dữ liệu không hợp lệ');
-                    } else {
-                        toast.error(errorData.message || 'Dữ liệu không hợp lệ');
+                    try {
+                        // Đọc nội dung phản hồi dưới dạng text trước
+                        const errorText = await response.text();
+                        console.log("Error response text:", errorText);
+                        
+                        // Cố gắng parse JSON
+                        let errorData;
+                        try {
+                            errorData = JSON.parse(errorText);
+                        } catch (jsonError) {
+                            console.error("Failed to parse error response as JSON:", jsonError);
+                            
+                            // Nếu không phải JSON hợp lệ nhưng có thông tin về giới hạn
+                            if (errorText.includes('maximum limit') || errorText.includes('5 bài tập')) {
+                                const errorMsg = 'Bạn đã đạt đến giới hạn tối đa 5 bài tập viết. Vui lòng xóa một số bài tập trước khi tạo mới.';
+                                showDirectError(errorMsg);
+                                throw new Error(`Bad request: ${response.status}`);
+                            }
+                            
+                            // Nếu không xác định được lỗi cụ thể
+                            toast.error('Không thể xử lý phản hồi từ máy chủ. Vui lòng thử lại sau.');
+                            throw new Error(`Invalid JSON in error response: ${errorText.substring(0, 100)}`);
+                        }
+                        
+                        // Xử lý errorData như thông thường
+                        if (errorData.message && errorData.message.includes('maximum limit')) {
+                            const errorMsg = 'Bạn đã đạt đến giới hạn tối đa 5 bài tập viết. Vui lòng xóa một số bài tập trước khi tạo mới.';
+                            showDirectError(errorMsg);
+                        } else if (errorData.title && errorData.errors) {
+                            const errorMessages = Object.values(errorData.errors).flat();
+                            toast.error(errorMessages[0] || 'Dữ liệu không hợp lệ');
+                        } else {
+                            toast.error(errorData.message || 'Dữ liệu không hợp lệ');
+                        }
+                    } catch (error) {
+                        console.error("Error processing response:", error);
+                        toast.error('Đã xảy ra lỗi khi xử lý phản hồi. Vui lòng thử lại sau.');
                     }
+                    
                     throw new Error(`Bad request: ${response.status}`);
                 } else if (response.status === 500) {
                     toast.error('Đã xảy ra lỗi ở máy chủ khi tạo bài tập viết. Vui lòng thử lại sau.');
@@ -469,17 +503,36 @@ function WritingPage() {
         if (result) {
             toast.success(messages.aiTopicSuccess || 'AI-generated writing topic created successfully!');
             // Refresh the exercises list
-            if (getAllWritingExercises) {
+            if (getAllWritingExercises && currentUser?.userId) {
                 getAllWritingExercises(currentUser?.userId);
             }
             
             // Navigate to the new exercise if ID is available
-            if (result.exerciseId) {
-                navigate(`/writing-exercise/${result.exerciseId}`);
+            if (result.writingExerciseId) {
+                navigate(`/writing/exercise-simple/${result.writingExerciseId}`);
+            } else if (result.exerciseId) {
+                navigate(`/writing/exercise-simple/${result.exerciseId}`);
             }
         } else {
             toast.error(messages.aiTopicError || 'Error generating writing topic with AI');
         }
+    };
+    
+    // Helper function to show direct error alerts for critical errors
+    const showDirectError = (message) => {
+        // Show as toast
+        toast.error(message);
+        
+        // Show custom modal for maximum limit errors
+        if (message.includes('maximum limit') || message.includes('5 writing exercises') || 
+            message.includes('giới hạn') || message.includes('bài tập viết')) {
+            // Use the formatted message or fallback to a default
+            const formattedMsg = 'Bạn đã đạt đến giới hạn tối đa 5 bài tập viết. Vui lòng xóa một số bài tập trước khi tạo mới.';
+            setLimitModalMessage(formattedMsg);
+            setShowLimitModal(true);
+        }
+        
+        console.log('DIRECT ERROR DISPLAYED:', message);
     };
     
     if (!isAuthenticated) {
@@ -531,6 +584,7 @@ function WritingPage() {
                     <AIWritingTopicForm 
                         onSuccess={handleAITopicSuccess}
                         onCancel={() => setShowAITopicForm(false)}
+                        messages={messages}
                     />
                 )}
                 
@@ -790,6 +844,96 @@ function WritingPage() {
                     </div>
                 </div>
             )}
+            
+            {/* Custom Limit Reached Modal */}
+            {showLimitModal && (
+                <div className="modern-modal-overlay">
+                    <div className="modern-modal-container">
+                        <div className="server-header">localhost:3000 cho biết</div>
+                        <div className="modern-modal-content">
+                            <p>{limitModalMessage || 'Bạn đã đạt đến giới hạn tối đa 5 bài tập viết. Vui lòng xóa một số bài tập trước khi tạo mới.'}</p>
+                            <button 
+                                className="modern-modal-button ok-button" 
+                                onClick={() => {
+                                    setShowLimitModal(false);
+                                    setShowCreateForm(false);
+                                }}
+                            >
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            <style jsx="true">{`
+                /* Modern Modal Styles */
+                .modern-modal-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: rgba(0, 0, 0, 0.7);
+                    z-index: 1200;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 20px;
+                }
+                
+                .modern-modal-container {
+                    background-color: #1e1e1e;
+                    border-radius: 15px;
+                    max-width: 450px;
+                    width: 92%;
+                    animation: modalFadeIn 0.3s ease-out;
+                    overflow: hidden;
+                }
+                
+                .server-header {
+                    color: white;
+                    opacity: 0.7;
+                    font-size: 14px;
+                    padding: 16px 25px 0;
+                }
+                
+                .modern-modal-content {
+                    padding: 10px 25px 22px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+                
+                .modern-modal-content p {
+                    margin: 0 0 20px 0;
+                    font-size: 15px;
+                    line-height: 1.5;
+                    color: white;
+                    text-align: center;
+                }
+                
+                .modern-modal-button.ok-button {
+                    padding: 8px 45px;
+                    border-radius: 100px;
+                    font-size: 15px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    border: none;
+                    background-color: #8c52ff;
+                    color: white;
+                }
+                
+                .modern-modal-button.ok-button:hover {
+                    background-color: #7540e0;
+                }
+                
+                @keyframes modalFadeIn {
+                    from { opacity: 0; transform: translateY(-20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+            `}</style>
         </div>
     );
 }

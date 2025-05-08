@@ -416,7 +416,7 @@ function CreateMultipleChoiceTestPage() {
     const handleCancel = () => {
         const confirmLeave = window.confirm('Are you sure you want to cancel? Any unsaved changes will be lost.');
         if (confirmLeave) {
-            navigate('/readings');
+            window.location.href = '/readings';
         }
     };
 
