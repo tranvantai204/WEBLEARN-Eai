@@ -849,8 +849,7 @@ function WritingPage() {
             {showLimitModal && (
                 <div className="modern-modal-overlay">
                     <div className="modern-modal-container">
-                        <div className="server-header">localhost:3000 cho biết</div>
-                        <div className="modern-modal-content">
+                        <div className="modern-modal-content mt-3">
                             <p>{limitModalMessage || 'Bạn đã đạt đến giới hạn tối đa 5 bài tập viết. Vui lòng xóa một số bài tập trước khi tạo mới.'}</p>
                             <button 
                                 className="modern-modal-button ok-button" 
@@ -883,7 +882,7 @@ function WritingPage() {
                 }
                 
                 .modern-modal-container {
-                    background-color: #1e1e1e;
+                    background-image: linear-gradient(135deg, #ff8c38, #ff7518);
                     border-radius: 15px;
                     max-width: 450px;
                     width: 92%;
@@ -921,12 +920,12 @@ function WritingPage() {
                     cursor: pointer;
                     transition: all 0.2s;
                     border: none;
-                    background-color: #8c52ff;
+                    background-color:rgb(103, 208, 240);
                     color: white;
                 }
                 
                 .modern-modal-button.ok-button:hover {
-                    background-color: #7540e0;
+                    background-color:rgb(64, 136, 224);
                 }
                 
                 @keyframes modalFadeIn {

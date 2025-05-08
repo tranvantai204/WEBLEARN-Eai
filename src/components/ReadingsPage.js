@@ -630,7 +630,7 @@ function ReadingsPage() {
                         <strong>Đã đạt giới hạn tối đa!</strong> Bạn cần xóa bớt bài kiểm tra để tạo mới.
                         <div style={{ marginTop: '8px' }}>
                             <button 
-                                onClick={() => navigate('/readings')}
+                                onClick={() => window.location.href = window.location.href}
                                 style={{ 
                                     background: '#6c757d', 
                                     border: 'none', 

@@ -90,33 +90,66 @@ export const WritingExerciseProvider = ({ children }) => {
       console.log(`Response status: ${response.status}`);
       
       if (!response.ok) {
-        let errorMessage = '';
-        
+        let errorMessage = 'An unexpected error occurred'; // Default fallback
+        let errorBody = null;
+        const status = response.status;
+
         try {
-          if (contentType && contentType.includes('application/json')) {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorData.title || 'An error occurred';
-            console.error('Error response:', errorData);
-          } else {
-            // For non-JSON errors
-            errorMessage = `Request failed with status: ${response.status}`;
-            const text = await response.text();
-            console.error('Non-JSON error response:', text.substring(0, 200));
-          }
-        } catch (parseError) {
-          console.error('Error parsing error response:', parseError);
-          errorMessage = `Request failed with status: ${response.status}`;
+            const contentType = response.headers.get('content-type');
+
+            if (contentType && contentType.includes('application/json')) {
+                // Lưu ý: Sử dụng .clone() vì body chỉ đọc được 1 lần
+                const responseClone = response.clone();
+                try {
+                    errorBody = await responseClone.json();
+                    console.error(`Parsed JSON error body (Status ${status}):`, errorBody);
+
+                    // Attempt to extract message from common JSON error structures
+                    errorMessage = errorBody.message // Common simple message property
+                                 || errorBody.title // Problem Details title
+                                 || errorBody.detail // Problem Details detail
+                                 || (typeof errorBody === 'string' ? errorBody : null) // Direct string JSON
+                                 || (Array.isArray(errorBody) && errorBody.length > 0 ? errorBody[0] : null) // Array of strings
+                                 || (errorBody.errors && Object.values(errorBody.errors).flat()[0]) // ASP.NET Core Validation errors
+                                 || `Request failed with status ${status} (Unrecognized JSON structure)`; // Fallback for JSON
+
+                } catch (jsonParseError) {
+                     // Nếu không parse được JSON dù Content-Type là JSON
+                     console.error('Failed to parse JSON error body, reading as text:', jsonParseError);
+                     const textBody = await response.text(); // Đọc body gốc (đã đọc 1 lần, cần clone nếu không muốn dùng lại)
+                     errorMessage = textBody || `Request failed with status ${status} (JSON parse error)`;
+                     console.error('Non-JSON content in JSON response:', textBody.substring(0, 200));
+                }
+
+            } else {
+                // Handle non-JSON responses (often plain text errors)
+                const textBody = await response.text();
+                errorMessage = textBody || `Request failed with status: ${status}`;
+                console.error(`Non-JSON error response (Status ${status}):`, textBody.substring(0, 200));
+            }
+        } catch (readBodyError) {
+            console.error('Error reading response body:', readBodyError);
+            errorMessage = `Request failed with status: ${status} (Failed to read body)`; // Fallback if reading body fails
         }
-        
+
+        // Ensure errorMessage is a string
+        if (typeof errorMessage !== 'string') {
+            errorMessage = 'An unexpected error occurred (Invalid message format)';
+        }
+
+
         // Create custom error with response details
         const error = new Error(errorMessage);
-        error.response = {
-          status: response.status,
-          statusText: response.statusText,
-          url: response.url
+        error.response = { // Attach response details
+            status: response.status,
+            statusText: response.statusText,
+            url: response.url,
+            // body: errorBody // Optional: attach the parsed body if needed elsewhere
         };
-        
-        throw error;
+        error.status = response.status; // Also attach status directly for easier access
+
+        console.error('Throwing custom error:', error);
+        throw error; // Throw the custom error
       }
       
       // For successful response, handle no-content and parse JSON

@@ -203,7 +203,7 @@ function AIWritingTopicForm({ onSuccess, onCancel, messages = {} }) {
       console.log('Error message:', errorMessage);
       
       // Check for API key not found errors
-      if (errorStatus === 404 || errorMessage.includes('API Key not found')) {
+      if (errorStatus === 400 && errorMessage.includes('API Key not found')) {
         const errorMsg = messages.apiKeyMissing || 'API Key not found. Please add your Gemini API key to use this feature.';
         showDirectError(errorMsg);
         setShowApiKeyForm(true);

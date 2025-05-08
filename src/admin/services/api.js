@@ -49,9 +49,10 @@ export const authService = {
   
   // Logout
   logout: () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
+    localStorage.clear();
+    // localStorage.removeItem('token');
+    // localStorage.removeItem('refreshToken');
+    // localStorage.removeItem('user');
   },
 
   // Check if user is authenticated
