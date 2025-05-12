@@ -203,6 +203,7 @@ function HomePage() {
     
     const [featuredSets, setFeaturedSets] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { translateText } = useLanguage();
     
     // Get translations for current language or fallback to English
     const translations = allTranslations[currentLanguage] || allTranslations.en;
@@ -552,9 +553,9 @@ function HomePage() {
                 {/* Featured Flashcards Section for public users - Dynamic */}
                 <section className="featured-flashcards">
                     <div className="featured-flashcards-header">
-                        <h2>Popular Flashcard Sets</h2>
+                        <h2>{translateText('Popular Flashcard Sets')}</h2>
                         <Link to="/explore" className="btn-primary">
-                            Explore All
+                            {translateText('Explore All')}
                         </Link>
                     </div>
                     <div className="featured-cards-grid">
@@ -563,7 +564,7 @@ function HomePage() {
                         ) : (
                             featuredSets.map((set, index) => (
                                 <div className="featured-card" key={set.flashcardSetId || index}>
-                                    <div className="featured-badge">{set.badge || 'Featured'}</div>
+                                    <div className="featured-badge">{set.badge || translateText('Featured')}</div>
                                     <h3 className="set-title">{set.title}</h3>
                                     <p className="set-description">{set.description}</p>
                                     <div className="set-stats">
@@ -573,7 +574,7 @@ function HomePage() {
                                         <span className="set-learner-count">Learners: {set.learnerCount || 0}</span>
                                     </div>
                                     <Link to={`/register?redirect=/flashcard-set/${set.flashcardSetId}`} className="study-now-btn">
-                                        <i className="fas fa-user-plus"></i> Sign Up to Study
+                                        <i className="fas fa-user-plus"></i> {translateText('Sign Up to Study')}
                                     </Link>
                                 </div>
                             ))

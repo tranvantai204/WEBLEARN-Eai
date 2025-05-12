@@ -645,8 +645,8 @@
 .calendar-day.active::after {
     content: '✅';
     position: absolute;
-    top: -10px;
-    right: -5px;
+    top: 17px;
+    right: 6px;
     font-size: 16px;
     opacity: 0.9;
 }

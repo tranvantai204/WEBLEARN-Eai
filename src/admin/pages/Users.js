@@ -175,7 +175,7 @@ const Users = () => {
         userName: '',
         email: '',
         password: '',
-        roles: ['User'], // Mặc định là User khi tạo mới
+        roles: ['Admin'], // Mặc định là User khi tạo mới
         gender: true, // Mặc định là Male
         level: 0,
         // status: 'Active',
@@ -248,7 +248,7 @@ const Users = () => {
            // Hoặc endpoint createUser xử lý được việc gán role
            const adminData = { ...userData, password: currentUser.password };
            // await userService.registerAdmin(adminData); // Nếu có endpoint riêng
-           await userService.createUser(adminData); // Nếu dùng endpoint chung
+           await userService.registerAdmin(adminData); // Nếu dùng endpoint chung
            message = 'Admin user created successfully';
     } else {
             const createData = { ...userData, password: currentUser.password };
@@ -801,7 +801,7 @@ const Users = () => {
                  >
                    {/* Có thể lấy danh sách role từ API */}
                    <MenuItem value="User">User</MenuItem>
-                <MenuItem value="Admin">Admin</MenuItem>
+                    <MenuItem value="Admin">Admin</MenuItem>
                    <MenuItem value="SuperAdmin">SuperAdmin</MenuItem>
               </Select>
             </FormControl>

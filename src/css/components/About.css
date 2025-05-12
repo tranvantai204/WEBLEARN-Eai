@@ -85,6 +85,14 @@
     margin-bottom: 20px;
 }
 
+.founder-image img {
+  display: block; /* Giúp loại bỏ khoảng trắng thừa dưới ảnh */
+  width: 350px;   /* Đặt chiều rộng mong muốn (ví dụ: 150px) */
+  height: auto;   /* Để chiều cao tự động điều chỉnh theo tỷ lệ */
+  /* Tùy chọn: Căn giữa ảnh nếu container của nó là flex hoặc grid */
+  margin: 0 auto; 
+}
+
 .mission-image {
     flex: 1;
     border-radius: 20px;

@@ -995,7 +995,7 @@ function ReadingsPage() {
         <div className="main-content">
             <div className="readings-wrapper">
                 <div className="ai-section">
-                    <h2 className="ai-section-title">{translateText('Tạo bài kiểm tra bằng AI')}</h2>
+                    <h2 className="ai-section-title">{translateText('Create AI Reading Test')}</h2>
                     <p className="ai-description">
                         {translateText('Enter a topic (optional) or leave blank for AI to choose one. Select options below to customize your reading test. AI will automatically generate a reading passage and multiple-choice questions. Example topics: "Climate Change", "Space Exploration", "Vietnamese Culture"...')}
                     </p>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
+import { useLanguage } from '../contexts/LanguageContext';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/components/Login.css';
 
@@ -13,6 +14,7 @@ function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [redirecting, setRedirecting] = useState(false);
     const [loginSuccess, setLoginSuccess] = useState(false);
+    const { translateText } = useLanguage();
 
     const { login, updateStreak } = useAuth();
     const navigate = useNavigate();
@@ -221,9 +223,9 @@ function LoginPage() {
                 </Link>
                 
                 <div className="login-welcome-content">
-                    <h1 className="login-welcome-title">Welcome back to your language journey!</h1>
+                    <h1 className="login-welcome-title">{translateText('Welcome back to your language journey!')}</h1>
                     <p className="login-welcome-text">
-                        Log in to continue your progress, practice vocabulary, and achieve your language goals.
+                        {translateText('Log in to continue your progress, practice vocabulary, and achieve your language goals.')}
                     </p>
                     
                     <div className="login-features">
@@ -233,7 +235,7 @@ function LoginPage() {
                             </div>
                             <div className="login-feature-text">
                                 <h3>Daily Streak</h3>
-                                <p>Keep your learning momentum going</p>
+                                <p>{translateText('Keep your learning momentum going')}</p>
                             </div>
                         </div>
                         
@@ -243,7 +245,7 @@ function LoginPage() {
                             </div>
                             <div className="login-feature-text">
                                 <h3>Achievements</h3>
-                                <p>Track your progress and earn rewards</p>
+                                <p>{translateText('Track your progress and earn rewards')}</p>
                             </div>
                         </div>
                         
@@ -253,7 +255,7 @@ function LoginPage() {
                             </div>
                             <div className="login-feature-text">
                                 <h3>Resume Learning</h3>
-                                <p>Continue right where you left off</p>
+                                <p>{translateText('Continue right where you left off')}</p>
                             </div>
                         </div>
                     </div>

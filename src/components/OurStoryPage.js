@@ -2,6 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../css/components/About.css'; // Sử dụng chung CSS với AboutPage
 import { useAuth } from '../contexts/AuthContext';
+import Dai from '../assets/PDai.jpg'
+import Dat from '../assets/TDat.jpg'
+import Tai from '../assets/VTai.jpg'
 
 function OurStoryPage() {
     const { isAuthenticated } = useAuth();
@@ -23,7 +26,7 @@ function OurStoryPage() {
                         <div className="mission-text">
                             <h2>Khởi đầu</h2>
                             <p>
-                                WordWise bắt đầu vào năm 2020, khi nhóm sáng lập của chúng tôi - những người đam mê công nghệ 
+                                WordWise bắt đầu vào năm 2024, khi nhóm sáng lập của chúng tôi - những người đam mê công nghệ 
                                 và ngôn ngữ - nhận ra vấn đề cốt lõi trong việc học ngoại ngữ hiện đại: thiếu sự cá nhân hóa 
                                 và phương pháp khoa học.
                             </p>
@@ -46,7 +49,7 @@ function OurStoryPage() {
                     <div className="timeline">
                         <div className="timeline-item">
                             <div className="timeline-dot"></div>
-                            <div className="timeline-date">2020</div>
+                            <div className="timeline-date">Tháng 1, 2024</div>
                             <div className="timeline-content">
                                 <h3>Những bước đi đầu tiên</h3>
                                 <p>
@@ -59,7 +62,7 @@ function OurStoryPage() {
                         
                         <div className="timeline-item">
                             <div className="timeline-dot"></div>
-                            <div className="timeline-date">2021</div>
+                            <div className="timeline-date">Tháng 2, 2024</div>
                             <div className="timeline-content">
                                 <h3>Nhận vốn đầu tư và mở rộng</h3>
                                 <p>
@@ -72,7 +75,7 @@ function OurStoryPage() {
                         
                         <div className="timeline-item">
                             <div className="timeline-dot"></div>
-                            <div className="timeline-date">2022</div>
+                            <div className="timeline-date"> Tháng 3, 2024</div>
                             <div className="timeline-content">
                                 <h3>Cải tiến AI và tích hợp công nghệ</h3>
                                 <p>
@@ -84,7 +87,7 @@ function OurStoryPage() {
                         
                         <div className="timeline-item">
                             <div className="timeline-dot"></div>
-                            <div className="timeline-date">2023</div>
+                            <div className="timeline-date">Tháng 8, 2024</div>
                             <div className="timeline-content">
                                 <h3>Toàn cầu hóa và hợp tác</h3>
                                 <p>
@@ -97,7 +100,7 @@ function OurStoryPage() {
                         
                         <div className="timeline-item">
                             <div className="timeline-dot"></div>
-                            <div className="timeline-date">2024</div>
+                            <div className="timeline-date">2025</div>
                             <div className="timeline-content">
                                 <h3>Hiện tại và tương lai</h3>
                                 <p>
@@ -112,44 +115,44 @@ function OurStoryPage() {
                 </div>
             </section>
 
-            <section className="founders-section">
+            <section className="founders-section mt-5">
                 <div className="container">
                     <h2 className="section-title">Đội ngũ sáng lập</h2>
                     <div className="founders-grid">
                         <div className="founder-card">
                             <div className="founder-image">
-                                <img src="/images/founder-1.jpg" alt="Nguyễn Minh Tuấn" />
+                                <img src={Dai} alt="Nguyễn Phúc Đại" />
                             </div>
-                            <h3>Nguyễn Minh Tuấn</h3>
+                            <h3>Nguyễn Phúc Đại</h3>
                             <p className="founder-title">Đồng sáng lập & CEO</p>
                             <p className="founder-bio">
                                 Với nền tảng về Khoa học Máy tính từ Đại học Stanford và 10 năm kinh nghiệm 
-                                tại các công ty công nghệ hàng đầu, Tuấn đã dẫn dắt WordWise từ ý tưởng ban đầu 
+                                tại các công ty công nghệ hàng đầu, Đại đã dẫn dắt WordWise từ ý tưởng ban đầu 
                                 đến nền tảng toàn cầu.
                             </p>
                         </div>
                         
                         <div className="founder-card">
                             <div className="founder-image">
-                                <img src="/images/founder-2.jpg" alt="Lê Thị Mai Anh" />
+                                <img src={Tai} alt="Trần Văn Tài" />
                             </div>
-                            <h3>Lê Thị Mai Anh</h3>
+                            <h3>Trần Văn Tài</h3>
                             <p className="founder-title">Đồng sáng lập & CTO</p>
                             <p className="founder-bio">
                                 Tiến sĩ Ngôn ngữ học Ứng dụng với chuyên môn về học máy và xử lý ngôn ngữ tự nhiên. 
-                                Mai Anh là người đứng sau các thuật toán học tập cá nhân hóa của WordWise.
+                                Tài là người đứng sau các thuật toán học tập cá nhân hóa của WordWise.
                             </p>
                         </div>
                         
                         <div className="founder-card">
                             <div className="founder-image">
-                                <img src="/images/founder-3.jpg" alt="Phạm Văn Hùng" />
+                                <img src={Dat} alt="Nguyễn Cao Thành Đạt" />
                             </div>
-                            <h3>Phạm Văn Hùng</h3>
+                            <h3>Nguyễn Cao Thành Đạt</h3>
                             <p className="founder-title">Đồng sáng lập & CPO</p>
                             <p className="founder-bio">
                                 Với hơn 15 năm kinh nghiệm trong thiết kế UX/UI và phát triển sản phẩm, 
-                                Hùng chịu trách nhiệm đảm bảo WordWise không chỉ hiệu quả mà còn thú vị 
+                                Đạt chịu trách nhiệm đảm bảo WordWise không chỉ hiệu quả mà còn thú vị 
                                 và dễ sử dụng cho người dùng toàn cầu.
                             </p>
                         </div>

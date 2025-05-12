@@ -552,7 +552,7 @@ function WritingPage() {
             <div className="writing-page-container container my-5">
                 <div className="page-header mb-4">
                     <h1 className="page-title">{translations.pageTitle}</h1>
-                    <p className="page-subtitle">{translations.introduction}</p>
+                    <p className="page-subtitle">{translateText(translations.introduction)}</p>
                 </div>
                 
                 <div className="writing-actions mb-4">

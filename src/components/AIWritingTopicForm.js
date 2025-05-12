@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../contexts/AuthContext';
 import { useFlashcard } from '../contexts/FlashcardContext';
 import { useWritingExercise } from '../contexts/WritingExerciseContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import ApiKeyForm from './ApiKeyForm';
 import LanguageSelector from './LanguageSelector';
 import Spinner from './common/Spinner';
@@ -75,6 +76,7 @@ const LoadingPopup = ({ message, onCancel }) => {
 };
 
 function AIWritingTopicForm({ onSuccess, onCancel, messages = {} }) {
+  const { translateText } = useLanguage();
   const [learningLanguage, setLearningLanguage] = useState('ENG');
   const [nativeLanguage, setNativeLanguage] = useState('VIE');
   const [title, setTitle] = useState('');
@@ -339,7 +341,7 @@ function AIWritingTopicForm({ onSuccess, onCancel, messages = {} }) {
       <div className="card-header">
         <h5 className="card-title">
           <i className="fas fa-robot me-2"></i>
-          Generate Writing Topic with AI
+          {translateText('Generate Writing Topic with AI')}
         </h5>
       </div>
       
@@ -397,17 +399,16 @@ function AIWritingTopicForm({ onSuccess, onCancel, messages = {} }) {
             fontWeight: '600'
           }}>
             <i className="fas fa-info-circle me-2"></i> 
-            How it works
+            {translateText('How it works')}
           </h6>
           <p style={{ color: '#475569', fontSize: '14px', margin: 0 }}>
-            AI will automatically generate a writing topic based on your learning language and native language.
-            This feature requires that you have saved your Gemini API key.
+            {translateText('AI will automatically generate a writing topic based on your learning language and native language. This feature requires that you have saved your Gemini API key.')}
           </p>
         </div>
         
         <form>
           <div className="mb-3">
-            <label htmlFor="topicTitle" className="form-label fw-bold">Topic Title</label>
+            <label htmlFor="topicTitle" className="form-label fw-bold">{translateText('Topic Title')}</label>
             <input 
               type="text"
               id="topicTitle"
@@ -426,7 +427,7 @@ function AIWritingTopicForm({ onSuccess, onCancel, messages = {} }) {
           </div>
 
           <div className="mb-3">
-            <label htmlFor="learningLanguage" className="form-label fw-bold">Learning Language</label>
+            <label htmlFor="learningLanguage" className="form-label fw-bold">{translateText('Learning Language')}</label>
             <LanguageSelector
               id="learningLanguage"
               value={learningLanguage}
@@ -440,7 +441,7 @@ function AIWritingTopicForm({ onSuccess, onCancel, messages = {} }) {
           </div>
           
           <div className="mb-3">
-            <label htmlFor="nativeLanguage" className="form-label fw-bold">Native Language</label>
+            <label htmlFor="nativeLanguage" className="form-label fw-bold">{translateText('Native Language')}</label>
             <LanguageSelector
               id="nativeLanguage"
               value={nativeLanguage}
@@ -483,7 +484,7 @@ function AIWritingTopicForm({ onSuccess, onCancel, messages = {} }) {
               ) : (
                 <>
                   <i className="fas fa-magic me-2"></i>
-                  Generate Topic
+                  {translateText('Generate Topic')}
                 </>
               )}
             </button>

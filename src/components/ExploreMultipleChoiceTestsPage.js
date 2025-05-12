@@ -101,7 +101,6 @@ function ExploreMultipleChoiceTestsPage() {
     return (
         <div className="tests-page">
             <div className="tests-container">
-                <div className="tests-grid">
                     <div className="tests-header">
                         <h1 className="page-title">{translateText('Explore Multiple Choice Tests')}</h1>
                         
@@ -157,6 +156,7 @@ function ExploreMultipleChoiceTestsPage() {
                             </div>
                         </div>
                     </div>
+                <div id='explore-tests-page' className="tests-grid" style={{display: 'flex'}}>
                     
                     {loading ? (
                         <div className="custom-loading-spinner">
@@ -197,7 +197,7 @@ function ExploreMultipleChoiceTestsPage() {
                                                 test.level === 4 ? 'Upper Intermediate' :
                                                 test.level === 5 ? 'Advanced' : 'Proficient'
                                             }</span>
-                                            <span className="test-learner-count"><i className="fas fa-question-circle"></i> {translateText('Questions')}: {test.questionCount || '0'}</span>
+                                            <span className="test-learner-count"><i className="fas fa-users"></i> {translateText('Learners')}: {test.learnerCount || '0'}</span>
                                         </div>
                                     </div>
                                 ))}

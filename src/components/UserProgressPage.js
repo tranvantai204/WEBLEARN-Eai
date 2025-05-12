@@ -111,22 +111,22 @@ function UserProgressPage() {
         }
         
         if (minutes < 60) {
-            return `${minutes.toFixed(0)} phút`;
+            return `${minutes.toFixed(0)} ${translateText('Minutes')}`;
         } else {
             const hours = Math.floor(minutes / 60);
             const mins = Math.round(minutes % 60);
-            return `${hours} giờ ${mins} phút`;
+            return `${hours} ${translateText('Hours')} ${mins} ${translateText('minutes')}`;
         }
     };
 
     // Format last learning date
     const formatDate = (dateString) => {
-        if (!dateString) return 'Hôm nay';
+        if (!dateString) return 'Today';
         
         try {
             const date = new Date(dateString);
             // Check if date is valid
-            if (isNaN(date.getTime())) return 'Hôm nay';
+            if (isNaN(date.getTime())) return 'Today';
             
             const today = new Date();
             const yesterday = new Date(today);
@@ -134,7 +134,7 @@ function UserProgressPage() {
             
             // Check if date is today
             if (date.toDateString() === today.toDateString()) {
-                return 'Hôm nay';
+                return 'Today';
             } 
             // Check if date is yesterday
             else if (date.toDateString() === yesterday.toDateString()) {
@@ -146,7 +146,7 @@ function UserProgressPage() {
             }
         } catch (error) {
             console.error('Date formatting error:', error);
-            return 'Hôm nay';
+            return 'Today';
         }
     };
 
@@ -234,7 +234,7 @@ function UserProgressPage() {
                                 </div>
                                 <div className="stat-info">
                                     <h3 className="stat-title">{translateText('Current Streak')}</h3>
-                                    <div className="stat-value">{progressData.currentStreak || 0} {translateText('days')}</div>
+                                    <div className="stat-value">{progressData.currentStreak || 0} {translateText('Days')}</div>
                                     <p className="stat-desc">{translateText('Keep your motivation every day!')}</p>
                                 </div>
                             </div>
@@ -245,7 +245,7 @@ function UserProgressPage() {
                                 </div>
                                 <div className="stat-info">
                                     <h3 className="stat-title">{translateText('Longest Streak')}</h3>
-                                    <div className="stat-value">{progressData.longestStreak || 0} {translateText('days')}</div>
+                                    <div className="stat-value">{progressData.longestStreak || 0} {translateText('Days')}</div>
                                     <p className="stat-desc">{translateText('Your record so far!')}</p>
                                 </div>
                             </div>
@@ -267,7 +267,7 @@ function UserProgressPage() {
                                 </div>
                                 <div className="stat-info">
                                     <h3 className="stat-title">{translateText('Recent Session')}</h3>
-                                    <div className="stat-value">{formatDate(progressData.lastLearningDate)}</div>
+                                    <div className="stat-value">{translateText(formatDate(progressData.lastLearningDate))}</div>
                                     <p className="stat-desc">{translateText('Continue maintaining your learning habits!')}</p>
                                 </div>
                             </div>

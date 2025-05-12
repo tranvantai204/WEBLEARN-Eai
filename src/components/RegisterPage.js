@@ -4,8 +4,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from '../contexts/AuthContext';
 import '../css/components/Register.css';
+import { useLanguage } from '../contexts/LanguageContext';
 
 function RegisterPage() {
+    const { translateText } = useLanguage();
     const [formStep, setFormStep] = useState(1);
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [formData, setFormData] = useState({
@@ -43,12 +45,12 @@ function RegisterPage() {
     }, [redirecting, navigate]);
 
     const levels = [
-        { value: '1', label: 'Level 1 - Beginner', icon: '🌱' },
-        { value: '2', label: 'Level 2 - Elementary', icon: '🌿' },
-        { value: '3', label: 'Level 3 - Pre-Intermediate', icon: '🌲' },
-        { value: '4', label: 'Level 4 - Intermediate', icon: '🎯' },
-        { value: '5', label: 'Level 5 - Upper Intermediate', icon: '🎓' },
-        { value: '6', label: 'Level 6 - Advanced', icon: '⭐' }
+        { value: '1', label: translateText('Level 1 - Beginner'), icon: '🌱' },
+        { value: '2', label: translateText('Level 2 - Elementary'), icon: '🌿' },
+        { value: '3', label: translateText('Level 3 - Pre-Intermediate'), icon: '🌲' },
+        { value: '4', label: translateText('Level 4 - Intermediate'), icon: '🎯' },
+        { value: '5', label: translateText('Level 5 - Upper Intermediate'), icon: '🎓' },
+        { value: '6', label: translateText('Level 6 - Advanced'), icon: '⭐' }
     ];
 
     const nextStep = () => {
@@ -347,9 +349,9 @@ function RegisterPage() {
                 </Link>
                 
                 <div className="register-welcome-content">
-                    <h1 className="register-welcome-title">Start your language journey today!</h1>
+                    <h1 className="register-welcome-title">{translateText('Start your language journey today!')}</h1>
                     <p className="register-welcome-text">
-                        Join thousands of successful language learners. Create your account to access personalized learning features.
+                        {translateText('Join thousands of successful language learners. Create your account to access personalized learning features.')}
                     </p>
                     
                     <div className="register-features">
@@ -358,8 +360,8 @@ function RegisterPage() {
                                 <i className="fas fa-brain"></i>
                             </div>
                             <div className="register-feature-text">
-                                <h3>AI-Powered Learning</h3>
-                                <p>Personalized to match your learning style</p>
+                                <h3>{translateText('AI-Powered Learning')}</h3>
+                                <p>{translateText('Personalized to match your learning style')}</p>
                             </div>
                         </div>
                         
@@ -368,8 +370,8 @@ function RegisterPage() {
                                 <i className="fas fa-layer-group"></i>
                             </div>
                             <div className="register-feature-text">
-                                <h3>Smart Flashcards</h3>
-                                <p>Enhanced with spaced repetition technology</p>
+                                <h3>{translateText('Smart Flashcards')}</h3>
+                                <p>{translateText('Lặp đi lặp lại đúng lúc, nhớ hoài không quên – học là dính!')}</p>
                             </div>
                         </div>
                         
@@ -378,8 +380,8 @@ function RegisterPage() {
                                 <i className="fas fa-chart-line"></i>
                             </div>
                             <div className="register-feature-text">
-                                <h3>Track Your Progress</h3>
-                                <p>Visual statistics to keep you motivated</p>
+                                <h3>{translateText('Track Your Progress')}</h3>
+                                <p>{translateText('Visual statistics to keep you motivated')}</p>
                             </div>
                         </div>
                     </div>
@@ -393,8 +395,8 @@ function RegisterPage() {
             <div className="register-form-wrapper">
                 <div className={`register-form-card ${redirecting ? 'scale-up' : ''}`}>
                     <div className="register-form-header">
-                        <h2 className="register-form-title">Create Your Account</h2>
-                        <p className="register-form-subtitle">It's quick and easy!</p>
+                        <h2 className="register-form-title">{translateText('Create Your Account')}</h2>
+                        <p className="register-form-subtitle">{translateText('It\'s quick and easy!')}</p>
                         
                         <div className="register-progress">
                             <div className="register-progress-bar" style={{ width: `${(formStep - 1) * 50}%` }}></div>
@@ -451,7 +453,7 @@ function RegisterPage() {
                                             />
                                             <label htmlFor="male" className="gender-label">
                                                 <i className="fas fa-mars"></i>
-                                                Male
+                                                {translateText('Male')}
                                             </label>
                                         </div>
                                         
@@ -479,7 +481,7 @@ function RegisterPage() {
                                         onClick={nextStep}
                                         disabled={!formData.name || !formData.email || !formData.gender}
                                     >
-                                        Continue
+                                        {translateText('Continue')}
                                         <i className="fas fa-arrow-right"></i>
                                     </button>
                                 </div>
@@ -626,7 +628,7 @@ function RegisterPage() {
                                         ) : (
                                             <>
                                                 <i className="fas fa-rocket"></i>
-                                                Create Account
+                                                {translateText('Create Account')}
                                             </>
                                         )}
                                     </button>
@@ -637,7 +639,7 @@ function RegisterPage() {
                     
                     <div className="register-form-footer">
                         <p>
-                            Already have an account?{' '}
+                            {translateText('Already have an account?')}{' '}
                             <Link to="/login" className="register-login-link">
                                 Log in
                             </Link>

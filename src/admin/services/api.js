@@ -158,7 +158,7 @@ export const userService = {
   // Create new user
   createUser: async (userData) => {
     try {
-      const response = await API.post('/api/users', userData);
+      const response = await API.post('/Auth/register', userData);
       return response.data;
     } catch (error) {
       throw error;

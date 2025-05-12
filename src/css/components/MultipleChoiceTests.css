@@ -65,6 +65,15 @@
     gap: 20px;
 }
 
+@media (min-width: 1024px) {
+    .sets-list {
+        /* Thay đổi dòng này để có 2 cột cố định */
+        grid-template-columns: repeat(2, 1fr); 
+        /* Điều này sẽ tạo ra 2 cột, mỗi cột chiếm 1 phần không gian bằng nhau */
+        /* Các giá trị minmax trước đó sẽ không còn tác dụng ở đây nữa */
+    }
+}
+
 .set-card {
     background-color: white;
     border-radius: 8px;
