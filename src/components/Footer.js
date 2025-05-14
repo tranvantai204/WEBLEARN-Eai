@@ -151,8 +151,8 @@ const Footer = () => {
                 <div className="footer-section contact">
                     <h3>Contact Us</h3>
                     <p><FontAwesomeIcon icon={faEnvelope} /> Email: info@wordwise.com</p>
-                    <p><FontAwesomeIcon icon={faPhone} /> Phone: +84 0585761955</p>
-                    <p><FontAwesomeIcon icon={faLocationDot} /> Address: 123 Learning Lane, Education City, 12345</p>
+                    <p><FontAwesomeIcon icon={faPhone} /> Phone: +84 246 296 9969</p>
+                    <p><FontAwesomeIcon icon={faLocationDot} /> Address: Ho Chi Minh City, VietNam</p>
                 </div>
 
                 <div className="footer-section newsletter">

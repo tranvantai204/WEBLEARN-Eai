@@ -371,7 +371,7 @@ function RegisterPage() {
                             </div>
                             <div className="register-feature-text">
                                 <h3>{translateText('Smart Flashcards')}</h3>
-                                <p>{translateText('Lặp đi lặp lại đúng lúc, nhớ hoài không quên – học là dính!')}</p>
+                                <p>{translateText('Enhanced with spaced repetition technology')}</p>
                             </div>
                         </div>
                         

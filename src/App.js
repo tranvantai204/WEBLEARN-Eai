@@ -61,6 +61,7 @@ import './css/mobile-utils.css'; // Import mobile utilities
 
 // Import Admin components
 import AdminApp from './admin/AdminApp';
+import NotFoundPage from './components/NotFoundPage.js';
 
 // Layout wrapper component
 const AppLayout = () => {
@@ -92,7 +93,7 @@ const AppLayout = () => {
                     <Route path="/public-learn/:flashcardSetId" element={<FlashcardLearningPage />} />
                     <Route path="/public-test/:testId" element={<MultipleChoiceTestDetailPage />} />
                     <Route path="/public-writing/:exerciseId" element={<WritingExerciseDetailPageSimple />} />
-                    
+                    <Route path='*' element={<NotFoundPage/>}></Route>
                     {/* Unprotected routes (only accessible when not logged in) */}
                     <Route path="/login" element={
                         <UnprotectedRoute>

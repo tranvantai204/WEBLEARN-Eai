@@ -602,7 +602,7 @@ function MultipleChoiceTestDetailPage() {
                                         <span>💤</span>
                                     </div>
                                     <h3>0 ĐIỂM RỒI KÌA!!!</h3>
-                                    <p>Ôi bạn ơi! Não đang mắc kẹt ở đâu đó rồi!!!</p>
+                                    <p>Thất bại là mẹ thành công, Cố gắng làm lại bạn nhé</p>
                                 </div>
                             )}
                             

@@ -460,7 +460,12 @@ export const LanguageProvider = ({ children }) => {
             'Generate Topic': 'Tạo Chủ Đề',
             'Minutes': 'Phút',
             'minutes': 'phút',
-            'Hours': 'Giờ'
+            'Hours': 'Giờ',
+            'Oops! You\'ve Wandered Into Uncharted Territory': 'Ối dời ơi! Lạc vào đâu giữa \'mê cung\' Internet rồi!',
+            'Our clever squirrel seems to be as lost as you are! It\'s trying to navigate the digital maze but can\'t find the page you\'re looking for.' :'Chú sóc \'thần sầu\' của tụi mình cũng đang \'hoang mang\' như bạn vậy đó! Nó đang cố \'hack não\' cái \'mê cung số\' này mà tìm hoài chẳng thấy trang bạn yêu cầu đâu.',
+            'Go Home': 'Về Nhà Thôi',
+            'Go Back':'Quay Xe Gấp',
+            'Try searching for what you need or return to the homepage to start fresh.': 'Thôi thì thử tìm lại xem sao, hoặc \'reset\' về trang chủ nhé người đẹp!'
         }
     }), []);
 
