@@ -465,7 +465,131 @@ export const LanguageProvider = ({ children }) => {
             'Our clever squirrel seems to be as lost as you are! It\'s trying to navigate the digital maze but can\'t find the page you\'re looking for.' :'Chú sóc \'thần sầu\' của tụi mình cũng đang \'hoang mang\' như bạn vậy đó! Nó đang cố \'hack não\' cái \'mê cung số\' này mà tìm hoài chẳng thấy trang bạn yêu cầu đâu.',
             'Go Home': 'Về Nhà Thôi',
             'Go Back':'Quay Xe Gấp',
-            'Try searching for what you need or return to the homepage to start fresh.': 'Thôi thì thử tìm lại xem sao, hoặc \'reset\' về trang chủ nhé người đẹp!'
+            'Try searching for what you need or return to the homepage to start fresh.': 'Thôi thì thử tìm lại xem sao, hoặc \'reset\' về trang chủ nhé người đẹp!',
+            'Create Room': 'Tạo Phòng',
+            'For Teachers & Hosts': 'Dành cho Giáo viên & Chủ phòng', 
+            'Room Name': 'Tên Phòng', 
+            'Enter room name...': 'Nhập tên phòng...', 
+            'Select Flashcard Set': 'Chọn Bộ Flashcard', 
+            'Choose flashcard set': 'Chọn bộ flashcard ',
+            'Join Room': 'Tham Gia Phòng', 
+            'For Students & Players': 'Dành cho Học sinh & Người chơi', 
+            'Room Code (6 characters)': 'Mã Phòng (6 ký tự)', 
+            'E.G. ABC123': 'Ví dụ: ABC123', 
+            'JOIN ROOM': 'THAM GIA PHÒNG',
+            'Room Information': 'Thông Tin Phòng', 
+            'Room ID': 'ID Phòng', 
+            'Room Code': 'Mã Phòng', 
+            'Copy Code': 'Chép Mã', 
+            'Role': 'Vai Trò', 
+            'Teacher': 'Giáo viên', 
+            'Waiting...': 'Đang chờ...', 
+            'Status': 'Trạng Thái', 
+            'Ready': 'Sẵn sàng', 
+            'Room Participants': 'Thành viên trong phòng', 
+            "You're currently alone in this room.": 'Chưa có ai vào phòng.', 
+            'ENTER TEACHER CONTROL PANEL': 'VÀO BẢNG ĐIỀU KHIỂN GIÁO VIÊN', 
+            'ENTER STUDENT LEARNING AREA': 'VÀO KHU VỰC HỌC TẬP CỦA HỌC SINH', 
+            'No data to export report!': 'Chưa có dữ liệu để xuất báo cáo!',
+            'Student Name': 'Tên học sinh',
+            'Correct Answers': 'Số câu đúng',
+            'Time': 'Thời gian',
+            'Anonymous Student': 'Học sinh ẩn danh',
+            'report-results': 'bao-cao-ket-qua', // Tên file, giữ nguyên không Gen Z
+            'room': 'phong', // Tên file, giữ nguyên không Gen Z
+            'No participants list to export!': 'Chưa có danh sách người tham gia để xuất!',
+            'No.': 'STT', // "STT" là viết tắt phổ biến, nghe tự nhiên hơn
+            'Username': 'Tên người dùng',
+            'ID': 'ID',
+            'Join Time': 'Thời gian tham gia',
+            'A friend': 'Một người bạn', // "Một người bạn" phù hợp hơn "Một người bạn"
+            'participants-list': 'danh-sach-tham-gia', // Tên file, giữ nguyên không Gen Z
+            'API Log': 'Nhật Ký API', // "Nhật Ký API" ổn rồi
+            'SignalR Events': 'Sự Kiện SignalR', // "Sự Kiện SignalR" ổn rồi
+
+            // Các từ đã có từ các hình ảnh và các lần Việt hóa trước (được giữ lại hoặc điều chỉnh)
+            'Teacher Control Panel': 'Trang Điều Khiển Giáo Viên', // "Trang Kiểm Soát Giáo Viên" -> "Trang Điều Khiển Giáo Viên" (nghe tự nhiên hơn)
+            'Back to Lobby': 'Về Phòng Chờ', //
+            'Start Room': 'Bắt Đầu Phòng', //
+            'End Room': 'Kết Thúc Phòng', //
+            'View Student Page': 'Xem Trang Học Sinh', //
+            'Export Report': 'Xuất Báo Cáo', //
+            'Export Results (CSV)': 'Xuất Kết Quả (CSV)', //
+            'Export Participants List': 'Xuất Danh Sách Tham Gia', //
+            'People in this room:': 'Những người trong phòng:', //
+            'No students have joined yet.': 'Chưa có học sinh nào tham gia.',
+            'Flashcard Battle': 'Đấu Trí Flashcard',
+            'Challenge Your Knowledge!': 'So Tài Kiến Thức!',
+            'Leaderboard': 'Bảng Xếp Hạng', // Đã có 'BXH Trực Tiếp' nhưng đây là tiêu đề chung cho card
+            'Players': 'Người chơi',
+            'Online': 'Đang online',
+            'No other players': 'Chưa có người chơi khác',
+            'Connection Info': 'Thông tin kết nối',
+            'Connection Status': 'Trạng thái kết nối',
+            'Connected': 'Đã kết nối',
+            'Disconnected': 'Mất kết nối',
+            'Flashcard ID': 'Flashcard ID',
+            'Game Status': 'Trạng thái game',
+            'Processing...': '⏳ Đang xử lý...',
+            'Ready to play': '✅ Sẵn sàng chơi',
+            'Waiting for Next Question': 'Chờ Câu Hỏi Tiếp Theo',
+            'The teacher will start the game soon!': 'Giáo viên sẽ bắt đầu game sớm thôi!',
+            'Loading...': 'Đang tải...', // Chung cho spinner
+            'Question': 'Câu Hỏi',
+            'Read carefully and answer correctly!': 'Hãy đọc kỹ và trả lời chính xác nhé!',
+            'EXAMPLE': 'VÍ DỤ',
+            'Type your answer...': '💭 Nhập đáp án của bạn...',
+            'Submitting...': 'Đang gửi...',
+            'Submit Answer': 'Gửi Đáp Án',
+            'Processing your answer...': 'Đang xử lý câu trả lời của bạn...',
+            'Press Enter or click "Submit Answer" to answer': 'Nhấn Enter hoặc click "Gửi Đáp Án" để trả lời',
+            'Correct!': 'Chính Xác!',
+            'Incorrect!': 'Sai Rồi!',
+            'Great! You answered correctly': 'Tuyệt vời! Bạn đã trả lời đúng',
+            "Don't worry, try again next time": 'Đừng lo lắng, hãy thử lại lần sau',
+            'Correct Answer': 'Đáp án chính xác',
+            'Excellent!': 'Xuất sắc!',
+            'You have completed all questions!': 'Bạn đã hoàn thành tất cả câu hỏi!',
+            'Preparing next question...': 'Chuẩn bị câu hỏi tiếp theo...',
+            'Recent result': 'Kết quả vừa rồi',
+            'Correct': 'Đúng', 
+            'Incorrect': 'Sai',
+            '🏆 Leaderboard': '🏆 Bảng Xếp Hạng', // Sử dụng key mới để phân biệt compact và full
+            'points': 'điểm',
+            'correct answers': 'câu đúng',
+            'Rank': 'Hạng',
+            'Student': 'Học Sinh',
+            'Score': 'Điểm',
+            'Correct': 'Đúng',
+            'Percentage': 'Tỷ lệ',
+            'Live Leaderboard': 'Bảng Xếp Hạng Trực Tiếp',
+            'Game Completed!': 'Trò Chơi Hoàn Thành!',
+            'Thank you for participating! The room has been closed.': 'Cảm ơn bạn đã tham gia! Phòng đã được đóng.',
+            'Final Results': 'Kết Quả Cuối Cùng',
+            'Total Players': 'Tổng Số Người Chơi',
+            'Highest Score': 'Điểm Cao Nhất',
+            'Game Summary': 'Tóm Tắt Trò Chơi',
+            'The session has ended': 'Phiên chơi đã kết thúc',
+            'Session Completed Successfully!': 'Phiên Chơi Hoàn Thành Thành Công!',
+            'All questions have been answered. Check the final leaderboard to see the results!': 'Tất cả câu hỏi đã được trả lời. Hãy xem bảng xếp hạng cuối cùng để biết kết quả!',
+            'Players': 'Người Chơi', 
+            'Top Score': 'Điểm Cao Nhất', 
+            'Participants': 'Người Tham Gia', 
+            'You can now return to the lobby or check the final leaderboard.': 'Bây giờ bạn có thể quay lại sảnh hoặc xem bảng xếp hạng cuối cùng.',
+            'Back to Lobby': 'Quay Lại Sảnh', 
+            'Play Again': 'Chơi Lại', 
+            'Flashcard Battle': 'Đấu Thẻ Học', 
+            'Finished': 'Đã Kết Thúc', 
+            'Game has ended - Thank you for playing!': 'Trò chơi đã kết thúc - Cảm ơn bạn đã chơi!',
+            'Challenge Your Knowledge!': 'Thử Thách Kiến Thức Của Bạn!',
+            'Session ended': 'Phiên đã kết thúc', 
+            'Connection Info': 'Thông Tin Kết Nối',
+            'Room ID': 'Mã Phòng',
+            'Game Status': 'Trạng Thái Trò Chơi',
+            'Processing...': 'Đang Xử Lý...',
+            'Ready to play': 'Sẵn Sàng Chơi',
+            'No other players': 'Không có người chơi khác',
+            'A friend': 'Một người bạn',
         }
     }), []);
 

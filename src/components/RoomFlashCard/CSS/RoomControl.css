@@ -1,0 +1,294 @@
+/* RoomControl.css */
+.room-control-container {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e3f2fd;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.room-control-container:hover {
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.control-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  background: linear-gradient(45deg, #1976d2, #42a5f5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.control-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.button-wrapper {
+  position: relative;
+}
+
+.control-button {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.control-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.control-button:hover::before {
+  left: 100%;
+}
+
+.control-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.control-button:active {
+  transform: translateY(-1px);
+  transition: transform 0.1s;
+}
+
+.control-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.control-button:disabled::before {
+  display: none;
+}
+
+/* Button Variants */
+.start-button {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+}
+
+.start-button:hover {
+  background: linear-gradient(135deg, #20c997, #17a2b8);
+}
+
+.next-button {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+}
+
+.next-button:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+}
+
+.finish-button {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+}
+
+.finish-button:hover {
+  background: linear-gradient(135deg, #c82333, #a71e2a);
+}
+
+.view-button {
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  color: white;
+}
+
+.view-button:hover {
+  background: linear-gradient(135deg, #138496, #0f6674);
+}
+
+.button-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.control-button:hover .button-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.button-text {
+  font-weight: 600;
+}
+
+/* Room Status Warning */
+.room-status-warning {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  color: #856404;
+  font-weight: 500;
+  margin-top: 1rem;
+  animation: pulse 2s infinite;
+}
+
+.warning-icon {
+  font-size: 1.2rem;
+  animation: bounce 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .room-control-container {
+    padding: 1rem;
+  }
+  
+  .control-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .control-buttons-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  
+  .control-button {
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .button-icon {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .control-buttons-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .control-button {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .room-status-warning {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+}
+
+/* Loading state for buttons */
+.control-button.loading {
+  position: relative;
+  color: transparent;
+}
+
+.control-button.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Success/Error states */
+.control-button.success {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  animation: successPulse 0.6s ease-out;
+}
+
+.control-button.error {
+  background: linear-gradient(135deg, #dc3545, #c82333) !important;
+  animation: errorShake 0.6s ease-out;
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}

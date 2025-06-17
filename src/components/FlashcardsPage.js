@@ -108,6 +108,10 @@ function FlashcardsPage() {
         navigate('/flashcards/create-ai');
     };
 
+    const handleCreateRoom = () => {
+        navigate('/live-room');
+    }
+
     return (
         <div className="flashcards-page">
             <div className="flashcards-container">
@@ -115,6 +119,19 @@ function FlashcardsPage() {
                     <div className="flashcards-header">
                         <h1 className="page-title">{translateText('My Flashcards')}</h1>
                         <div className="flashcards-actions">
+                            <button
+                                className="create-set-btn create-manual-btn"
+                                onClick={handleCreateRoom}
+                                style={{ 
+                                    background: 'linear-gradient(135deg,rgb(244, 99, 66), #0d47a1)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem'
+                                }}    
+                            >
+                                <i class="fa fa-home" aria-hidden="true"></i>
+                                {translateText('Create Room')}
+                            </button>
                             <button 
                                 className="create-set-btn" 
                                 onClick={handleCreateNew}

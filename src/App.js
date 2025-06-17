@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
@@ -7,8 +8,8 @@ import { WritingExerciseProvider } from './contexts/WritingExerciseContext';
 import { MultipleChoiceTestProvider } from './contexts/MultipleChoiceTestContext';
 
 // Import language utilities
-import './scripts/forceEnglishLanguage';
-import { forceEnglishLanguage } from './utils/forceEnglishLanguage';
+// './scripts/forceEnglishLanguage'; // This type of import is for side effects, usually not needed if function is exported
+// import { forceEnglishLanguage } from './utils/forceEnglishLanguage'; // Assuming you call this function somewhere if needed
 
 // Import route protection components
 import ProtectedRoute from './components/ProtectedRoute';
@@ -63,11 +64,13 @@ import './css/mobile-utils.css'; // Import mobile utilities
 import AdminApp from './admin/AdminApp';
 import NotFoundPage from './components/NotFoundPage.js';
 
+// NEW: Import the LiveRoomApp
+import LiveRoomApp from './apps/LiveRoomApp.jsx'; // Adjust path if you place LiveRoomApp.js elsewhere
+
 // Layout wrapper component
 const AppLayout = () => {
     const location = useLocation();
     
-    // Don't show header and footer on auth pages or admin pages
     const isAuthPage = location.pathname === '/login' || 
                       location.pathname === '/register' || 
                       location.pathname === '/forgot-password' || 
@@ -75,14 +78,17 @@ const AppLayout = () => {
     
     const isAdminPage = location.pathname.startsWith('/admin');
     
+    // Determine if the current page is the LiveRoomApp page
+    const isLiveRoomPage = location.pathname.startsWith('/live-room');
+
     if (isAdminPage) {
         return <AdminApp />;
     }
     
     return (
         <div className="app">
-            {!isAuthPage && <Header />}
-            <main className={`main-content ${isAuthPage ? 'auth-page' : ''}`}>
+            {!isAuthPage && <Header />} {/* Optionally hide Header for LiveRoomApp */}
+            <main className={`main-content ${isAuthPage ? 'auth-page' : ''} ${isLiveRoomPage ? 'live-room-page-wrapper' : ''}`}>
                 <Routes>
                     {/* Public routes */}
                     <Route path="/" element={<HomePage />} />
@@ -93,7 +99,7 @@ const AppLayout = () => {
                     <Route path="/public-learn/:flashcardSetId" element={<FlashcardLearningPage />} />
                     <Route path="/public-test/:testId" element={<MultipleChoiceTestDetailPage />} />
                     <Route path="/public-writing/:exerciseId" element={<WritingExerciseDetailPageSimple />} />
-                    <Route path='*' element={<NotFoundPage/>}></Route>
+                    
                     {/* Unprotected routes (only accessible when not logged in) */}
                     <Route path="/login" element={
                         <UnprotectedRoute>
@@ -177,9 +183,9 @@ const AppLayout = () => {
                             <MultipleChoiceTestDetailPage />
                         </ProtectedRoute>
                     } />
-                    <Route path="/readings/tests" element={
+                    <Route path="/readings/tests" element={ // Duplicate of /readings/multiple-choice/tests?
                         <ProtectedRoute>
-                            <ReadingsPage />
+                            <ReadingsPage /> 
                         </ProtectedRoute>
                     } />
                     <Route path="/readings/practice" element={
@@ -222,6 +228,13 @@ const AppLayout = () => {
                             <UserProgressPage />
                         </ProtectedRoute>
                     } />
+
+                    {/* NEW: Route for the Live Room App */}
+                    <Route path="/live-room" element={
+                        <ProtectedRoute> {/* Assuming live room access requires login */}
+                            <LiveRoomApp />
+                        </ProtectedRoute>
+                    } />
                     
                     {/* Public info pages */}
                     <Route path="/resources" element={<ResourcesPage />} />
@@ -236,14 +249,22 @@ const AppLayout = () => {
                     <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                     <Route path="/terms-of-service" element={<TermsOfServicePage />} />
                     <Route path="/cookies" element={<CookiesPage />} />
+
+                    {/* Catch-all for 404 */}
+                    <Route path='*' element={<NotFoundPage />} />
                 </Routes>
             </main>
-            {!isAuthPage && <Footer />}
+            {!isAuthPage && !isLiveRoomPage && <Footer />} {/* Optionally hide Footer for LiveRoomApp */}
         </div>
     );
 };
 
 function App() {
+    useEffect(() => {
+        // If you have a forceEnglishLanguage utility and want to call it on app load:
+        // forceEnglishLanguage(); 
+    }, []);
+
     return (
         <LanguageProvider>
             <AuthProvider>
@@ -262,4 +283,4 @@ function App() {
     );
 }
 
-export default App; 
+export default App;

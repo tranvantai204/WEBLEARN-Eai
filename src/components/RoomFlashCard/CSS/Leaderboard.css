@@ -1,0 +1,458 @@
+/* Base Styles */
+.leaderboard .leaderboard-container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e3f2fd;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+  min-width: 800px; /* Đảm bảo bảng có độ rộng tối thiểu */
+  width: 100%;
+}
+
+.leaderboard .leaderboard-container:hover {
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Thêm các style mới cho grid layout */
+.grid-layout {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  background: white;
+}
+
+.grid-header {
+  display: grid;
+  grid-template-columns: 12% 35% 15% 15% 23%;
+  background: linear-gradient(135deg, #0d47a1, #1976d2);
+  padding: 1.5rem 0;
+}
+
+.grid-header > div {
+  padding: 0 1rem;
+  text-align: center;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #e3f2fd;
+  white-space: nowrap;
+}
+
+.grid-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: 12% 35% 15% 15% 23%;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f0f0f0;
+  height: 70px;
+  align-items: center;
+}
+
+.grid-row:last-child {
+  border-bottom: none;
+}
+
+.grid-row > div {
+  padding: 1rem;
+  vertical-align: middle;
+  word-wrap: break-word;
+}
+
+/* Giữ nguyên các style cũ cho các cell */
+.rank-cell, .name-cell, .score-cell, .correct-cell, .percentage-cell {
+  /* Giữ nguyên các style từ bản cũ */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid-header,
+  .grid-row {
+    grid-template-columns: 15% 30% 15% 15% 25%;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-container {
+    min-width: 500px;
+  }
+  
+  .grid-header,
+  .grid-row {
+    grid-template-columns: 15% 30% 15% 15% 25%;
+  }
+}
+
+.leaderboard .leaderboard-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: #333;
+  margin-bottom: 2rem;
+  background: linear-gradient(45deg, #1976d2, #42a5f5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Compact Leaderboard Styles */
+.leaderboard .compact-leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.leaderboard .leaderboard-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border-left: 4px solid #e0e0e0;
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  min-height: 60px;
+}
+
+.leaderboard .leaderboard-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard .leaderboard-item.winner {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border-left-color: #ffc107;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+}
+
+.leaderboard .leaderboard-item.rank-2 {
+  border-left-color: #6c757d;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.leaderboard .leaderboard-item.rank-3 {
+  border-left-color: #cd7f32;
+  background: linear-gradient(135deg, #fdf2e9, #f4e2d7);
+}
+
+.leaderboard .player-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.leaderboard .rank-icon {
+  font-size: 2rem;
+  min-width: 3rem;
+  text-align: center;
+}
+
+.leaderboard .player-name {
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.leaderboard .score-info {
+  text-align: right;
+}
+
+.leaderboard .score-main {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1976d2;
+  line-height: 1.2;
+}
+
+.leaderboard .score-detail {
+  font-size: 1rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+/* Full Leaderboard Styles */
+.leaderboard .full-leaderboard {
+  overflow-x: auto;
+  width: 100%;
+  
+}
+
+.leaderboard .table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  width: 100%;
+}
+
+.leaderboard .leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  table-layout: fixed; /* Đảm bảo các cột có độ rộng cố định */
+  font-size: 1.1rem; /* Tăng kích thước font chung */
+}
+
+.leaderboard .leaderboard-table thead {
+  background: linear-gradient(135deg, #0d47a1, #1976d2);
+}
+
+.leaderboard .leaderboard-table th {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #e3f2fd;
+  white-space: nowrap;
+}
+
+/* Column specific styles - Phân bố lại độ rộng các cột */
+.leaderboard .col-rank { width: 12%; }
+.leaderboard .col-name { width: 35%; }
+.leaderboard .col-score { width: 15%; }
+.leaderboard .col-correct { width: 15%; }
+.leaderboard .col-percentage { width: 23%; }
+
+.leaderboard .leaderboard-table tbody tr {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f0f0f0;
+  height: 70px; /* Tăng chiều cao hàng */
+}
+
+.leaderboard .leaderboard-table tbody tr:hover {
+  background: linear-gradient(135deg, #f8f9fa, #e3f2fd);
+}
+
+.leaderboard .table-row.winner-row {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  font-weight: 600;
+}
+
+.leaderboard .table-row.winner-row:hover {
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+}
+
+.leaderboard .leaderboard-table td {
+  padding: 1.5rem 1rem;
+  vertical-align: middle;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+.leaderboard .rank-cell {
+  width: 12%;
+}
+
+.leaderboard .rank-display {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.leaderboard .name-cell {
+  font-weight: 600;
+  color: #333;
+  text-align: left;
+  font-size: 1.2rem;
+  width: 35%;
+  padding-left: 1.5rem;
+}
+
+.leaderboard .score-cell {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1976d2;
+  width: 100%;
+}
+
+.leaderboard .correct-cell {
+  font-weight: 600;
+  color: #28a745;
+  font-size: 1.2rem;
+  width: 100%;
+}
+
+.leaderboard .percentage-cell {
+  width: 100%;
+  padding: 1rem;
+}
+
+.leaderboard .progress-container {
+  position: relative;
+  background: #e0e0e0;
+  border-radius: 12px;
+  height: 28px; /* Tăng chiều cao progress bar */
+  overflow: hidden;
+  margin: 0 auto;
+  max-width: 150px;
+}
+
+.leaderboard .progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  transition: width 0.8s ease;
+  border-radius: 12px;
+  min-width: 35px;
+}
+
+.leaderboard .progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .leaderboard .leaderboard-container {
+    min-width: 700px;
+    padding: 1.5rem;
+  }
+  
+  .leaderboard .leaderboard-title {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .leaderboard .leaderboard-container {
+    padding: 1rem;
+    min-width: 600px;
+  }
+  
+  .leaderboard .leaderboard-title {
+    font-size: 1.5rem;
+  }
+  
+  .leaderboard .leaderboard-item {
+    padding: 1rem;
+  }
+  
+  .leaderboard .player-name {
+    font-size: 1.1rem;
+  }
+  
+  .leaderboard .score-main {
+    font-size: 1.3rem;
+  }
+  
+  .leaderboard .leaderboard-table {
+    font-size: 1rem;
+  }
+  
+  .leaderboard .leaderboard-table th,
+  .leaderboard .leaderboard-table td {
+    padding: 1rem 0.75rem;
+  }
+  
+  .leaderboard .rank-display {
+    font-size: 1.3rem;
+  }
+  
+  .leaderboard .score-cell {
+    font-size: 1.1rem;
+  }
+  
+  .leaderboard .name-cell {
+    font-size: 1rem;
+  }
+  
+  .leaderboard .correct-cell {
+    font-size: 1rem;
+  }
+
+  .leaderboard .progress-container {
+    height: 24px;
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .leaderboard .leaderboard-container {
+    min-width: 100%;
+    overflow-x: auto;
+  }
+  
+  .leaderboard .leaderboard-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+  
+  .leaderboard .player-info {
+    justify-content: center;
+  }
+  
+  .leaderboard .table-container {
+    font-size: 0.9rem;
+    min-width: 500px;
+  }
+  
+  .leaderboard .leaderboard-table tbody tr {
+    height: 60px;
+  }
+  
+  .leaderboard .progress-container {
+    height: 20px;
+    max-width: 100px;
+  }
+  
+  .leaderboard .progress-text {
+    font-size: 0.8rem;
+  }
+  
+  /* Điều chỉnh độ rộng cột cho mobile */
+  .leaderboard .col-rank { width: 15%; }
+  .leaderboard .col-name { width: 30%; }
+  .leaderboard .col-score { width: 15%; }
+  .leaderboard .col-correct { width: 15%; }
+  .leaderboard .col-percentage { width: 25%; }
+  
+  .leaderboard .rank-cell { width: 15%; }
+  .leaderboard .name-cell { width: 30%; }
+  .leaderboard .score-cell { width: 15%; }
+  .leaderboard .correct-cell { width: 15%; }
+  .leaderboard .percentage-cell { width: 25%; }
+}
+
+/* Animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.leaderboard .leaderboard-item,
+.leaderboard .table-row {
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Đảm bảo bảng không bị co lại quá nhỏ */
+.leaderboard .full-leaderboard {
+  min-width: 100%;
+}
+
+/* Thêm style cho container cha nếu cần */
+.leaderboard.leaderboard-container.full {
+  width: 100%;
+  max-width: none;
+}
