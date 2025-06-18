@@ -19,12 +19,165 @@ const StudentPage = (props) => {
     roomId,
     currentFlashcardId,
     roomParticipantsList,
-    isRoomFinished 
+    isRoomFinished,
+    isStudentFinished 
   } = props;
   const { translateText } = useLanguage();
   
   // State để điều khiển hiển thị overlay
   const [showFinishedOverlay, setShowFinishedOverlay] = React.useState(true); 
+  const [showStudentFinishedOverlay, setShowStudentFinishedOverlay] = React.useState(true);
+
+  // Student Finished Overlay Component
+  const StudentFinishedOverlay = () => (
+    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" 
+         style={{ 
+           backgroundColor: 'rgba(0, 0, 0, 0.85)', 
+           zIndex: 9999,
+           backdropFilter: 'blur(8px)'
+         }}>
+      <div className="card border-0 shadow-lg text-center position-relative" 
+           style={{ 
+             borderRadius: '24px', 
+             maxWidth: '550px', 
+             width: '90%',
+             background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+             transform: 'scale(1)',
+             animation: 'slideInUp 0.6s ease-out'
+           }}>
+        
+        {/* Close Button */}
+        <button
+          type="button"
+          className="btn btn-light position-absolute top-0 end-0 m-3 rounded-circle d-flex align-items-center justify-content-center"
+          style={{ 
+            width: '40px', 
+            height: '40px',
+            zIndex: 10000,
+            boxShadow: '0 2px 10px rgba(0,0,0,0.15)'
+          }}
+          onClick={() => setShowStudentFinishedOverlay(false)}
+          title={translateText('Close')}
+        >
+          <i className="fas fa-times fs-5"></i>
+        </button>
+
+        <div className="card-body p-5 text-white position-relative overflow-hidden">
+          {/* Background decorations */}
+          <div className="position-absolute top-0 end-0 opacity-20">
+            <div className="rounded-circle bg-white" style={{ width: '100px', height: '100px', transform: 'translate(30px, -30px)' }}></div>
+          </div>
+          <div className="position-absolute bottom-0 start-0 opacity-20">
+            <div className="rounded-circle bg-white" style={{ width: '60px', height: '60px', transform: 'translate(-20px, 20px)' }}></div>
+          </div>
+          <div className="position-absolute" style={{ top: '50%', left: '10%', transform: 'translateY(-50%)' }}>
+            <div className="rounded-circle bg-white opacity-10" style={{ width: '40px', height: '40px' }}></div>
+          </div>
+
+          <div className="position-relative">
+            {/* Celebration Icon with Animation */}
+            <div className="mb-4" style={{ fontSize: '4.5rem' }}>
+              <span className="d-inline-block" style={{ 
+                animation: 'bounce 2s ease-in-out infinite' 
+              }}>🎉</span>
+            </div>
+
+            <h2 className="display-6 fw-bold mb-3 text-white">
+              {translateText('Congratulations!')}
+            </h2>
+            
+            <p className="fs-5 mb-4 opacity-90">
+              {translateText('You have completed all questions!')}
+            </p>
+
+            <div className="bg-white bg-opacity-20 rounded-4 p-4 mb-4">
+              <p className="mb-3 fw-semibold">
+                <i className="fas fa-hourglass-half me-2"></i>
+                {translateText('You can now:')}
+              </p>
+              <div className="row g-3">
+                <div className="col-12">
+                  <div className="d-flex align-items-center">
+                    <i className="fas fa-users me-3 text-yellow-300"></i>
+                    <span>{translateText('Wait for other players to finish')}</span>
+                  </div>
+                </div>
+                <div className="col-12">
+                  <div className="d-flex align-items-center">
+                    <i className="fas fa-trophy me-3 text-yellow-300"></i>
+                    <span>{translateText('Check the live leaderboard')}</span>
+                  </div>
+                </div>
+                <div className="col-12">
+                  <div className="d-flex align-items-center">
+                    <i className="fas fa-redo me-3 text-yellow-300"></i>
+                    <span>{translateText('Start a new game when ready')}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Current Status */}
+            <div className="bg-white bg-opacity-15 rounded-3 p-3 mb-4">
+              <div className="small opacity-75 mb-2">{translateText('Current Status')}</div>
+              <div className="d-flex align-items-center justify-content-center">
+                <div className="spinner-border spinner-border-sm me-2" role="status" style={{ width: '16px', height: '16px' }}>
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <span className="fw-semibold">
+                  {translateText('Waiting for game to end...')}
+                </span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+              <button
+                type="button"
+                className="btn btn-light btn-lg px-4 py-2 fw-bold"
+                onClick={() => setShowStudentFinishedOverlay(false)}
+                style={{ borderRadius: '12px' }}
+              >
+                <i className="fas fa-eye me-2"></i>
+                {translateText('Continue Watching')}
+              </button>
+              
+              <button
+                type="button"
+                className="btn btn-outline-light btn-lg px-4 py-2 fw-bold"
+                onClick={() => navigateTo('lobby')}
+                style={{ borderRadius: '12px' }}
+              >
+                <i className="fas fa-home me-2"></i>
+                {translateText('Back to Lobby')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-20px); }
+          60% { transform: translateY(-10px); }
+        }
+        @keyframes slideInUp {
+          0% { 
+            opacity: 0;
+            transform: translateY(100px) scale(0.9);
+          }
+          100% { 
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        .text-yellow-300 {
+          color: #fde047 !important;
+        }
+      `}</style>
+    </div>
+  );
 
   // Room Finished Overlay Component
   const RoomFinishedOverlay = () => (
@@ -165,11 +318,18 @@ const StudentPage = (props) => {
                       {translateText('Finished')}
                     </span>
                   )}
+                  {isStudentFinished && !isRoomFinished && (
+                    <span className="badge bg-success ms-3 fs-6" style={{ borderRadius: '12px' }}>
+                      {translateText('You Completed!')}
+                    </span>
+                  )}
                 </h1>
                 <p className="mb-0">
                   {isRoomFinished 
                     ? translateText('Game has ended - Thank you for playing!') 
-                    : translateText('Challenge Your Knowledge!')
+                    : isStudentFinished
+                      ? translateText('You finished all questions! Waiting for others...')
+                      : translateText('Challenge Your Knowledge!')
                   }
                 </p>
               </div>
@@ -254,6 +414,66 @@ const StudentPage = (props) => {
                         </div>
                       </div>
                     </div>
+                  ) : isStudentFinished ? (
+                    // Student Finished Waiting Card
+                    <div className="card border-0 shadow-lg overflow-hidden" style={{ borderRadius: '20px' }}>
+                      <div 
+                        className="card-header border-0 text-center py-4 position-relative text-white"
+                        style={{ background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)' }}
+                      >
+                        <div className="position-relative">
+                          <div className="d-flex align-items-center justify-content-center mb-2">
+                            <div className="bg-white bg-opacity-20 rounded-circle p-2 me-3">
+                              <i className="fas fa-check-circle fs-4 text-white"></i>
+                            </div>
+                            <h2 className="h3 fw-bold mb-0 text-white">{translateText('Well Done!')}</h2>
+                          </div>
+                          <div className="small opacity-75">{translateText('You have completed all questions')}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="card-body p-4 text-center">
+                        <div className="mb-4" style={{ fontSize: '4rem' }}>
+                          <span style={{ animation: 'bounce 2s ease-in-out infinite' }}>🎉</span>
+                        </div>
+                        <h3 className="h4 fw-bold text-success mb-3">
+                          {translateText('Congratulations!')}
+                        </h3>
+                        <p className="text-muted mb-4">
+                          {translateText('You have successfully answered all questions. Now you can wait for other players to finish or start a new game.')}
+                        </p>
+                        
+                        {/* Waiting Status */}
+                        <div className="alert alert-success border-0 mb-4" style={{ borderRadius: '12px' }}>
+                          <div className="d-flex align-items-center justify-content-center">
+                            <div className="spinner-border spinner-border-sm text-success me-2" role="status" style={{ width: '16px', height: '16px' }}>
+                              <span className="visually-hidden">Loading...</span>
+                            </div>
+                            <span className="fw-semibold">
+                              {translateText('Waiting for other players to finish...')}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Action Options */}
+                        <div className="row g-3">
+                          <div className="col-6">
+                            <div className="p-3 bg-light rounded-3 h-100">
+                              <i className="fas fa-hourglass-half fs-4 text-warning mb-2"></i>
+                              <div className="fw-semibold text-dark mb-1">{translateText('Keep Waiting')}</div>
+                              <div className="small text-muted">{translateText('Stay to see final results')}</div>
+                            </div>
+                          </div>
+                          <div className="col-6">
+                            <div className="p-3 bg-light rounded-3 h-100">
+                              <i className="fas fa-redo fs-4 text-primary mb-2"></i>
+                              <div className="fw-semibold text-dark mb-1">{translateText('New Game')}</div>
+                              <div className="small text-muted">{translateText('Start fresh in lobby')}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   ) : (
                     // Normal Game Content
                     <>
@@ -294,6 +514,14 @@ const StudentPage = (props) => {
                             <div className="badge bg-success px-3 py-2" style={{ borderRadius: '12px' }}>
                               <i className="fas fa-check me-1"></i>
                               {translateText('Final Results')}
+                            </div>
+                          </div>
+                        )}
+                        {isStudentFinished && !isRoomFinished && (
+                          <div className="text-center mt-3">
+                            <div className="badge bg-info px-3 py-2" style={{ borderRadius: '12px' }}>
+                              <i className="fas fa-clock me-1"></i>
+                              {translateText('You completed!')}
                             </div>
                           </div>
                         )}
@@ -397,15 +625,19 @@ const StudentPage = (props) => {
                             <div className={`fw-bold ${
                               isRoomFinished 
                                 ? 'text-secondary' 
-                                : isWaitingForAnswer 
-                                  ? 'text-warning' 
-                                  : 'text-success'
+                                : isStudentFinished
+                                  ? 'text-success'
+                                  : isWaitingForAnswer 
+                                    ? 'text-warning' 
+                                    : 'text-success'
                             }`}>
                               {isRoomFinished 
                                 ? translateText('Finished') 
-                                : isWaitingForAnswer 
-                                  ? translateText('Processing...') 
-                                  : translateText('Ready to play')
+                                : isStudentFinished
+                                  ? translateText('You finished!')
+                                  : isWaitingForAnswer 
+                                    ? translateText('Processing...') 
+                                    : translateText('Ready to play')
                               }
                             </div>
                           </div>
@@ -444,11 +676,12 @@ const StudentPage = (props) => {
         </div>
       </div>
 
-      {/* Room Finished Overlay - Optional full-screen celebration */}
-      {/* Uncomment if you want a full-screen overlay celebration */}
+      {/* Overlays */}
       {isRoomFinished && showFinishedOverlay && <RoomFinishedOverlay />}
+      {isStudentFinished && !isRoomFinished && showStudentFinishedOverlay && <StudentFinishedOverlay />}
     </div>
   );
 };
 
 export default StudentPage;
+                              

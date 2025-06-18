@@ -38,6 +38,7 @@ export default function LiveRoomApp() {
   const [lastAnswerResult, setLastAnswerResult] = useState(null);
   const [isWaitingForAnswer, setIsWaitingForAnswer] = useState(false);
   const [isRoomFinished, setIsRoomFinished] = useState(false);
+  const [isStudentFinished, setIsStudentFinished] = useState(false);
   
   const messagesEndRef = useRef(null);
 
@@ -154,6 +155,14 @@ export default function LiveRoomApp() {
         setLastAnswerResult(null);
         setLeaderboard(finalResults); 
         setIsRoomFinished(true);
+      });
+
+      newConnection.on('StudentFinished', (userId, roomId) => {
+        addSignalRMessage('Event', `Student ${userId} has finished all questions in room ${roomId}`);
+        setIsStudentFinished(true);
+        setCurrentQuestion(null);
+        setCurrentFlashcardId(null);
+        addSignalRMessage('Event', 'You have completed all questions in this room!');
       });
       
       newConnection.on('AnswerSubmissionError', (errors) => {
@@ -452,7 +461,8 @@ export default function LiveRoomApp() {
     roomId,
     currentFlashcardId,
     roomParticipantsList,
-    isRoomFinished 
+    isRoomFinished,
+    isStudentFinished
   };
 
   return (
