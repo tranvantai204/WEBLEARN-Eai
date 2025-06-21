@@ -502,7 +502,6 @@ export const LanguageProvider = ({ children }) => {
             'Username': 'Tên người dùng',
             'ID': 'ID',
             'Join Time': 'Thời gian tham gia',
-            'A friend': 'Một người bạn', // "Một người bạn" phù hợp hơn "Một người bạn"
             'participants-list': 'danh-sach-tham-gia', // Tên file, giữ nguyên không Gen Z
             'API Log': 'Nhật Ký API', // "Nhật Ký API" ổn rồi
             'SignalR Events': 'Sự Kiện SignalR', // "Sự Kiện SignalR" ổn rồi
@@ -588,11 +587,9 @@ export const LanguageProvider = ({ children }) => {
             'Game Status': 'Trạng Thái Trò Chơi',
             'Processing...': 'Đang Xử Lý...',
             'Ready to play': 'Sẵn Sàng Chơi',
-            'No other players': 'Không có người chơi khác',
             'A friend': 'Một người bạn',
             'Congratulations!': 'Chúc mừng bạn!',
             'You can now:': 'Bây giờ bạn có thể:',
-            'Wait for other players to finish': 'Chờ các người chơi khác hoàn thành',
             'Check the live leaderboard': 'Xem bảng xếp hạng trực tiếp',
             'Start a new game when ready': 'Bắt đầu một trò chơi mới khi đã sẵn sàng',
             'Current Status': 'Trạng Thái Hiện Tại',
@@ -613,7 +610,13 @@ export const LanguageProvider = ({ children }) => {
             'Auto-generate smart flashcards in seconds': 'Tạo bộ thẻ thông minh trong 1 nốt nhạc',
             'Get instant AI feedback on your writing': 'Viết bài & nhận góp ý tự động từ AI',
             'Understand readings with smart explanations': 'Hiểu bài đọc với những giải thích thông minh',
-            'Battle friends in online flashcard mode': 'Đấu với bạn bè trong chế độ thẻ flashcard trực tuyến'
+            'Battle friends in online flashcard mode': 'Đấu với bạn bè trong chế độ thẻ flashcard trực tuyến',
+            'Game Mode': 'Chế độ Trò Chơi',
+            'Max Participants': 'Số Người Chơi Tối Đa',
+            'Show Real-time Leaderboard': 'Hiển thị Bảng Xếp Hạng Trực Tiếp',
+            'Term To Definition': 'Trả lời định nghĩa',
+            'Definition To Term': 'Trả lời thuật ngữ',
+            'Mix': 'Trộn Lẫn',
         }
     }), []);
 

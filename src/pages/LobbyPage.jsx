@@ -11,6 +11,11 @@ const LobbyPage = (props) => {
   const { getUserFlashcardSets } = useFlashcard();
   const [userId, setUserId] = useState(null); 
   const [flashcardSets, setFlashcardSets] = useState([]);
+  
+  // Thêm state cho các trường mới
+  const [gameMode, setGameMode] = useState(1); // Default mode = 1
+  const [maxParticipants, setMaxParticipants] = useState(10); // Default 10 người
+  const [showLeaderboardRealtime, setShowLeaderboardRealtime] = useState(true); // Default true
 
   useEffect(() => {
     const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
@@ -64,6 +69,18 @@ useEffect(() => {
 
   const validateRoomCode = (code) => {
     return /^[a-zA-Z0-9]{0,6}$/.test(code);
+  };
+
+  // Hàm tạo phòng được cập nhật với các tham số mới
+  const handleCreateRoom = async () => {
+    if (!selectedFlashcardSet) {
+      // addMessage('Vui lòng chọn flashcard set'); // Uncomment nếu có addMessage function
+      alert('Vui lòng chọn flashcard set');
+      return;
+    }
+    
+    // Gọi createRoom với các tham số từ state
+    await createRoom(gameMode, maxParticipants, showLeaderboardRealtime);
   };
 
   const {
@@ -171,10 +188,64 @@ useEffect(() => {
                   </select>
                 </div>
 
+                {/* Game Mode Selection */}
+                <div className="input-group">
+                  <label htmlFor="gameModeSelect" className="input-label">
+                    <i className="fas fa-gamepad"></i>
+                    {translateText('Game Mode')}
+                  </label>
+                  <select
+                    id="gameModeSelect"
+                    className="enhanced-select"
+                    value={gameMode}
+                    onChange={(e) => setGameMode(parseInt(e.target.value))}
+                  >
+                    <option disabled value={0}>{translateText('Term To Definition')}</option>
+                    <option value={1}>{translateText('Definition To Term')}</option>
+                    <option disabled value={2}>{translateText('Mix')}</option>
+                  </select>
+                </div>
+
+                {/* Max Participants */}
+                <div className="input-group">
+                  <label htmlFor="maxParticipantsInput" className="input-label">
+                    <i className="fas fa-users"></i>
+                    {translateText('Max Participants')}
+                  </label>
+                  <input 
+                    type="number" 
+                    id="maxParticipantsInput"
+                    className="enhanced-input" 
+                    value={maxParticipants} 
+                    onChange={(e) => setMaxParticipants(parseInt(e.target.value) || 1)}
+                    min="1"
+                    max="50"
+                    placeholder={translateText('Maximum number of participants')}
+                  />
+                </div>
+
+                {/* Show Leaderboard Option */}
+                {/* <div className="input-group">
+                  <label className="checkbox-label">
+                    <input 
+                      type="checkbox"
+                      checked={showLeaderboardRealtime}
+                      onChange={(e) => setShowLeaderboardRealtime(e.target.checked)}
+                      className="enhanced-checkbox"
+                      disabled
+                    />
+                    <span className="checkmark"></span>
+                    <span className="checkbox-text ms-4 text-dark">
+                      <i className="fas fa-trophy me-2"></i>
+                      {translateText('Show Real-time Leaderboard')}
+                    </span>
+                  </label>
+                </div> */}
+
                 <button 
                   type="button"
                   className="action-btn teacher-btn"
-                  onClick={createRoom}
+                  onClick={handleCreateRoom}
                   disabled={connectionStatus !== 'Connected' || !selectedFlashcardSet}
                 >
                   <span className="btn-text">{translateText('Create Room')}</span>

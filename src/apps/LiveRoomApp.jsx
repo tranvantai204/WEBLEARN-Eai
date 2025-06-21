@@ -118,6 +118,8 @@ export default function LiveRoomApp() {
         setLastAnswerResult(null); 
         setAnswerText(''); 
         setIsWaitingForAnswer(false);
+        setIsRoomFinished(false);
+        setIsStudentFinished(false);
       });
       
       newConnection.on('QuestionStarted', (data) => { 
@@ -239,7 +241,7 @@ export default function LiveRoomApp() {
     }
   };
 
-  const createRoom = async () => {
+  const createRoom = async (mode = 1, maxParticipants = 10, showLeaderboardRealtime = true) => {
     if (!selectedFlashcardSet) {
       addMessage('Vui lòng chọn flashcard set');
       return;
@@ -249,9 +251,9 @@ export default function LiveRoomApp() {
     const result = await callApi('/api/Rooms/create', 'POST', {
       flashcardSetId: flashcardSetId,
       roomName: roomName,
-      mode: 1, 
-      maxParticipants: 10, 
-      showLeaderboardRealtime: true
+      mode: mode,  
+      maxParticipants: maxParticipants,  
+      showLeaderboardRealtime: showLeaderboardRealtime 
     });
     
     if (result.success && result.data) {
@@ -261,6 +263,7 @@ export default function LiveRoomApp() {
       setUserRole('teacher');
       setRoomParticipantsList([]); 
       setIsRoomFinished(false);
+      setLeaderboard([]);
 
       const createdRoomId = result.data.roomId; 
       if (connection && connection.state === 'Connected' && createdRoomId) {
@@ -285,6 +288,19 @@ export default function LiveRoomApp() {
     }
     
     addMessage(`Attempting to join room with code: ${joinCode}`);
+    setRoomCode('');
+    setRoomId('');
+    setUserRole('');
+    setRoomParticipantsList([]); 
+    setLeaderboard([]);
+
+    setCurrentQuestion(null);
+    setCurrentFlashcardId(null);
+    setLastAnswerResult(null);
+    setIsWaitingForAnswer(false);
+    setIsRoomFinished(false);
+    setIsStudentFinished(false);
+
     
     const result = await callApi('/api/Rooms/join', 'POST', {
       roomCode: joinCode
