@@ -99,19 +99,19 @@ const StudentPage = (props) => {
                 <div className="col-12">
                   <div className="d-flex align-items-center">
                     <i className="fas fa-users me-3 text-yellow-300"></i>
-                    <span>{translateText('Wait for other players to finish')}</span>
+                    <span className='text-warning'>{translateText('Wait for other players to finish')}</span>
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="d-flex align-items-center">
                     <i className="fas fa-trophy me-3 text-yellow-300"></i>
-                    <span>{translateText('Check the live leaderboard')}</span>
+                    <span className='text-warning'>{translateText('Check the live leaderboard')}</span>
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="d-flex align-items-center">
                     <i className="fas fa-redo me-3 text-yellow-300"></i>
-                    <span>{translateText('Start a new game when ready')}</span>
+                    <span className='text-warning'>{translateText('Start a new game when ready')}</span>
                   </div>
                 </div>
               </div>
@@ -119,12 +119,12 @@ const StudentPage = (props) => {
 
             {/* Current Status */}
             <div className="bg-white bg-opacity-15 rounded-3 p-3 mb-4">
-              <div className="small opacity-75 mb-2">{translateText('Current Status')}</div>
+              <div className="small opacity-75 mb-2 text-dark">{translateText('Current Status')}</div>
               <div className="d-flex align-items-center justify-content-center">
                 <div className="spinner-border spinner-border-sm me-2" role="status" style={{ width: '16px', height: '16px' }}>
-                  <span className="visually-hidden">Loading...</span>
+                  <span className="visually-hidden text-dark">Loading...</span>
                 </div>
-                <span className="fw-semibold">
+                <span className="fw-semibold text-dark">
                   {translateText('Waiting for game to end...')}
                 </span>
               </div>
@@ -238,7 +238,7 @@ const StudentPage = (props) => {
             {/* Final Stats */}
             {leaderboard && leaderboard.length > 0 && (
               <div className="bg-white bg-opacity-20 rounded-4 p-4 mb-4">
-                <h4 className="h5 fw-bold mb-3 text-white">
+                <h4 className="h5 fw-bold mb-3 text-warning">
                   <i className="fas fa-trophy me-2"></i>
                   {translateText('Final Results')}
                 </h4>
@@ -248,7 +248,7 @@ const StudentPage = (props) => {
                       <div className="fs-2 fw-bold text-warning">
                         {leaderboard.length}
                       </div>
-                      <div className="small text-white opacity-75">
+                      <div className="small text-dark opacity-75">
                         {translateText('Total Players')}
                       </div>
                     </div>
@@ -258,7 +258,7 @@ const StudentPage = (props) => {
                       <div className="fs-2 fw-bold text-success">
                         {leaderboard[0]?.score || 0}
                       </div>
-                      <div className="small text-white opacity-75">
+                      <div className="small text-dark opacity-75">
                         {translateText('Highest Score')}
                       </div>
                     </div>
